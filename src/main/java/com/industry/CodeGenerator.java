@@ -104,11 +104,8 @@ public class CodeGenerator {
 
         // 生成的表名
         strategy.setInclude(
-                "t_certificate_category",
-                "t_data_transfer",
-                "t_enterprise_account",
-                "t_operation_log",
-                "t_qualification_category");
+                "t_qualification_acquisition",
+                "t_qualification_acquisition_application");
         // 去除表前缀
         strategy.setTablePrefix("t_");
         // 自动填充配置
