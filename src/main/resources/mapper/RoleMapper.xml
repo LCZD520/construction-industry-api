@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.RoleMapper">
+    <resultMap id="roleMap" type="Role">
+        <result property="enabled" column="is_enabled"/>
+    </resultMap>
+    <select id="getRoleById" resultMap="roleMap" resultType="com.industry.entity.Role">
+        select role_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               role_name,
+               is_enabled,
+               data_permission,
+               description
+        from construction_industry_api.t_role
+    </select>
+</mapper>

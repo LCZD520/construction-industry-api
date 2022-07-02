@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.NoticeMapper">
+
+    <resultMap id="noticeResultMap" type="com.industry.entity.Notice">
+        <result property="enabled" column="is_enabled"/>
+    </resultMap>
+    <select id="queryList" resultMap="noticeResultMap" resultType="com.industry.entity.Notice">
+        select id,
+               gmt_create,
+               gmt_modified,
+               title,
+               content,
+               is_enabled
+        from construction_industry_api.t_notice order by gmt_create desc 
+    </select>
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.MenuMapper">
+
+    <resultMap id="Menus" type="Menu">
+        <id column="menu_id" property="menuId"/>
+        <result column="menu_title" property="menuTitle"/>
+        <result column="menu_icon" property="menuIcon"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="is_enabled" property="enabled"/>
+        <result column="route" property="route"/>
+        <result column="gmt_create" property="gmtCreate" javaType="Date"/>
+        <result column="gmt_modified" property="gmtModified" javaType="Date"/>
+        <collection property="subListMenus" ofType="Menu">
+            <id column="menu_id2" property="menuId"/>
+            <result column="menu_title2" property="menuTitle"/>
+            <result column="menu_icon2" property="menuIcon"/>
+            <result column="parent_id2" property="parentId"/>
+            <result column="is_enabled2" property="enabled"/>
+            <result column="route2" property="route"/>
+            <result column="gmt_create2" property="gmtCreate" javaType="Date"/>
+            <result column="gmt_modified2" property="gmtModified" javaType="Date"/>
+        </collection>
+    </resultMap>
+    <select id="queryListMenus" resultMap="Menus">
+        select m1.menu_id,
+               m1.menu_title,
+               m1.menu_icon,
+               m1.parent_id,
+               m1.route,
+               m1.creator_id,
+               m1.regenerator_id,
+               m1.is_enabled,
+               m1.gmt_create,
+               m1.gmt_modified,
+               m2.menu_id        as menu_id2,
+               m2.menu_title     as menu_title2,
+               m2.menu_icon      as menu_icon2,
+               m2.parent_id      as parent_id2,
+               m2.creator_id     as creator_id2,
+               m2.regenerator_id as regenerator_id2,
+               m2.is_enabled     as is_enabled2,
+               m2.route          as route2,
+               m2.gmt_create     as gmt_create2,
+               m2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_menu m1
+                 inner join construction_industry_api.t_menu m2
+                            on m1.menu_id = m2.parent_id
+    </select>
+</mapper>

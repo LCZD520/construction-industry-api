@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EnterpriseAccountMapper">
+
+    <select id="queryList" resultType="com.industry.entity.EnterpriseAccount">
+        select enterprise_account_id,
+               bank_name,
+               opening_bank,
+               account_name,
+               bank_card_no,
+               remark
+        from construction_industry_api.t_enterprise_account
+        order by gmt_create desc
+    </select>
+    <select id="queryById" resultType="com.industry.entity.EnterpriseAccount" parameterType="Integer">
+        select enterprise_account_id,
+               bank_name,
+               account_name,
+               opening_bank,
+               bank_card_no,
+               remark
+        from construction_industry_api.t_enterprise_account where enterprise_account_id = #{id}
+    </select>
+</mapper>

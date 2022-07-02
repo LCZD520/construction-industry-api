@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.UserMapper">
+
+    <resultMap id="queryUserByUsernameResultMap" type="com.industry.auth.AuthUser">
+        <result column="is_enabled" property="enabled" jdbcType="TINYINT"/>
+        <result column="is_on_job" property="onJob" jdbcType="TINYINT"/>
+        <result column="is_first_login" property="firstLogin" jdbcType="TINYINT"/>
+
+    </resultMap>
+    
+    <select id="queryUserByUsername" resultMap="queryUserByUsernameResultMap" resultType="com.industry.auth.AuthUser">
+        select user_id,
+               mechanism_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               is_enabled,
+               username,
+               password,
+               full_name,
+               telephone_number,
+               sex,
+               age,
+               is_on_job,
+               is_first_login
+        from construction_industry_api.t_user
+        where username = #{username}
+    </select>
+</mapper>
