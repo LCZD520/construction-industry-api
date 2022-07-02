@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAcquisitionMapper">
+
+    <select id="queryList" resultType="com.industry.entity.QualificationAcquisition">
+        select qualification_acquisition_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               remark,
+               transfer_customers,
+               category_and_grade,
+               status,
+               acquisition_amount,
+               safety_permit,
+               construction_progress,
+               qualified_personnel,
+               acquisition_date,
+               location
+        from t_qualification_acquisition
+    </select>
+
+    <select id="queryById" resultType="com.industry.entity.QualificationAcquisition">
+        select qualification_acquisition_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               remark,
+               transfer_customers,
+               category_and_grade,
+               status,
+               acquisition_amount,
+               safety_permit,
+               construction_progress,
+               qualified_personnel,
+               acquisition_date,
+               location
+        from t_qualification_acquisition
+        where qualification_acquisition_id = #{id}
+    </select>
+</mapper>

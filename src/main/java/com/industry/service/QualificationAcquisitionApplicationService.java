@@ -1,5 +1,7 @@
 package com.industry.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.industry.entity.QualificationAcquisitionApplication;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface QualificationAcquisitionApplicationService extends IService<QualificationAcquisitionApplication> {
 
+    IPage<QualificationAcquisitionApplication> queryList(Page<QualificationAcquisitionApplication> objectPage);
+
+    int insert(QualificationAcquisitionApplication qualificationAcquisitionApplication);
+
+    int deleteById(Integer id);
+
+    QualificationAcquisitionApplication queryById(Integer id);
 }

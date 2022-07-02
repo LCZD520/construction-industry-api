@@ -23,7 +23,7 @@ public class EnterpriseAccountServiceImpl extends ServiceImpl<EnterpriseAccountM
     private EnterpriseAccountMapper mapper;
 
     @Autowired
-    public void setService(EnterpriseAccountMapper mapper) {
+    public void setMapper(EnterpriseAccountMapper mapper) {
         this.mapper = mapper;
     }
 

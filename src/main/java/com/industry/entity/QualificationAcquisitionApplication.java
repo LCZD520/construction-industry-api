@@ -3,6 +3,8 @@ package com.industry.entity;
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -35,11 +37,11 @@ public class QualificationAcquisitionApplication implements Serializable {
 
     @ApiModelProperty(value = "创建时间")
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)
-    private Date gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @ApiModelProperty(value = "更新时间")
     @TableField(value = "gmt_modified", fill = FieldFill.INSERT_UPDATE)
-    private Date gmtModified;
+    private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "创建人id")
     @TableField(value = "creator_id", fill = FieldFill.INSERT)
@@ -68,6 +70,5 @@ public class QualificationAcquisitionApplication implements Serializable {
     @ApiModelProperty(value = "转账账户")
     @TableField("transfer_account")
     private String transferAccount;
-
 
 }
