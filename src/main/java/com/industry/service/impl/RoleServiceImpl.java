@@ -1,12 +1,13 @@
 package com.industry.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Role;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.RoleDO;
 import com.industry.mapper.RoleMapper;
 import com.industry.service.RoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,9 @@ import java.util.List;
  * @author lc
  * @since 2022-06-30
  */
+@Slf4j
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, RoleDO> implements RoleService {
 
     private RoleMapper mapper;
 
@@ -31,17 +33,25 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public IPage<Role> getListRoles(Page<Role> page) {
-        return mapper.selectPage(page, null);
-    }
-
-    @Override
-    public int insert(Role role) {
+    public int insert(RoleDO role) {
         return mapper.insert(role);
     }
 
     @Override
-    public Role getRoleById(Integer id) {
+    public RoleDO getRoleById(Integer id) {
         return mapper.getRoleById(id);
+    }
+
+    @Override
+    public ListPages<RoleDO> getListRoles(ListPages<RoleDO> page) {
+        page.setList(mapper.getListRoles(page));
+        page.setTotal(mapper.getCount());
+        page.setCurrentPage(page.getCurrentPage() + 1);
+        return page;
+    }
+
+    @Override
+    public List<RoleDO> getListRolesAll() {
+        return mapper.getListRolesAll();
     }
 }

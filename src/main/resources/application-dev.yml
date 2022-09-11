@@ -16,7 +16,7 @@ spring:
   application:
     name: mobile-mall-backstage-api
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/construction_industry_api?useSSL=false&useUnicode=true&characterEncoding=UTF-8&tinyInt1isBit=false&rewriteBatchedStatements=true
+    url: jdbc:mysql://127.0.0.1:3306/construction_industry_api?useSSL=false&useUnicode=true&characterEncoding=UTF-8&tinyInt1isBit=false&rewriteBatchedStatements=true&allowMultiQueries=true
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: 123456
@@ -38,7 +38,7 @@ mybatis-plus:
       id-type: auto
       table-prefix: t_
   mapper-locations: classpath*:mapper/*Mapper.xml
-  type-aliases-package: com.industry.entity
+  type-aliases-package: com.industry.bean
 
 jwt:
   header: Authorization

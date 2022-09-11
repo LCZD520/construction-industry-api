@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyMapper">
+
+    <select id="listQualificationAgencys" resultType="QualificationAgencyDO">
+        select id,
+               agency_company,
+               payment_way,
+               area,
+               agency_amount,
+               status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               agency_qualification
+        from construction_industry_api.t_qualification_agency
+        order by id desc
+    </select>
+
+    <resultMap id="QualificationAgencyMap" type="QualificationAgencyDO">
+        <id column="id" property="id"/>
+        <collection property="listConstructors" ofType="QualificationAgencyConstructorDO">
+            <id column="id2" property="id"/>
+            <result column="qualification_agency_id2" property="qualificationAgencyId"/>
+            <result column="level_major_initial_conversion2" property="levelMajorInitialConversion"/>
+            <result column="demand_number2" property="demandNumber"/>
+            <result column="talent_price2" property="talentPrice"/>
+            <result column="talent_price_number2" property="talentPriceNumber"/>
+            <result column="number_unit2" property="numberUnit"/>
+            <result column="remark2" property="remark"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="regenerator_id2" property="regeneratorId"/>
+            <result column="gmt_modified2" property="gmtModified"/>
+        </collection>
+        <collection property="listOtherPersons" ofType="QualificationAgencyOtherPersonDO">
+            <id column="id3" property="id"/>
+            <result column="qualification_agency_id3" property="qualificationAgencyId"/>
+            <result column="level_major_initial_conversion3" property="levelMajorInitialConversion"/>
+            <result column="demand_number3" property="demandNumber"/>
+            <result column="talent_price3" property="talentPrice"/>
+            <result column="talent_price_number3" property="talentPriceNumber"/>
+            <result column="number_unit3" property="numberUnit"/>
+            <result column="remark3" property="remark"/>
+            <result column="creator_id3" property="creatorId"/>
+            <result column="gmt_create3" property="gmtCreate"/>
+            <result column="regenerator_id3" property="regeneratorId"/>
+            <result column="gmt_modified3" property="gmtModified"/>
+        </collection>
+    </resultMap>
+
+    <select id="getQualificationAgencyById" resultMap="QualificationAgencyMap" parameterType="Integer"
+            resultType="QualificationAgencyDO">
+        select t1.id
+             , t1.agency_company
+             , t1.payment_way
+             , t1.area
+             , t1.agency_amount
+             , t1.status
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t1.remark
+             , t1.agency_qualification
+             , t2.id                             as id2
+             , t2.qualification_agency_id        as qualification_agency_id2
+             , t2.level_major_initial_conversion as level_major_initial_conversion2
+             , t2.tender_exit
+             , t2.demand_number                  as demand_number2
+             , t2.talent_price                   as talent_price2
+             , t2.talent_price_number            as talent_price_number2
+             , t2.number_unit                    as number_unit2
+             , t2.remark                         as remark2
+             , t2.creator_id                     as creator_id2
+             , t2.gmt_create                     as gmt_create2
+             , t2.regenerator_id                 as regenerator_id2
+             , t2.gmt_modified                   as gmt_modified2
+             , t3.id                             as id3
+             , t3.qualification_agency_id        as qualification_agency_id3
+             , t3.level_major_initial_conversion as level_major_initial_conversion3
+             , t3.demand_number                  as demand_number3
+             , t3.talent_price                   as talent_price3
+             , t3.talent_price_number            as talent_price_number3
+             , t3.number_unit                    as number_unit3
+             , t3.remark                         as remark3
+             , t3.creator_id                     as creator_id3
+             , t3.gmt_create                     as gmt_create3
+             , t3.regenerator_id                 as regenerator_id3
+             , t3.gmt_modified                   as gmt_modified3
+             , t3.type
+        from construction_industry_api.t_qualification_agency as t1
+                 left join construction_industry_api.t_qualification_agency_constructor as t2
+                           on t1.id = t2.qualification_agency_id
+                 left join construction_industry_api.t_qualification_agency_other_person t3
+                           on t1.id = t3.qualification_agency_id
+        where t1.id = #{id}
+    </select>
+</mapper>

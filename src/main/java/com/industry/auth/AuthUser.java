@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.industry.bean.entity.MechanismDO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,8 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -41,21 +38,21 @@ public class AuthUser implements UserDetails {
     private Integer mechanismId;
 
     @ApiModelProperty(value = "创建时间")
-    @JsonFormat(locale = "zh",pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)
-    private Date gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @ApiModelProperty(value = "更新时间")
-    @JsonFormat(locale = "zh",pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(value = "gmt_modified", fill = FieldFill.INSERT_UPDATE)
-    private Date gmtModified;
+    private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "创建人id")
-    @TableField("creator_id")
+    @TableField(value = "creator_id", fill = FieldFill.INSERT)
     private Integer creatorId;
 
     @ApiModelProperty(value = "更新人id")
-    @TableField("regenerator_id")
+    @TableField(value = "regenerator_id", fill = FieldFill.INSERT_UPDATE)
     private Integer regeneratorId;
 
     @ApiModelProperty(value = "是否可用")
@@ -94,6 +91,9 @@ public class AuthUser implements UserDetails {
     @TableField("is_first_login")
     private Boolean firstLogin;
 
+    @ApiModelProperty(value = "所在机构")
+    @TableField(exist = false)
+    private MechanismDO mechanism;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

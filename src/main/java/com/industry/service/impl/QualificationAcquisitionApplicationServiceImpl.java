@@ -2,15 +2,12 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.QualificationAcquisition;
-import com.industry.entity.QualificationAcquisitionApplication;
+import com.industry.bean.entity.QualificationAcquisitionApplication;
 import com.industry.mapper.QualificationAcquisitionApplicationMapper;
 import com.industry.service.QualificationAcquisitionApplicationService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.xml.ws.Action;
 
 /**
  * <p>

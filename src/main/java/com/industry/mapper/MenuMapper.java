@@ -1,6 +1,6 @@
 package com.industry.mapper;
 
-import com.industry.entity.Menu;
+import com.industry.bean.entity.MenuDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2022-06-28
  */
 @Mapper
-public interface MenuMapper extends BaseMapper<Menu> {
+public interface MenuMapper extends BaseMapper<MenuDO> {
 
-    List<Menu> queryListMenus();
+    List<MenuDO> queryListMenus();
 }

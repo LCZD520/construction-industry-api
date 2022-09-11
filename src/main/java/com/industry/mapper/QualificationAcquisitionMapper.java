@@ -2,7 +2,7 @@ package com.industry.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.QualificationAcquisition;
+import com.industry.bean.entity.QualificationAcquisitionDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,12 +12,16 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author lc
- * @since 2022-07-02
+ * @since 2022-07-15
  */
 @Mapper
-public interface QualificationAcquisitionMapper extends BaseMapper<QualificationAcquisition> {
+public interface QualificationAcquisitionMapper extends BaseMapper<QualificationAcquisitionDO> {
 
-    IPage<QualificationAcquisition> queryList(Page<QualificationAcquisition> page);
-
-    QualificationAcquisition queryById(Integer id);
+    /**
+     * 获取资质收购记录
+     *
+     * @param page page
+     * @return IPage<QualificationAcquisitionDO>
+     */
+    IPage<QualificationAcquisitionDO> listQualificationAcquisition(Page<QualificationAcquisitionDO> page);
 }

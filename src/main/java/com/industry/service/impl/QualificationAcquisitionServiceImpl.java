@@ -2,13 +2,14 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.QualificationAcquisition;
-import com.industry.mapper.EnterpriseAccountMapper;
+import com.industry.bean.entity.QualificationAcquisitionDO;
 import com.industry.mapper.QualificationAcquisitionMapper;
 import com.industry.service.QualificationAcquisitionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.ws.Action;
 
 /**
  * <p>
@@ -16,10 +17,11 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author lc
- * @since 2022-07-02
+ * @since 2022-07-15
  */
 @Service
-public class QualificationAcquisitionServiceImpl extends ServiceImpl<QualificationAcquisitionMapper, QualificationAcquisition> implements QualificationAcquisitionService {
+public class QualificationAcquisitionServiceImpl extends ServiceImpl<QualificationAcquisitionMapper, QualificationAcquisitionDO> implements QualificationAcquisitionService {
+
     private QualificationAcquisitionMapper mapper;
 
     @Autowired
@@ -28,23 +30,26 @@ public class QualificationAcquisitionServiceImpl extends ServiceImpl<Qualificati
     }
 
     @Override
-    public IPage<QualificationAcquisition> queryList(Page<QualificationAcquisition> page) {
-
-        return mapper.queryList(page);
+    public int insert(QualificationAcquisitionDO qualificationAcquisition) {
+        return mapper.insert(qualificationAcquisition);
     }
 
     @Override
-    public int insert(QualificationAcquisition qualificationAcquisition) {
-        return mapper.insert( qualificationAcquisition );
+    public IPage<QualificationAcquisitionDO> listQualificationAcquisition(Page<QualificationAcquisitionDO> page) {
+        return mapper.listQualificationAcquisition(page);
     }
 
     @Override
-    public int deleteById(Integer id) {
-        return mapper.deleteById( id );
+    public int updateQualificationAcquisitionById(QualificationAcquisitionDO qualificationAcquisition) {
+        final QualificationAcquisitionDO qualificationAcquisitionDO = mapper.selectById(qualificationAcquisition);
+        if (qualificationAcquisitionDO != null) {
+            return mapper.updateById(qualificationAcquisition);
+        }
+        return 0;
     }
 
     @Override
-    public QualificationAcquisition queryById(Integer id) {
-        return mapper.queryById(id);
+    public QualificationAcquisitionDO getDetailById(Integer id) {
+        return mapper.selectById(id);
     }
 }

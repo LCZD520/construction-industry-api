@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,9 @@ public class CodeGenerator {
         // 不打开输出目录
         gc.setOpen(false);
         // 设置ID类型:雪花算法自增
-        gc.setIdType(IdType.ASSIGN_ID);
+        gc.setIdType(IdType.AUTO);
         // 实体类命名方式 xxxEntity
-//        gc.setEntityName("%sEntity");
+        gc.setEntityName("%sDO");
         // 时间类型对应策略
         gc.setDateType(DateType.ONLY_DATE);
         gc.setSwagger2(true);
@@ -69,7 +70,7 @@ public class CodeGenerator {
         PackageConfig pc = new PackageConfig();
         // 父包名
         pc.setParent("com.industry");
-        pc.setEntity("entity");
+        pc.setEntity("bean.entity");
         pc.setMapper("mapper");
         pc.setService("service");
         pc.setServiceImpl("service.impl");
@@ -104,8 +105,7 @@ public class CodeGenerator {
 
         // 生成的表名
         strategy.setInclude(
-                "t_qualification_acquisition",
-                "t_qualification_acquisition_application");
+                "t_enterprise_transfer");
         // 去除表前缀
         strategy.setTablePrefix("t_");
         // 自动填充配置

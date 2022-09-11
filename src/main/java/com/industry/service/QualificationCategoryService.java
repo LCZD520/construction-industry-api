@@ -1,7 +1,9 @@
 package com.industry.service;
 
-import com.industry.entity.QualificationCategory;
+import com.industry.bean.entity.QualificationCategoryDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -11,6 +13,28 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lc
  * @since 2022-07-01
  */
-public interface QualificationCategoryService extends IService<QualificationCategory> {
+public interface QualificationCategoryService extends IService<QualificationCategoryDO> {
 
+    /**
+     * 获取资质分类tree
+     *
+     * @return list-tree
+     */
+    List<QualificationCategoryDO> listQualificationCategoryTree();
+
+    /**
+     * 获取资质分类详情
+     *
+     * @param id 证书id
+     * @return CertificateCategoryDO
+     */
+    QualificationCategoryDO getDetailById(Integer id);
+
+    /**
+     * 插入资质类别
+     *
+     * @param qualificationCategory QualificationCategoryDO
+     * @return 受影响rows
+     */
+    int insert(QualificationCategoryDO qualificationCategory);
 }

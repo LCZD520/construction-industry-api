@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.RoleMapper">
-    <resultMap id="roleMap" type="Role">
+    <resultMap id="roleMap" type="RoleDO">
         <result property="enabled" column="is_enabled"/>
     </resultMap>
-    <select id="getRoleById" resultMap="roleMap" resultType="com.industry.entity.Role">
+    <select id="getRoleById" resultMap="roleMap" resultType="RoleDO">
         select role_id,
                gmt_create,
                gmt_modified,
@@ -14,6 +14,40 @@
                is_enabled,
                data_permission,
                description
+        from construction_industry_api.t_role
+        where role_id = #{id}
+    </select>
+
+    <select id="getListRoles" resultType="RoleDO" resultMap="roleMap">
+        select role_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               role_name,
+               is_enabled,
+               data_permission,
+               description
+        from construction_industry_api.t_role
+        order by role_id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="getListRolesAll" resultType="RoleDO" resultMap="roleMap">
+        select role_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               role_name,
+               is_enabled,
+               data_permission,
+               description
+        from construction_industry_api.t_role
+    </select>
+
+    <select id="getCount" resultType="Long">
+        select count(*)
         from construction_industry_api.t_role
     </select>
 </mapper>

@@ -1,6 +1,6 @@
 package com.industry.service;
 
-import com.industry.entity.Menu;
+import com.industry.bean.entity.MenuDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author lc
  * @since 2022-06-28
  */
-public interface MenuService extends IService<Menu> {
+public interface MenuService extends IService<MenuDO> {
 
-    List<Menu> queryListMenus();
+    List<MenuDO> queryListMenus();
 }

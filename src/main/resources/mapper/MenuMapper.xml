@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.MenuMapper">
 
-    <resultMap id="Menus" type="Menu">
+    <resultMap id="Menus" type="MenuDO">
         <id column="menu_id" property="menuId"/>
         <result column="menu_title" property="menuTitle"/>
         <result column="menu_icon" property="menuIcon"/>
@@ -11,7 +11,7 @@
         <result column="route" property="route"/>
         <result column="gmt_create" property="gmtCreate" javaType="Date"/>
         <result column="gmt_modified" property="gmtModified" javaType="Date"/>
-        <collection property="subListMenus" ofType="Menu">
+        <collection property="subListMenus" ofType="MenuDO">
             <id column="menu_id2" property="menuId"/>
             <result column="menu_title2" property="menuTitle"/>
             <result column="menu_icon2" property="menuIcon"/>

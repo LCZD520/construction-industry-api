@@ -2,7 +2,7 @@ package com.industry.auth.handler;
 
 import com.industry.enums.ResultCodeEnum;
 import com.industry.util.JsonUtil;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

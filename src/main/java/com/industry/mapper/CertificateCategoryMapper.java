@@ -1,7 +1,9 @@
 package com.industry.mapper;
 
-import com.industry.entity.CertificateCategory;
+import com.industry.bean.entity.CertificateCategoryDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -11,6 +13,16 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lc
  * @since 2022-07-01
  */
-public interface CertificateCategoryMapper extends BaseMapper<CertificateCategory> {
+@Mapper
+public interface CertificateCategoryMapper extends BaseMapper<CertificateCategoryDO> {
 
+
+    /**
+     * 插入分类
+     * @param certificateCategory CertificateCategoryDO实体
+     * @return 受影响行数
+     */
+    int insertCategory(CertificateCategoryDO certificateCategory);
+
+    CertificateCategoryDO getDetailById(@Param("id") Integer id);
 }

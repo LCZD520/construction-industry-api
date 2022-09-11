@@ -2,7 +2,7 @@ package com.industry.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.EnterpriseAccount;
+import com.industry.bean.entity.EnterpriseAccountDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,9 +15,9 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-07-01
  */
 @Mapper
-public interface EnterpriseAccountMapper extends BaseMapper<EnterpriseAccount> {
+public interface EnterpriseAccountMapper extends BaseMapper<EnterpriseAccountDO> {
 
-    IPage<EnterpriseAccount> queryList(Page<EnterpriseAccount> page);
+    IPage<EnterpriseAccountDO> queryList(Page<EnterpriseAccountDO> page);
 
-    EnterpriseAccount queryById(Integer id);
+    EnterpriseAccountDO queryById(Integer id);
 }

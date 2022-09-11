@@ -3,12 +3,11 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.QualificationAcquisitionApplication;
-import com.industry.entity.vo.ListPagesVo;
+import com.industry.bean.entity.QualificationAcquisitionApplication;
+import com.industry.bean.common.ListPages;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.QualificationAcquisitionApplicationService;
-import com.industry.service.QualificationAcquisitionService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,12 +42,12 @@ public class QualificationAcquisitionApplicationController {
     public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
             , @RequestParam("pageSize") Integer pageSize) {
         IPage<QualificationAcquisitionApplication> iPage = service.queryList(new Page<>(currentPage, pageSize));
-        ListPagesVo<QualificationAcquisitionApplication> listPagesVo
-                = new ListPagesVo<>(iPage.getRecords()
+        ListPages<QualificationAcquisitionApplication> listPages
+                = new ListPages<>(iPage.getRecords()
                 , iPage.getTotal()
                 , iPage.getCurrent()
                 , iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, listPagesVo);
+        return result.success(ResultCodeEnum.SUCCESS, listPages);
     }
 
     @PostMapping("/insert")
@@ -71,17 +70,17 @@ public class QualificationAcquisitionApplicationController {
 
     @GetMapping("/detail/{id}")
     public ResultEntity queryById(@PathVariable("id") Integer id) {
-        QualificationAcquisitionApplication QualificationAcquisitionApplication = service.queryById(id);
-        if (QualificationAcquisitionApplication != null) {
-            return result.success(ResultCodeEnum.SUCCESS, QualificationAcquisitionApplication);
+        QualificationAcquisitionApplication qualificationAcquisitionApplication = service.queryById(id);
+        if (qualificationAcquisitionApplication != null) {
+            return result.success(ResultCodeEnum.SUCCESS, qualificationAcquisitionApplication);
         }
         return result.failure(ResultCodeEnum.ERROR_NOT_EXIST);
     }
 
     @PutMapping("/update")
-    public ResultEntity update(@RequestBody QualificationAcquisitionApplication QualificationAcquisitionApplication) {
-        log.info("QualificationAcquisitionApplication:{}", QualificationAcquisitionApplication);
-        boolean b = service.updateById(QualificationAcquisitionApplication);
+    public ResultEntity update(@RequestBody QualificationAcquisitionApplication qualificationAcquisitionApplication) {
+        log.info("QualificationAcquisitionApplication:{}", qualificationAcquisitionApplication);
+        boolean b = service.updateById(qualificationAcquisitionApplication);
         if (b) {
             return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
         }

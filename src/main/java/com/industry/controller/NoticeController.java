@@ -3,17 +3,15 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Notice;
+import com.industry.bean.entity.NoticeDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.NoticeService;
-import com.industry.util.LocalCacheUtil;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,7 +44,7 @@ public class NoticeController {
     @GetMapping("/get-list-notices")
     public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
             , @RequestParam("pageSize") Integer pageSize) {
-        IPage<Notice> iPage = noticeService.queryList(new Page<>(currentPage, pageSize));
+        IPage<NoticeDO> iPage = noticeService.queryList(new Page<>(currentPage, pageSize));
         Map<String, Object> map = new HashMap<>(8);
         map.put("total", iPage.getTotal());
         map.put("listNotices", iPage.getRecords());
@@ -57,7 +55,7 @@ public class NoticeController {
 
     @GetMapping("/detail/{id}")
     public ResultEntity queryListById(@PathVariable("id") Integer id) {
-        Notice notice = noticeService.queryById(id);
+        NoticeDO notice = noticeService.queryById(id);
         if (notice != null) {
             return result.success(ResultCodeEnum.SUCCESS, notice);
         }
@@ -65,7 +63,7 @@ public class NoticeController {
     }
 
     @PostMapping("/insert")
-    public ResultEntity insert(@RequestBody Notice notice) {
+    public ResultEntity insert(@RequestBody NoticeDO notice) {
         int insert = noticeService.insert(notice);
         if (insert == 1) {
             return result.success(ResultCodeEnum.SUCCESS_INSERT);
@@ -74,7 +72,7 @@ public class NoticeController {
     }
 
     @PutMapping("/update")
-    public ResultEntity update(@RequestBody Notice notice) {
+    public ResultEntity update(@RequestBody NoticeDO notice) {
         log.info("notice:{}", notice);
         boolean success = noticeService.updateById(notice);
         if (success) {

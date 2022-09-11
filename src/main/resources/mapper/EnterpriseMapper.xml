@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EnterpriseMapper">
+
+    <insert id="insert" parameterType="EnterpriseDO" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_enterprise
+        ( enterprise_name
+        , enterprise_qualifications
+        , area
+        , contact_address
+        , contacts
+        , sex
+        , telephone_number
+        , qq_number
+        , enterprise_status
+        , creator_id
+        , gmt_create
+        , regenerator_id
+        , gmt_modified
+        , remark)
+        values ( #{enterpriseName}
+               , #{enterpriseQualifications}
+               , #{area}
+               , #{contactAddress}
+               , #{contacts}
+               , #{sex}
+               , #{telephoneNumber}
+               , #{qqNumber}
+               , #{enterpriseStatus}
+               , #{creatorId}
+               , #{gmtCreate}
+               , #{regeneratorId}
+               , #{gmtModified}
+               , #{remark})
+    </insert>
+    <update id="updateEnterpriseStatus">
+        update construction_industry_api.t_enterprise
+        set enterprise_status = 2
+        where id = #{enterpriseId}
+    </update>
+
+
+    <resultMap id="listEnterprisesMap" type="EnterpriseDO">
+        <id column="id" property="id"/>
+        <collection property="listEnterpriseDemands" ofType="EnterpriseDemandDO">
+            <id column="id2" property="id"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="regenerator_id2" property="regeneratorId"/>
+            <result column="gmt_modified2" property="gmtModified"/>
+        </collection>
+    </resultMap>
+    <select id="listEnterprises" resultMap="listEnterprisesMap" resultType="EnterpriseDO">
+        select t1.id
+             , t1.enterprise_name
+             , t1.enterprise_qualifications
+             , t1.area
+             , t1.contact_address
+             , t1.contacts
+             , t1.sex
+             , t1.telephone_number
+             , t1.qq_number
+             , t1.enterprise_status
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t1.remark
+             , t2.id             as id2
+             , t2.enterprise_id
+             , t2.class_three_personnel
+             , t2.tender_exit
+             , t2.demand_number
+             , t2.enterprise_offer
+             , t2.enterprise_offer_number
+             , t2.enterprise_offer_unit
+             , t2.market_development_fee
+             , t2.market_development_fee_unit
+             , t2.title
+             , t2.education
+             , t2.level_major_initial_conversion
+             , t2.gmt_create     as gmt_create2
+             , t2.creator_id     as creator_id2
+             , t2.regenerator_id as regenerator_id2
+             , t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_enterprise as t1
+                 left join construction_industry_api.t_enterprise_demand as t2
+                           on t1.id = t2.enterprise_id
+        order by t1.id desc
+    </select>
+    <select id="getEnterpriseById" resultMap="listEnterprisesMap" resultType="EnterpriseDO">
+        select t1.id
+             , t1.enterprise_name
+             , t1.enterprise_qualifications
+             , t1.area
+             , t1.contact_address
+             , t1.contacts
+             , t1.sex
+             , t1.telephone_number
+             , t1.qq_number
+             , t1.enterprise_status
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t1.remark
+             , t2.id             as id2
+             , t2.enterprise_id
+             , t2.class_three_personnel
+             , t2.tender_exit
+             , t2.demand_number
+             , t2.enterprise_offer
+             , t2.enterprise_offer_number
+             , t2.enterprise_offer_unit
+             , t2.market_development_fee
+             , t2.market_development_fee_unit
+             , t2.title
+             , t2.education
+             , t2.level_major_initial_conversion
+             , t2.gmt_create     as gmt_create2
+             , t2.creator_id     as creator_id2
+             , t2.regenerator_id as regenerator_id2
+             , t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_enterprise as t1
+                 left join construction_industry_api.t_enterprise_demand as t2
+                           on t1.id = t2.enterprise_id
+        where t1.id = #{id}
+    </select>
+    <select id="getEnterpriseDemandsById" resultType="EnterpriseDemandDO">
+        select id,
+               enterprise_id,
+               class_three_personnel,
+               tender_exit,
+               demand_number,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               market_development_fee,
+               market_development_fee_unit,
+               title,
+               education,
+               level_major_initial_conversion,
+               gmt_create,
+               creator_id,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_enterprise_demand
+        where enterprise_id = #{id}
+    </select>
+</mapper>

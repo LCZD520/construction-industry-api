@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.EnterpriseAccountMapper">
 
-    <select id="queryList" resultType="com.industry.entity.EnterpriseAccount">
+    <select id="queryList" resultType="com.industry.bean.entity.EnterpriseAccountDO">
         select enterprise_account_id,
                bank_name,
                opening_bank,
@@ -12,7 +12,7 @@
         from construction_industry_api.t_enterprise_account
         order by gmt_create desc
     </select>
-    <select id="queryById" resultType="com.industry.entity.EnterpriseAccount" parameterType="Integer">
+    <select id="queryById" resultType="com.industry.bean.entity.EnterpriseAccountDO" parameterType="Integer">
         select enterprise_account_id,
                bank_name,
                account_name,

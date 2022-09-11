@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentMapper">
+
+    <insert id="save" parameterType="TalentDO" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_talent
+        values ( #{id}
+               , #{fullName}
+               , #{sex}
+               , #{area}
+               , #{socialSecurity}
+               , #{telephoneNumber}
+               , #{qqNumber}
+               , #{education}
+               , #{title}
+               , #{tenderExit}
+               , #{classThreePersonnel}
+               , #{issueCertTime}
+               , #{continuingEducationDate}
+               , #{certificateStatus}
+               , #{talentStatus}
+               , #{talentPrice}
+               , #{talentPriceNumber}
+               , #{numberUnit}
+               , #{creatorId}
+               , #{gmtCreate}
+               , #{regeneratorId}
+               , #{gmtModified}
+               , #{remark})
+    </insert>
+    <update id="updateTalentStatusBatch">
+        update construction_industry_api.t_talent
+        set talent_status = 2
+        where id in
+        <foreach collection="listTalentIds" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <resultMap id="certificateMap" type="TalentCertificateDO">
+        <id column="id2" property="id"/>
+        <result column="issue_cert_time2" property="issueCertTime"/>
+        <result column="continuing_education_date2" property="continuingEducationDate"/>
+        <result column="creator_id2" property="creatorId"/>
+        <result column="gmt_create2" property="gmtCreate"/>
+        <result column="regenerator_id2" property="regeneratorId"/>
+        <result column="gmt_modified2" property="gmtModified"/>
+    </resultMap>
+
+    <resultMap id="talentMap" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection property="listCertificates" ofType="TalentCertificateDO" resultMap="certificateMap"/>
+    </resultMap>
+
+    <resultMap id="talentMap2" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection
+                property="listCertificates"
+                ofType="TalentCertificateDO"
+                select="selectSubList"
+                column="id"/>
+    </resultMap>
+
+    <select id="selectSubList" resultType="TalentCertificateDO">
+        select id,
+               talent_id,
+               remark,
+               level_major,
+               initial_conversion,
+               issue_cert_time,
+               continuing_education_date,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_certificate
+        where talent_id = #{id}
+    </select>
+
+    <select id="queryList" resultMap="talentMap2" resultType="TalentDO">
+        select t1.id,
+               t1.full_name,
+               t1.sex,
+               t1.area,
+               t1.social_security,
+               t1.telephone_number,
+               t1.qq_number,
+               t1.education,
+               t1.title,
+               t1.tender_exit,
+               t1.class_three_personnel,
+               t1.issue_cert_time,
+               t1.continuing_education_date,
+               t1.certificate_status,
+               t1.talent_status,
+               t1.talent_price,
+               t1.talent_price_number,
+               t1.number_unit,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.remark
+        from construction_industry_api.t_talent as t1
+        order by t1.id desc
+    </select>
+
+    <select id="queryById" resultMap="talentMap" resultType="TalentDO">
+        select t1.id,
+               t1.full_name,
+               t1.sex,
+               t1.area,
+               t1.social_security,
+               t1.telephone_number,
+               t1.qq_number,
+               t1.education,
+               t1.title,
+               t1.tender_exit,
+               t1.class_three_personnel,
+               t1.issue_cert_time,
+               t1.continuing_education_date,
+               t1.certificate_status,
+               t1.talent_status,
+               t1.talent_price,
+               t1.talent_price_number,
+               t1.number_unit,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.remark,
+               t2.id                        as id2,
+               t2.talent_id,
+               t2.level_major,
+               t2.initial_conversion,
+               t2.issue_cert_time           as issue_cert_time2,
+               t2.continuing_education_date as continuing_education_date2,
+               t2.creator_id                as creator_id2,
+               t2.gmt_create                as gmt_create2,
+               t2.regenerator_id            as regenerator_id2,
+               t2.gmt_modified              as gmt_modified2
+        from construction_industry_api.t_talent t1
+                 left join
+             construction_industry_api.t_talent_certificate t2
+             on t1.id = t2.talent_id
+        where t1.id = #{id}
+        order by t1.id desc
+    </select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyConstructorMapper">
+
+    <insert id="insertBatch" parameterType="List">
+        insert into construction_industry_api.t_qualification_agency_constructor
+        ( qualification_agency_id
+        , level_major_initial_conversion
+        , tender_exit
+        , demand_number
+        , talent_price
+        , talent_price_number
+        , number_unit
+        , creator_id
+        , gmt_create
+        , regenerator_id
+        , gmt_modified
+        , remark)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.qualificationAgencyId}
+            ,#{item.levelMajorInitialConversion}
+            ,#{item.tenderExit}
+            ,#{item.demandNumber}
+            ,#{item.talentPrice}
+            ,#{item.talentPriceNumber}
+            ,#{item.numberUnit}
+            ,#{item.creatorId}
+            ,#{item.gmtCreate}
+            ,#{item.regeneratorId}
+            ,#{item.gmtModified}
+            ,#{item.remark})
+        </foreach>
+    </insert>
+    <select id="selectIdsByQualificationAgencyId" resultType="Integer">
+        select id
+        from construction_industry_api.t_qualification_agency_constructor
+        where qualification_agency_id = #{qualificationAgencyId}
+    </select>
+</mapper>

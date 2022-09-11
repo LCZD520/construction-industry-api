@@ -2,7 +2,7 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.EnterpriseAccount;
+import com.industry.bean.entity.EnterpriseAccountDO;
 import com.industry.mapper.EnterpriseAccountMapper;
 import com.industry.service.EnterpriseAccountService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2022-07-01
  */
 @Service
-public class EnterpriseAccountServiceImpl extends ServiceImpl<EnterpriseAccountMapper, EnterpriseAccount> implements EnterpriseAccountService {
+public class EnterpriseAccountServiceImpl extends ServiceImpl<EnterpriseAccountMapper, EnterpriseAccountDO> implements EnterpriseAccountService {
 
     private EnterpriseAccountMapper mapper;
 
@@ -33,17 +33,17 @@ public class EnterpriseAccountServiceImpl extends ServiceImpl<EnterpriseAccountM
     }
 
     @Override
-    public EnterpriseAccount queryById(Integer id) {
+    public EnterpriseAccountDO queryById(Integer id) {
         return mapper.queryById(id);
     }
 
     @Override
-    public int insert(EnterpriseAccount enterpriseAccount) {
+    public int insert(EnterpriseAccountDO enterpriseAccount) {
         return mapper.insert(enterpriseAccount);
     }
 
     @Override
-    public IPage<EnterpriseAccount> queryList(Page<EnterpriseAccount> page) {
+    public IPage<EnterpriseAccountDO> queryList(Page<EnterpriseAccountDO> page) {
         return mapper.queryList(page);
     }
 }

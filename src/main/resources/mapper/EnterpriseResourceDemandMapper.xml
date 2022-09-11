@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EnterpriseResourceDemandMapper">
+
+    <insert id="insertBatch" parameterType="List">
+        insert into construction_industry_api.t_enterprise_resource_demand
+        (enterprise_resource_id
+        ,level_major_initial_conversion
+        ,gmt_create
+        ,creator_id
+        ,regenerator_id
+        ,gmt_modified)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.enterpriseResourceId}
+            ,#{item.levelMajorInitialConversion}
+            ,#{item.gmtCreate}
+            ,#{item.creatorId}
+            ,#{item.regeneratorId}
+            ,#{item.gmtModified})
+        </foreach>
+    </insert>
+    <select id="selectIdsByEnterpriseResourceId" resultType="Integer">
+        select id
+        from construction_industry_api.t_enterprise_resource_demand
+        where enterprise_resource_id = #{id}
+    </select>
+    <select id="getEnterpriseDemandById" resultType="EnterpriseDemandDO">
+        select level_major_initial_conversion, class_three_personnel,tender_exit
+        from construction_industry_api.t_enterprise_demand
+        where id = #{id}
+    </select>
+</mapper>

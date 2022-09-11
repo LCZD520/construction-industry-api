@@ -1,6 +1,6 @@
 package com.industry.service.impl;
 
-import com.industry.entity.Menu;
+import com.industry.bean.entity.MenuDO;
 import com.industry.mapper.MenuMapper;
 import com.industry.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2022-06-28
  */
 @Service
-public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+public class MenuServiceImpl extends ServiceImpl<MenuMapper, MenuDO> implements MenuService {
 
     private MenuMapper menuMapper;
 
@@ -28,7 +28,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
-    public List<Menu> queryListMenus() {
+    public List<MenuDO> queryListMenus() {
         return menuMapper.queryListMenus();
     }
 }

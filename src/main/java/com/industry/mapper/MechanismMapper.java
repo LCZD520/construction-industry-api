@@ -1,8 +1,11 @@
 package com.industry.mapper;
 
-import com.industry.entity.Mechanism;
+import com.industry.bean.common.SelectOptions;
+import com.industry.bean.entity.MechanismDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,6 +16,9 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-06-30
  */
 @Mapper
-public interface MechanismMapper extends BaseMapper<Mechanism> {
+public interface MechanismMapper extends BaseMapper<MechanismDO> {
 
+    List<MechanismDO> getSubListMechanismsById(Integer id);
+
+    List<SelectOptions> listMechanisms();
 }

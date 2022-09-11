@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.LogisticsMapper">
+
+    <select id="listTalentLogistics" resultType="LogisticsDO">
+        select id,
+               talent_id,
+               enterprise_id,
+               add_remark,
+               logistics_project_type,
+               detail_item,
+               address,
+               telephone_number,
+               recipient,
+               logistics_type,
+               is_confirm,
+               status,
+               confirm_remark,
+               confirm_cost,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_logistics
+        where talent_id = #{talentId}
+        order by gmt_create desc
+    </select>
+
+    <select id="listEnterpriseLogistics" resultType="LogisticsDO">
+        select id,
+               talent_id,
+               enterprise_id,
+               add_remark,
+               logistics_project_type,
+               detail_item,
+               address,
+               telephone_number,
+               recipient,
+               logistics_type,
+               is_confirm,
+               status,
+               confirm_remark,
+               confirm_cost,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_logistics
+        where enterprise_id = #{enterpriseId}
+        order by gmt_create desc
+    </select>
+
+    <select id="listAllLogistics" resultType="LogisticsDO">
+        select id,
+               talent_id,
+               enterprise_id,
+               add_remark,
+               logistics_project_type,
+               detail_item,
+               address,
+               telephone_number,
+               recipient,
+               logistics_type,
+               is_confirm,
+               status,
+               confirm_remark,
+               confirm_cost,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_logistics
+        order by gmt_create desc
+    </select>
+    <select id="listLogistics" resultType="LogisticsDO">
+
+    </select>
+</mapper>

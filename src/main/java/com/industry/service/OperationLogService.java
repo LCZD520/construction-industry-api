@@ -1,6 +1,6 @@
 package com.industry.service;
 
-import com.industry.entity.OperationLog;
+import com.industry.bean.entity.OperationLogDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lc
  * @since 2022-07-01
  */
-public interface OperationLogService extends IService<OperationLog> {
+public interface OperationLogService extends IService<OperationLogDO> {
 
 }

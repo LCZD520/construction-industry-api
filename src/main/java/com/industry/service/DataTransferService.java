@@ -1,6 +1,6 @@
 package com.industry.service;
 
-import com.industry.entity.DataTransfer;
+import com.industry.bean.entity.DataTransferDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lc
  * @since 2022-07-01
  */
-public interface DataTransferService extends IService<DataTransfer> {
+public interface DataTransferService extends IService<DataTransferDO> {
 
 }

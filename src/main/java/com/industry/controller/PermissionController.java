@@ -1,10 +1,10 @@
 package com.industry.controller;
 
 
-import com.industry.entity.Permission;
+import com.industry.bean.entity.PermissionDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.PermissionService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +40,7 @@ public class PermissionController {
     }
 
     @PostMapping("/add")
-    public ResultEntity add(@RequestBody Permission permission) {
+    public ResultEntity add(@RequestBody PermissionDO permission) {
         log.info("permission:{}", permission);
         int insert = service.insert(permission);
         if (insert == 1) {
@@ -51,8 +51,8 @@ public class PermissionController {
 
     @GetMapping("/get-list-permissions")
     public ResultEntity queryList() {
-        Map<String, List<Permission>> map = new HashMap<>();
-        List<Permission> permissions = service.queryListPermissions();
+        Map<String, List<PermissionDO>> map = new HashMap<>();
+        List<PermissionDO> permissions = service.queryListPermissions();
         map.put("listPermissions",permissions);
         return result.success(ResultCodeEnum.SUCCESS, map);
     }

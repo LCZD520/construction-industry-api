@@ -2,7 +2,7 @@ package com.industry.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.AdvancedSetting;
+import com.industry.bean.entity.AdvancedSettingDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,9 +15,9 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-07-01
  */
 @Mapper
-public interface AdvancedSettingMapper extends BaseMapper<AdvancedSetting> {
+public interface AdvancedSettingMapper extends BaseMapper<AdvancedSettingDO> {
 
-    IPage<AdvancedSetting> queryList(Page<AdvancedSetting> page);
+    IPage<AdvancedSettingDO> queryList(Page<AdvancedSettingDO> page);
 
-    AdvancedSetting queryById(Integer id);
+    AdvancedSettingDO queryById(Integer id);
 }

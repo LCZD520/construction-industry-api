@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentCertificatesMapper">
+
+    <insert id="insertBatch" parameterType="TalentCertificatesDO" useGeneratedKeys="true"
+            keyProperty="talentCertificatesId">
+        insert into
+        construction_industry_api.t_talent_certificates(talent_id
+        ,mechanism_id
+        ,certificates_type
+        ,certificates_whereabouts
+        ,creator_id
+        ,gmt_create
+        ,regenerator_id
+        ,gmt_modified
+        ,remark)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.talentId}
+            ,#{item.mechanismId}
+            ,#{item.certificatesType}
+            ,#{item.certificatesWhereabouts}
+            ,#{item.creatorId}
+            ,#{item.gmtCreate}
+            ,#{item.regeneratorId}
+            ,#{item.gmtModified}
+            ,#{item.remark})
+        </foreach>
+    </insert>
+    <update id="updateCertificateBatchById" parameterType="UpdateTalentCertificatesWhereaboutsRequest">
+        update construction_industry_api.t_talent_certificates
+        set certificates_whereabouts =#{whereaboutsRequest.certificatesWhereabouts}
+        <if test="whereaboutsRequest.remark !=''">
+            ,remark = #{whereaboutsRequest.remark}
+        </if>
+        where talent_certificates_id in (
+        <foreach collection="whereaboutsRequest.listTalentCertificatesId" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+
+    <select id="listCertificates" resultType="TalentCertificatesDO">
+        select talent_certificates_id,
+               talent_id,
+               mechanism_id,
+               certificates_type,
+               certificates_whereabouts,
+               gmt_create,
+               creator_id,
+               gmt_modified,
+               regenerator_id,
+               remark
+        from construction_industry_api.t_talent_certificates
+        where talent_id = #{id}
+        order by talent_certificates_id desc
+    </select>
+</mapper>

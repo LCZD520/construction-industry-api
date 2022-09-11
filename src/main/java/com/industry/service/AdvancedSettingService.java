@@ -2,7 +2,7 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.AdvancedSetting;
+import com.industry.bean.entity.AdvancedSettingDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,13 +13,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lc
  * @since 2022-07-01
  */
-public interface AdvancedSettingService extends IService<AdvancedSetting> {
+public interface AdvancedSettingService extends IService<AdvancedSettingDO> {
 
-    IPage<AdvancedSetting> queryList(Page<AdvancedSetting> page);
+    IPage<AdvancedSettingDO> queryList(Page<AdvancedSettingDO> page);
 
-    int insert(AdvancedSetting advancedSetting);
+    int insert(AdvancedSettingDO advancedSetting);
 
     int deleteById(Integer id);
 
-    AdvancedSetting queryById(Integer id);
+    AdvancedSettingDO queryById(Integer id);
 }

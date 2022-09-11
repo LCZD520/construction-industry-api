@@ -3,15 +3,18 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Role;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.RoleDO;
+import com.industry.bean.entity.TalentOrderDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.RoleService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,28 +47,31 @@ public class RoleController {
     @GetMapping("/get-role/{id}")
     public ResultEntity getRoleById(@PathVariable("id") Integer id) {
         log.info("id:{}", id);
-        Role role = service.getRoleById(id);
+        RoleDO role = service.getRoleById(id);
         if (role == null) {
             return result.failure(ResultCodeEnum.ERROR_NOT_EXIST);
         }
         return result.success(ResultCodeEnum.SUCCESS, role);
     }
 
-    @GetMapping("/get-list-roles")
-    public ResultEntity getListRoles(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam("pageSize") Integer pageSize) {
-        IPage<Role> iPage = service.getListRoles(new Page<>(currentPage, pageSize));
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("total", iPage.getTotal());
-        map.put("listRoles", iPage.getRecords());
-        map.put("currentPage", iPage.getCurrent());
-        map.put("pageSize", iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, map);
+    @GetMapping("/list")
+    public ResultEntity getListRoles(@RequestParam("currentPage") Long currentPage
+            , @RequestParam("pageSize") Long pageSize) {
+        ListPages<RoleDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<RoleDO> list = service.getListRoles(page);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
 
+    @GetMapping("/list-all")
+    public ResultEntity getListRoles() {
+        List<RoleDO> listRolesAll = service.getListRolesAll();
+        return result.success(ResultCodeEnum.SUCCESS, listRolesAll);
     }
 
     @PostMapping("/insert")
-    public ResultEntity insert(@RequestBody Role role) {
+    public ResultEntity insert(@RequestBody RoleDO role) {
         log.info("role:{}", role);
         int insert = service.insert(role);
         if (insert == 1) {
@@ -75,7 +81,7 @@ public class RoleController {
     }
 
     @PutMapping("/update")
-    public ResultEntity update(@RequestBody Role role) {
+    public ResultEntity update(@RequestBody RoleDO role) {
         log.info("role:{}", role);
         final boolean isSuccess = service.updateById(role);
         if (isSuccess) {

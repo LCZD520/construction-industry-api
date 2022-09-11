@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentEntryMapper">
+
+    <update id="updateTalentOrderId">
+        update construction_industry_api.t_talent_entry
+        set talent_order_id = #{talentOrderId}
+        where talent_order_id = #{originalTalentOrderId}
+    </update>
+</mapper>

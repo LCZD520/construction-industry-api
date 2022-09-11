@@ -1,6 +1,6 @@
 package com.industry.mapper;
 
-import com.industry.entity.DataTransfer;
+import com.industry.bean.entity.DataTransferDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lc
  * @since 2022-07-01
  */
-public interface DataTransferMapper extends BaseMapper<DataTransfer> {
+public interface DataTransferMapper extends BaseMapper<DataTransferDO> {
 
 }

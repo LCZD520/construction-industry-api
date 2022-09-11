@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EnterpriseTransferMapper">
+
+    <resultMap id="getWaitAssignTalentsMap" type="OrderSelectedTalentDO">
+        <id column="id" property="id"/>
+        <result column="is_confirmed" property="confirmed"/>
+        <result column="is_assigned" property="assigned"/>
+    </resultMap>
+    <update id="updateInfoByIds">
+        update construction_industry_api.t_order_selected_talent
+        set enterprise_application_transfer_id = #{id},is_assigned = 1
+        where id in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getWaitAssignTalents" resultMap="getWaitAssignTalentsMap">
+        select id,
+               talent_order_id,
+               enterprise_application_transfer_id,
+               talent_id,
+               area,
+               class_three_personnel,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               contract_balance,
+               market_development_fee,
+               market_development_fee_unit,
+               is_confirmed,
+               is_assigned,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               full_name,
+               level_major_initial_conversion,
+               enterprise_name,
+               creator_id
+        from construction_industry_api.t_order_selected_talent
+        where is_assigned = 0
+          and talent_order_id in
+              (select id
+               from construction_industry_api.t_talent_order
+               where enterprise_id = #{id})
+    </select>
+
+    <select id="getWaitAssignTalentIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_order_selected_talent
+        where is_assigned = 0
+          and talent_order_id in
+              (select id
+               from construction_industry_api.t_talent_order
+               where enterprise_id = #{id})
+    </select>
+    <select id="selectFullNameByIds" resultType="String">
+        select full_name
+        from construction_industry_api.t_order_selected_talent where id in
+        <foreach collection="lis" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getListTransferRecords" resultType="EnterpriseTransferDO">
+        select id,
+               enterprise_id,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               audit_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               bank_name
+        from construction_industry_api.t_enterprise_transfer
+        where enterprise_id = #{id}
+        order by id desc
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="EnterpriseTransferDO">
+        <id column="id" property="id"/>
+        <collection property="listAssignedTalents"
+                    select="listAssignedTalentsSelect"
+                    column="id"
+                    ofType="OrderSelectedTalentDO"/>
+    </resultMap>
+
+    <select id="listAssignedTalentsSelect"
+            resultType="OrderSelectedTalentDO"
+            resultMap="getWaitAssignTalentsMap">
+        select id,
+               talent_order_id,
+               enterprise_application_transfer_id,
+               talent_id,
+               area,
+               class_three_personnel,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               contract_balance,
+               market_development_fee,
+               market_development_fee_unit,
+               is_confirmed,
+               is_assigned,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               full_name,
+               level_major_initial_conversion,
+               enterprise_name,
+               creator_id
+        from construction_industry_api.t_order_selected_talent
+        where enterprise_application_transfer_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultMap="getDetailByIdMap">
+        select id,
+               enterprise_id,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               audit_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               bank_name
+        from construction_industry_api.t_enterprise_transfer
+        where id = #{id}
+    </select>
+</mapper>

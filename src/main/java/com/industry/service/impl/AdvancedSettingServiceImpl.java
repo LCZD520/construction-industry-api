@@ -2,7 +2,7 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.AdvancedSetting;
+import com.industry.bean.entity.AdvancedSettingDO;
 import com.industry.mapper.AdvancedSettingMapper;
 import com.industry.service.AdvancedSettingService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2022-07-01
  */
 @Service
-public class AdvancedSettingServiceImpl extends ServiceImpl<AdvancedSettingMapper, AdvancedSetting> implements AdvancedSettingService {
+public class AdvancedSettingServiceImpl extends ServiceImpl<AdvancedSettingMapper, AdvancedSettingDO> implements AdvancedSettingService {
 
     private AdvancedSettingMapper mapper;
 
@@ -28,12 +28,12 @@ public class AdvancedSettingServiceImpl extends ServiceImpl<AdvancedSettingMappe
     }
 
     @Override
-    public IPage<AdvancedSetting> queryList(Page<AdvancedSetting> page) {
+    public IPage<AdvancedSettingDO> queryList(Page<AdvancedSettingDO> page) {
         return mapper.queryList(page);
     }
 
     @Override
-    public int insert(AdvancedSetting advancedSetting) {
+    public int insert(AdvancedSettingDO advancedSetting) {
         return mapper.insert(advancedSetting);
     }
 
@@ -43,7 +43,7 @@ public class AdvancedSettingServiceImpl extends ServiceImpl<AdvancedSettingMappe
     }
 
     @Override
-    public AdvancedSetting queryById(Integer id) {
+    public AdvancedSettingDO queryById(Integer id) {
         return mapper.queryById(id);
     }
 }

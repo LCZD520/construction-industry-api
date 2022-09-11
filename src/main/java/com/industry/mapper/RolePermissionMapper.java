@@ -1,8 +1,8 @@
 package com.industry.mapper;
 
-import com.industry.entity.RolePermission;
+import com.industry.bean.entity.RolePermissionDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.industry.entity.request.RoleInsertOrUpdateBatchRequest;
+import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-07-01
  */
 @Mapper
-public interface RolePermissionMapper extends BaseMapper<RolePermission> {
+public interface RolePermissionMapper extends BaseMapper<RolePermissionDO> {
 
     int insertBatch(RoleInsertOrUpdateBatchRequest role);
 }

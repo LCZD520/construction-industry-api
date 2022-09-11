@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.AdvancedSettingMapper">
 
-    <select id="queryList" resultType="com.industry.entity.AdvancedSetting">
+    <select id="queryList" resultType="com.industry.bean.entity.AdvancedSettingDO">
         select advanced_setting_id,
                config_name,
                config_code,
@@ -11,7 +11,7 @@
         from construction_industry_api.t_advanced_setting
         order by gmt_create desc
     </select>
-    <select id="queryById" resultType="com.industry.entity.AdvancedSetting" parameterType="Integer">
+    <select id="queryById" resultType="com.industry.bean.entity.AdvancedSettingDO" parameterType="Integer">
         select advanced_setting_id,
                config_name,
                config_code,

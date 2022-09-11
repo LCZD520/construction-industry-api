@@ -4,7 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.util.LocalCacheUtil;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

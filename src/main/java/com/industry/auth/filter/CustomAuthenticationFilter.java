@@ -3,7 +3,7 @@ package com.industry.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.UserService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

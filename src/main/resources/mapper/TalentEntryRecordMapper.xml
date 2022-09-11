@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentEntryRecordMapper">
+
+    <resultMap id="listTalentEntryRecordsMap" type="TalentEntryRecordDO">
+        <id column="id" property="id"/>
+        <result column="talent_entry_id" property="talentEntryId"/>
+        <association property="talentEntry" column="talent_entry_id" select="selectTalentEntry">
+            <id column="id" property="id"/>
+        </association>
+    </resultMap>
+    <update id="updateStatusById">
+        update construction_industry_api.t_talent_entry_record
+        set status           = #{status},
+            approval_opinion = #{approvalOpinion.approvalOpinion}
+        where id = #{id}
+    </update>
+    <update id="updateTalentOrderId">
+        update construction_industry_api.t_talent_entry_record
+        set talent_order_id = #{talentOrderId}
+        where talent_order_id = #{originalTalentOrderId}
+    </update>
+
+    <select id="selectTalentEntry" resultMap="selectTalentEntryMap" resultType="TalentEntryDO">
+        select id,
+               enterprise_account_id,
+               talent_order_id,
+               transferor_info,
+               transfer_way,
+               transfer_date,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_entry
+        where id = #{talent_entry_id}
+    </select>
+
+    <resultMap id="selectTalentEntryMap" type="TalentEntryDO">
+        <id column="id" property="id"/>
+        <association property="talentOrder" column="talent_order_id" select="selectTalentOrder">
+        </association>
+    </resultMap>
+
+    <select id="selectTalentOrder" resultType="TalentOrderDO">
+        select id
+             , orderno
+             , enterprise_id
+             , enterprise_name
+        from construction_industry_api.t_talent_order
+        where id = #{talent_order_id}
+    </select>
+
+    <select id="listTalentEntryRecords" resultMap="listTalentEntryRecordsMap" resultType="TalentEntryRecordDO">
+        select id,
+               talent_entry_id,
+               status,
+               talent_id,
+               full_name,
+               entry_amount,
+               funds_purpose,
+               other_fee,
+               contract_balance,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               talent_order_id,
+               approval_opinion
+        from construction_industry_api.t_talent_entry_record
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent_entry_record
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="TalentEntryRecordDO">
+        <id column="id" property="id"/>
+        <result column="talent_order_id" property="talentOrderId"/>
+        <association property="talentEntry">
+            <id column="id2" property="id"/>
+            <id column="creator_id2" property="creatorId"/>
+            <id column="gmt_create2" property="gmtCreate"/>
+            <id column="regenerator_id2" property="regeneratorId"/>
+            <id column="gmt_modified2" property="gmtModified"/>
+        </association>
+        <association property="talentOrder" select="selectTalentOrder" column="talent_order_id">
+        </association>
+        <collection
+                property="listTalentEntryRecords" column="talent_id"
+                ofType="TalentEntryRecordDO" select="selectListEntrys">
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+
+    <resultMap id="selectListEntrysMap" type="talentEntryRecordDO">
+        <id column="id" property="id"/>
+        <association property="talentEntry">
+            <id column="id2" property="id"/>
+            <id column="creator_id2" property="creatorId"/>
+            <id column="gmt_create2" property="gmtCreate"/>
+            <id column="regenerator_id2" property="regeneratorId"/>
+            <id column="gmt_modified2" property="gmtModified"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListEntrys" resultMap="selectListEntrysMap" resultType="talentEntryRecordDO">
+        select t1.id
+             , t1.talent_entry_id
+             , t1.status
+             , t1.talent_id
+             , t1.full_name
+             , t1.entry_amount
+             , t1.funds_purpose
+             , t1.other_fee
+             , t1.contract_balance
+             , t1.enterprise_offer
+             , t1.enterprise_offer_number
+             , t1.enterprise_offer_unit
+             , t1.talent_price
+             , t1.talent_price_number
+             , t1.number_unit
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t1.talent_order_id
+             , t1.approval_opinion
+             , t2.id             as id2
+             , t2.enterprise_account_id
+             , t2.talent_order_id
+             , t2.transferor_info
+             , t2.transfer_way
+             , t2.transfer_date
+             , t2.creator_id     as creator_id2
+             , t2.gmt_create     as gmt_create2
+             , t2.regenerator_id as regenerator_id2
+             , t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_entry_record as t1
+                 left join construction_industry_api.t_talent_entry as t2
+                           on t1.talent_entry_id = t2.id
+        where t1.talent_id = #{talent_id}
+    </select>
+
+    <select id="getDetailById" resultMap="getDetailByIdMap" resultType="TalentEntryRecordDO">
+        select t1.id,
+               t1.talent_entry_id,
+               t1.status,
+               t1.talent_id,
+               t1.full_name,
+               t1.entry_amount,
+               t1.funds_purpose,
+               t1.other_fee,
+               t1.contract_balance,
+               t1.enterprise_offer,
+               t1.enterprise_offer_number,
+               t1.enterprise_offer_unit,
+               t1.talent_price,
+               t1.talent_price_number,
+               t1.number_unit,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.talent_order_id,
+               t1.approval_opinion,
+               t2.id             as id2,
+               t2.enterprise_account_id,
+               t2.talent_order_id,
+               t2.transferor_info,
+               t2.transfer_way,
+               t2.transfer_date,
+               t2.creator_id     as creator_id2,
+               t2.gmt_create     as gmt_create2,
+               t2.regenerator_id as regenerator_id2,
+               t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_entry_record as t1
+                 left join construction_industry_api.t_talent_entry as t2
+                           on t2.id = t1.talent_entry_id
+        where t1.id = #{id}
+    </select>
+</mapper>

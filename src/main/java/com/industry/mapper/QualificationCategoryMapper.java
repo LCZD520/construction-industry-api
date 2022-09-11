@@ -1,7 +1,8 @@
 package com.industry.mapper;
 
-import com.industry.entity.QualificationCategory;
+import com.industry.bean.entity.QualificationCategoryDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lc
  * @since 2022-07-01
  */
-public interface QualificationCategoryMapper extends BaseMapper<QualificationCategory> {
+@Mapper
+public interface QualificationCategoryMapper extends BaseMapper<QualificationCategoryDO> {
 
 }

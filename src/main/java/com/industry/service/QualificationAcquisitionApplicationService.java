@@ -2,7 +2,7 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.QualificationAcquisitionApplication;
+import com.industry.bean.entity.QualificationAcquisitionApplication;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

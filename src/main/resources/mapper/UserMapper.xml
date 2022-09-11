@@ -6,9 +6,26 @@
         <result column="is_enabled" property="enabled" jdbcType="TINYINT"/>
         <result column="is_on_job" property="onJob" jdbcType="TINYINT"/>
         <result column="is_first_login" property="firstLogin" jdbcType="TINYINT"/>
-
     </resultMap>
-    
+    <insert id="insertUser" parameterType="com.industry.auth.AuthUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into construction_industry_api.t_user(
+         mechanism_id, gmt_create, gmt_modified, creator_id,
+         regenerator_id, username, password, full_name,
+         telephone_number, sex, age, is_on_job)
+        values (#{mechanismId},
+                #{gmtCreate},
+                #{gmtModified},
+                #{creatorId},
+                #{regeneratorId},
+                #{username},
+                #{password},
+                #{fullName},
+                #{telephoneNumber},
+                #{sex},
+                #{age},
+                #{onJob})
+    </insert>
+
     <select id="queryUserByUsername" resultMap="queryUserByUsernameResultMap" resultType="com.industry.auth.AuthUser">
         select user_id,
                mechanism_id,
@@ -28,4 +45,123 @@
         from construction_industry_api.t_user
         where username = #{username}
     </select>
+    <resultMap id="listUsersMap" type="SelectOptions">
+        <result column="user_id" property="value"/>
+        <result column="full_name" property="label"/>
+    </resultMap>
+    <select id="listUsers" resultMap="listUsersMap" resultType="SelectOptions">
+        select user_id,
+               full_name
+        from construction_industry_api.t_user
+    </select>
+
+    <resultMap id="listAllUsersMap" type="com.industry.auth.AuthUser">
+        <id column="user_id" property="userId"/>
+        <result column="is_enabled" property="enabled"/>
+        <result column="is_on_job" property="onJob"/>
+        <result column="is_first_login" property="firstLogin"/>
+        <association property="mechanism" select="selectMechanismName" column="mechanism_id"/>
+    </resultMap>
+
+    <select id="selectMechanismName" resultType="MechanismDO">
+        select mechanism_id,
+               mechanism_name
+        from construction_industry_api.t_mechanism
+        where mechanism_id = #{mechanism_id}
+    </select>
+
+    <select id="listAllUsers" resultType="com.industry.auth.AuthUser" resultMap="listAllUsersMap">
+        select user_id,
+               mechanism_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               is_enabled,
+               username,
+               full_name,
+               telephone_number,
+               sex,
+               age,
+               is_on_job,
+               is_first_login
+        from construction_industry_api.t_user
+        order by user_id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_user
+    </select>
+    <select id="listUsersByMechanismId" resultMap="listAllUsersMap" resultType="com.industry.auth.AuthUser">
+        select user_id,
+               mechanism_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               is_enabled,
+               username,
+               full_name,
+               telephone_number,
+               sex,
+               age,
+               is_on_job,
+               is_first_login
+        from construction_industry_api.t_user
+        where mechanism_id in (
+            select m1.mechanism_id
+            from (select * from t_mechanism where parent_id is not null) m1,
+                 (select @pid := #{mechanismId}) pd
+            where find_in_set(parent_id, @pid) > 0
+                      and @pid := concat(@pid, ',', mechanism_id)
+            union
+            select mechanism_id
+            from t_mechanism
+            where mechanism_id = #{mechanismId}
+        )
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByMechanismId" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_user
+        where mechanism_id in (
+            select m1.mechanism_id
+            from (select * from t_mechanism where parent_id is not null) m1,
+                 (select @pid := #{mechanismId}) pd
+            where find_in_set(parent_id, @pid) > 0
+                      and @pid := concat(@pid, ',', mechanism_id)
+            union
+            select mechanism_id
+            from t_mechanism
+            where mechanism_id = #{mechanismId}
+        )
+    </select>
+
+    <resultMap id="getDetailById" type="com.industry.auth.AuthUser">
+        <result column="is_enabled" property="enabled" jdbcType="TINYINT"/>
+        <result column="is_on_job" property="onJob" jdbcType="TINYINT"/>
+        <result column="is_first_login" property="firstLogin" jdbcType="TINYINT"/>
+        <association property="mechanism" select="selectMechanismName" column="mechanism_id"/>
+    </resultMap>
+
+    <select id="getDetailById" resultType="com.industry.auth.AuthUser" resultMap="getDetailById">
+        select user_id,
+               mechanism_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               is_enabled,
+               username,
+               full_name,
+               telephone_number,
+               sex,
+               age,
+               is_on_job,
+               is_first_login
+        from construction_industry_api.t_user
+        where user_id = #{id}
+    </select>
+
 </mapper>

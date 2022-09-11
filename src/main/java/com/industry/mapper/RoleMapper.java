@@ -1,8 +1,12 @@
 package com.industry.mapper;
 
-import com.industry.entity.Role;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.RoleDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,7 +17,30 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-06-30
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<Role> {
+public interface RoleMapper extends BaseMapper<RoleDO> {
 
-    Role getRoleById(Integer id);
+    /**
+     * 获取角色详情
+     *
+     * @param id 角色id
+     * @return RoleDO
+     */
+    RoleDO getRoleById(@Param("id") Integer id);
+
+    /**
+     * 获取角色列表
+     *
+     * @param page ListPages<RoleDO>
+     * @return List<RoleDO>
+     */
+    List<RoleDO> getListRoles(@Param("page") ListPages<RoleDO> page);
+
+    /**
+     * 获取角色列表
+     *
+     * @return List<RoleDO>
+     */
+    List<RoleDO> getListRolesAll();
+
+    Long getCount();
 }

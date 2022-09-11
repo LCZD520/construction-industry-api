@@ -1,13 +1,13 @@
 package com.industry.auth.handler;
 
 import com.industry.auth.AuthUser;
-import com.industry.entity.Menu;
+import com.industry.bean.entity.MenuDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.MenuService;
 import com.industry.util.JsonUtil;
 import com.industry.util.JwtUtil;
 import com.industry.util.LocalCacheUtil;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -61,7 +61,7 @@ public class CustomAuthenticationSuccessHandler extends JsonUtil implements Auth
         localCache.put(authentication.getName(), token);
         log.info("当前在线人数:{}",localCache.size());
         HashMap<String, Object> map = new HashMap<>(8);
-        List<Menu> listMenus = menuService.queryListMenus();
+        List<MenuDO> listMenus = menuService.queryListMenus();
         map.put("token", "Bearer " + token);
         AuthUser principal = (AuthUser) authentication.getPrincipal();
         principal.setPassword(null);

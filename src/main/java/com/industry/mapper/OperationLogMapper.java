@@ -1,6 +1,6 @@
 package com.industry.mapper;
 
-import com.industry.entity.OperationLog;
+import com.industry.bean.entity.OperationLogDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lc
  * @since 2022-07-01
  */
-public interface OperationLogMapper extends BaseMapper<OperationLog> {
+public interface OperationLogMapper extends BaseMapper<OperationLogDO> {
 
 }

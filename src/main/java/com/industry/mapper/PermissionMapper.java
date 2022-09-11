@@ -1,6 +1,6 @@
 package com.industry.mapper;
 
-import com.industry.entity.Permission;
+import com.industry.bean.entity.PermissionDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @since 2022-06-28
  */
 @Mapper
-public interface PermissionMapper extends BaseMapper<Permission> {
+public interface PermissionMapper extends BaseMapper<PermissionDO> {
 
-    List<Permission> queryListPermissions();
+    List<PermissionDO> queryListPermissions();
 }

@@ -1,10 +1,10 @@
 package com.industry.service.impl;
 
-import com.industry.entity.RolePermission;
+import com.industry.bean.entity.RolePermissionDO;
 import com.industry.mapper.RolePermissionMapper;
 import com.industry.service.RolePermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.industry.entity.request.RoleInsertOrUpdateBatchRequest;
+import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @since 2022-07-01
  */
 @Service
-public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper, RolePermission> implements RolePermissionService {
+public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper, RolePermissionDO> implements RolePermissionService {
 
     private RolePermissionMapper mapper;
 

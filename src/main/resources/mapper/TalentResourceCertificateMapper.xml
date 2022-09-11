@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentResourceCertificateMapper">
+
+
+    <insert id="insertBatch" parameterType="List">
+        insert into construction_industry_api.t_talent_resource_certificate
+        (talent_resource_id, level_major,initial_conversion
+        , issue_cert_time, continuing_education_date
+        , creator_id,gmt_create, regenerator_id, gmt_modified)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.talentResourceId}
+            ,#{item.levelMajor}
+            ,#{item.initialConversion}
+            ,#{item.issueCertTime}
+            ,#{item.continuingEducationDate}
+            ,#{item.creatorId}
+            ,#{item.gmtCreate}
+            ,#{item.regeneratorId}
+            ,#{item.gmtModified} )
+        </foreach>
+    </insert>
+    <select id="selectIdsByTalentResourceId" resultType="Integer">
+        select id
+        from construction_industry_api.t_talent_resource_certificate
+        where talent_resource_id = #{id}
+    </select>
+</mapper>

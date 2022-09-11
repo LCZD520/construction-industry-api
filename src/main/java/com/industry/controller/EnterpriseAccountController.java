@@ -3,11 +3,11 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.EnterpriseAccount;
-import com.industry.entity.vo.ListPagesVo;
+import com.industry.bean.entity.EnterpriseAccountDO;
+import com.industry.bean.common.ListPages;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.EnterpriseAccountService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,17 +41,17 @@ public class EnterpriseAccountController {
     @GetMapping("/list")
     public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
             , @RequestParam("pageSize") Integer pageSize) {
-        IPage<EnterpriseAccount> iPage = service.queryList(new Page<>(currentPage, pageSize));
-        ListPagesVo<EnterpriseAccount> listPagesVo
-                = new ListPagesVo<>(iPage.getRecords()
+        IPage<EnterpriseAccountDO> iPage = service.queryList(new Page<>(currentPage, pageSize));
+        ListPages<EnterpriseAccountDO> listPages
+                = new ListPages<>(iPage.getRecords()
                 , iPage.getTotal()
                 , iPage.getCurrent()
                 , iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, listPagesVo);
+        return result.success(ResultCodeEnum.SUCCESS, listPages);
     }
 
     @PostMapping("/insert")
-    public ResultEntity insert(@RequestBody EnterpriseAccount enterpriseAccount) {
+    public ResultEntity insert(@RequestBody EnterpriseAccountDO enterpriseAccount) {
         int insert = service.insert(enterpriseAccount);
         if (insert > 0) {
             return result.success(ResultCodeEnum.SUCCESS_INSERT);
@@ -70,7 +70,7 @@ public class EnterpriseAccountController {
 
     @GetMapping("/detail/{id}")
     public ResultEntity queryById(@PathVariable("id") Integer id) {
-        EnterpriseAccount enterpriseAccount = service.queryById(id);
+        EnterpriseAccountDO enterpriseAccount = service.queryById(id);
         if (enterpriseAccount != null) {
             return result.success(ResultCodeEnum.SUCCESS, enterpriseAccount);
         }
@@ -78,7 +78,7 @@ public class EnterpriseAccountController {
     }
 
     @PutMapping("/update")
-    public ResultEntity update(@RequestBody EnterpriseAccount enterpriseAccount) {
+    public ResultEntity update(@RequestBody EnterpriseAccountDO enterpriseAccount) {
         log.info("enterpriseAccount:{}", enterpriseAccount);
         boolean b = service.updateById(enterpriseAccount);
         if (b) {

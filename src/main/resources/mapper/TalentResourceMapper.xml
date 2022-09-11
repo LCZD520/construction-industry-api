@@ -2,4 +2,208 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.TalentResourceMapper">
 
+    <insert id="save" parameterType="TalentResourceDO" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_talent_resource
+        values ( #{id}
+               , #{shared}
+               , #{fullName}
+               , #{sex}
+               , #{area}
+               , #{socialSecurity}
+               , #{telephoneNumber}
+               , #{qqNumber}
+               , #{education}
+               , #{title}
+               , #{classThreePersonnel}
+               , #{tenderExit}
+               , #{certificateStatus}
+               , #{talentType}
+               , #{talentPrice}
+               , #{talentPriceNumber}
+               , #{numberUnit}
+               , #{talentRequirement}
+               , #{followUpSituation}
+               , #{remark}
+               , #{creatorId}
+               , #{gmtCreate}
+               , #{regeneratorId}
+               , #{gmtModified})
+    </insert>
+
+
+    <resultMap id="certificateMap" type="TalentCertificateDO">
+        <id column="id2" property="id"/>
+        <result column="creator_id2" property="creatorId"/>
+        <result column="gmt_create2" property="gmtCreate"/>
+        <result column="regenerator_id2" property="regeneratorId"/>
+        <result column="gmt_modified2" property="gmtModified"/>
+    </resultMap>
+
+    <resultMap id="talentResourceMap" type="TalentResourceDO">
+        <id column="id" property="id"/>
+        <result column="is_shared" property="shared"/>
+        <collection property="listCertificates" ofType="TalentResourceCertificateDO" resultMap="certificateMap"/>
+    </resultMap>
+
+    <resultMap id="listTalentResourcesMap" type="TalentResourceDO">
+        <id column="id" property="id"/>
+        <result column="is_shared" property="shared"/>
+        <collection
+                property="listCertificates"
+                ofType="TalentResourceCertificateDO"
+                select="selectSubList"
+                column="id">
+            <id column="id2" property="id"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="regenerator_id2" property="regeneratorId"/>
+            <result column="gmt_modified2" property="gmtModified"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSubList" resultType="TalentResourceCertificateDO">
+        select id             as id2,
+               talent_resource_id,
+               level_major,
+               initial_conversion,
+               issue_cert_time,
+               continuing_education_date,
+               creator_id     as creator_id2,
+               gmt_create     as gmt_create2,
+               regenerator_id as regenerator_id2,
+               gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_resource_certificate
+        where talent_resource_id = #{id}
+    </select>
+
+    <select id="listTalentResources" resultMap="listTalentResourcesMap">
+        select t1.id
+             , t1.is_shared
+             , t1.full_name
+             , t1.sex
+             , t1.area
+             , t1.social_security
+             , t1.telephone_number
+             , t1.qq_number
+             , t1.education
+             , t1.title
+             , t1.class_three_personnel
+             , t1.tender_exit
+             , t1.certificate_status
+             , t1.talent_type
+             , t1.talent_price
+             , t1.talent_price_number
+             , t1.number_unit
+             , t1.talent_requirement
+             , t1.follow_up_situation
+             , t1.remark
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+        from construction_industry_api.t_talent_resource as t1
+        order by t1.id desc
+    </select>
+
+    <select id="getTalentResourceById" resultMap="talentResourceMap" resultType="TalentResourceDO">
+        select t1.id
+             , t1.is_shared
+             , t1.full_name
+             , t1.sex
+             , t1.area
+             , t1.social_security
+             , t1.telephone_number
+             , t1.qq_number
+             , t1.education
+             , t1.title
+             , t1.class_three_personnel
+             , t1.tender_exit
+             , t1.certificate_status
+             , t1.talent_type
+             , t1.talent_price
+             , t1.talent_price_number
+             , t1.number_unit
+             , t1.talent_requirement
+             , t1.follow_up_situation
+             , t1.remark
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t2.id             as id2
+             , t2.talent_resource_id
+             , t2.level_major
+             , t2.initial_conversion
+             , t2.issue_cert_time
+             , t2.continuing_education_date
+             , t2.creator_id     as creator_id2
+             , t2.gmt_create     as gmt_create2
+             , t2.regenerator_id as regenerator_id2
+             , t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_resource as t1
+                 left join construction_industry_api.t_talent_resource_certificate as t2
+                           on t1.id = t2.talent_resource_id
+        where t1.id = #{id}
+        order by t1.id desc
+    </select>
+
+    <select id="listTalentResourcesByUserId" resultMap="listTalentResourcesMap" resultType="TalentResourceDO">
+        select id
+             , is_shared
+             , full_name
+             , sex
+             , area
+             , social_security
+             , telephone_number
+             , qq_number
+             , education
+             , title
+             , class_three_personnel
+             , tender_exit
+             , certificate_status
+             , talent_type
+             , talent_price
+             , talent_price_number
+             , number_unit
+             , talent_requirement
+             , follow_up_situation
+             , remark
+             , creator_id
+             , gmt_create
+             , regenerator_id
+             , gmt_modified
+        from construction_industry_api.t_talent_resource
+        where creator_id = #{userId}
+        order by id desc
+    </select>
+
+    <select id="listSharedTalentResources" resultMap="listTalentResourcesMap" resultType="TalentResourceDO">
+        select id
+             , is_shared
+             , full_name
+             , sex
+             , area
+             , social_security
+             , telephone_number
+             , qq_number
+             , education
+             , title
+             , class_three_personnel
+             , tender_exit
+             , certificate_status
+             , talent_type
+             , talent_price
+             , talent_price_number
+             , number_unit
+             , talent_requirement
+             , follow_up_situation
+             , remark
+             , creator_id
+             , gmt_create
+             , regenerator_id
+             , gmt_modified
+        from construction_industry_api.t_talent_resource
+        where is_shared = 1
+        order by id desc
+    </select>
 </mapper>

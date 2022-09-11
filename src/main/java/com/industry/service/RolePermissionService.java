@@ -1,8 +1,8 @@
 package com.industry.service;
 
-import com.industry.entity.RolePermission;
+import com.industry.bean.entity.RolePermissionDO;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.industry.entity.request.RoleInsertOrUpdateBatchRequest;
+import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
 
 /**
  * <p>
@@ -12,7 +12,7 @@ import com.industry.entity.request.RoleInsertOrUpdateBatchRequest;
  * @author lc
  * @since 2022-07-01
  */
-public interface RolePermissionService extends IService<RolePermission> {
+public interface RolePermissionService extends IService<RolePermissionDO> {
 
     int insertBatch(RoleInsertOrUpdateBatchRequest role);
 }

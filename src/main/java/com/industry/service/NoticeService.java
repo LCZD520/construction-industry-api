@@ -2,9 +2,8 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Notice;
+import com.industry.bean.entity.NoticeDO;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -14,14 +13,14 @@ import org.springframework.stereotype.Service;
  * @author lc
  * @since 2022-06-26
  */
-public interface NoticeService extends IService<Notice> {
+public interface NoticeService extends IService<NoticeDO> {
 
     /**
      * 添加公告
      * @param notice 公告实体
      * @return 1 添加成功，0 添加失败
      */
-    int insert(Notice notice);
+    int insert(NoticeDO notice);
 
     /**
      * 公告删除
@@ -35,12 +34,12 @@ public interface NoticeService extends IService<Notice> {
      * @param page 分页page对象
      * @return IPage
      */
-    IPage<Notice> queryList(Page<Notice> page);
+    IPage<NoticeDO> queryList(Page<NoticeDO> page);
 
     /**
      * 通过id查询公告
      * @param id
      * @return
      */
-    Notice queryById(Integer id);
+    NoticeDO queryById(Integer id);
 }

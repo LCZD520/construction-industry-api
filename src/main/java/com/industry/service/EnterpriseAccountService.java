@@ -2,7 +2,7 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.EnterpriseAccount;
+import com.industry.bean.entity.EnterpriseAccountDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,13 +13,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lc
  * @since 2022-07-01
  */
-public interface EnterpriseAccountService extends IService<EnterpriseAccount> {
+public interface EnterpriseAccountService extends IService<EnterpriseAccountDO> {
 
     int deleteById(Integer id);
 
-    EnterpriseAccount queryById(Integer id);
+    EnterpriseAccountDO queryById(Integer id);
 
-    int insert(EnterpriseAccount enterpriseAccount);
+    int insert(EnterpriseAccountDO enterpriseAccount);
 
-    IPage<EnterpriseAccount> queryList(Page<EnterpriseAccount> page);
+    IPage<EnterpriseAccountDO> queryList(Page<EnterpriseAccountDO> page);
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationTransferMapper">
+
+    <select id="listQualificationTransfer" resultType="QualificationTransferDO">
+        select id,
+               transfer_customers,
+               qualification_requirements,
+               area,
+               status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_transfer
+        order by id desc
+    </select>
+</mapper>

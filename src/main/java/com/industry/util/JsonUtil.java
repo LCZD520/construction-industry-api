@@ -1,6 +1,7 @@
 package com.industry.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.industry.bean.common.ResultEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  */
 @Component
 public class JsonUtil implements Serializable {
+
     public void writeJson(HttpServletResponse resp, ResultEntity data) throws IOException {
         resp.setContentType("application/json; charset=utf-8");
         PrintWriter writer = resp.getWriter();

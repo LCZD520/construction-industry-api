@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentOrderMapper">
+    <insert id="insertTalentOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_talent_order
+        (enterprise_id, orderno, enterprise_name, enterprise_demand_ids, order_status,
+         order_demand, creator_id, gmt_create, regenerator_id, gmt_modified)
+        values ( #{enterpriseId}
+               , #{orderno}
+               , #{enterpriseName}
+               , #{enterpriseDemandIds}
+               , #{orderStatus}
+               , #{orderDemand}
+               , #{creatorId}
+               , #{gmtCreate}
+               , #{regeneratorId}
+               , #{gmtModified})
+    </insert>
+    <update id="updateOrderStatus">
+        update construction_industry_api.t_talent_order
+        set order_status = 2
+        where id = #{id}
+    </update>
+    <update id="updateTalentOrderId">
+        update construction_industry_api.t_order_selected_talent
+        set talent_order_id = #{id} where talent_order_id in
+        <foreach collection="listTalentOrderIds" separator="," item="item" index="index" open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getMaxOrderno" resultType="java.lang.String">
+        select max(orderno)
+        from construction_industry_api.t_talent_order
+        where gmt_create between #{today}' 00:00:00'
+                  and #{today}' 23:59:59';
+    </select>
+
+    <resultMap id="listTalentOrdersMap" type="TalentOrderDO">
+        <id column="id" property="id"/>
+        <collection property="selectedTalents" select="TalentsMap" ofType="OrderSelectedTalentDO" column="id">
+            <id column="id" property="id"/>
+            <result column="is_confirmed" property="confirmed"/>
+        </collection>
+    </resultMap>
+
+    <select id="TalentsMap" resultType="OrderSelectedTalentDO">
+        select id,
+               talent_order_id,
+               enterprise_name,
+               talent_id,
+               enterprise_application_transfer_id,
+               area,
+               level_major_initial_conversion,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               contract_balance,
+               market_development_fee,
+               market_development_fee_unit,
+               is_confirmed,
+               is_assigned,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               full_name
+        from construction_industry_api.t_order_selected_talent
+        where talent_order_id = #{id}
+    </select>
+
+    <select id="listTalentOrders" resultMap="listTalentOrdersMap" resultType="TalentOrderDO">
+        select id,
+               enterprise_id,
+               orderno,
+               enterprise_name,
+               enterprise_demand_ids,
+               order_status,
+               order_demand,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_order
+        where enterprise_id = #{id}
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getDetailById" resultMap="listTalentOrdersMap" resultType="TalentOrderDO">
+        select id,
+               enterprise_id,
+               orderno,
+               enterprise_name,
+               enterprise_demand_ids,
+               order_status,
+               order_demand,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_order
+        where id = #{id}
+    </select>
+
+    <resultMap id="getListSelectedTalentsByIdMap" type="OrderSelectedTalentDO">
+        <id column="id" property="id"/>
+        <result column="is_confirmed" property="confirmed"/>
+        <result column="is_assigned" property="assigned"/>
+    </resultMap>
+
+    <select id="getListSelectedTalentsById"
+            resultMap="getListSelectedTalentsByIdMap"
+            resultType="OrderSelectedTalentDO">
+        select id,
+               talent_order_id,
+               enterprise_application_transfer_id,
+               enterprise_name,
+               talent_id,
+               area,
+               class_three_personnel,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               contract_balance,
+               market_development_fee,
+               market_development_fee_unit,
+               is_confirmed,
+               is_assigned,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               full_name,
+               level_major_initial_conversion
+        from construction_industry_api.t_order_selected_talent
+        where talent_order_id = #{id}
+    </select>
+    <select id="getMaxOrderStatusByEnterpriseId" resultType="Integer">
+        select max(order_status)
+        from construction_industry_api.t_talent_order
+        where enterprise_id = #{id};
+    </select>
+    <select id="getMaxOrdernoByEnterpriseId" resultType="TalentOrderDO">
+        select id,
+               enterprise_id,
+               orderno,
+               enterprise_name,
+               enterprise_demand_ids,
+               order_status,
+               order_demand
+        from construction_industry_api.t_talent_order
+        where orderno = (select max(orderno)
+                         from construction_industry_api.t_talent_order
+                         where enterprise_id = #{id});
+    </select>
+    <select id="getListTalentOrderIdsByEnterpriseId" resultType="Integer">
+        select id
+        from construction_industry_api.t_talent_order
+        where enterprise_id = #{id};
+    </select>
+</mapper>

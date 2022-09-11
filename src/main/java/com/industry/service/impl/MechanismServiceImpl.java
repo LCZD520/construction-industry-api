@@ -1,8 +1,8 @@
 package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.industry.entity.Mechanism;
-import com.industry.entity.Permission;
+import com.industry.bean.common.SelectOptions;
+import com.industry.bean.entity.MechanismDO;
 import com.industry.mapper.MechanismMapper;
 import com.industry.service.MechanismService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2022-06-30
  */
 @Service
-public class MechanismServiceImpl extends ServiceImpl<MechanismMapper, Mechanism> implements MechanismService {
+public class MechanismServiceImpl extends ServiceImpl<MechanismMapper, MechanismDO> implements MechanismService {
 
     private MechanismMapper mapper;
 
@@ -31,29 +31,63 @@ public class MechanismServiceImpl extends ServiceImpl<MechanismMapper, Mechanism
     }
 
     @Override
-    public int insert(Mechanism mechanism) {
+    public int insert(MechanismDO mechanism) {
         return mapper.insert(mechanism);
     }
 
     @Override
-    public List<Mechanism> queryListMechanisms() {
-        QueryWrapper<Mechanism> queryWrapper = new QueryWrapper<>();
-        List<Mechanism> mechanisms = new ArrayList<>();
+    public List<MechanismDO> queryListMechanisms() {
+        QueryWrapper<MechanismDO> queryWrapper = new QueryWrapper<>();
+        List<MechanismDO> mechanisms = new ArrayList<>();
         queryWrapper.eq("parent_id", 0);
         // 一级机构
-        List<Mechanism> rootPermission = mapper.selectList(queryWrapper);
+        List<MechanismDO> rootPermission = mapper.selectList(queryWrapper);
         queryWrapper.clear();
         queryWrapper.ne("parent_id", 0);
         // 非一级机构
-        List<Mechanism> nonRootPermission = mapper.selectList(queryWrapper);
-        for (Mechanism mechanism : rootPermission) {
+        List<MechanismDO> nonRootPermission = mapper.selectList(queryWrapper);
+        for (MechanismDO mechanism : rootPermission) {
             mechanisms.add(getSubList(mechanism, nonRootPermission));
         }
         return mechanisms;
     }
 
-    private Mechanism getSubList(Mechanism rootMechanism, List<Mechanism> list) {
-        for (Mechanism mechanism : list) {
+    @Override
+    public List<MechanismDO> getSubListMechanismsById(Integer id) {
+        return mapper.getSubListMechanismsById(id);
+    }
+
+    @Override
+    public int deleteById(Integer id) {
+        List<MechanismDO> subList = this.getSubListMechanismsById(id);
+        if (subList.isEmpty()) {
+            return mapper.deleteById(id);
+        }
+        return -1;
+    }
+
+    @Override
+    public int updateMechanismById(MechanismDO mechanism) {
+        MechanismDO mechanism1 = this.getById(mechanism.getMechanismId());
+        if (mechanism1 == null) {
+            return 0;
+        }
+        return mapper.updateById(mechanism);
+    }
+
+    @Override
+    public MechanismDO getById(Integer id) {
+        return mapper.selectById(id);
+    }
+
+    @Override
+    public List<SelectOptions> listMechanisms() {
+        return mapper.listMechanisms();
+    }
+
+    private MechanismDO getSubList(MechanismDO rootMechanism, List<MechanismDO> list) {
+        rootMechanism.setSubListMechanisms(new ArrayList<>());
+        for (MechanismDO mechanism : list) {
             if (rootMechanism.getMechanismId().equals(mechanism.getParentId())) {
                 rootMechanism.getSubListMechanisms().add(getSubList(mechanism, list));
             }

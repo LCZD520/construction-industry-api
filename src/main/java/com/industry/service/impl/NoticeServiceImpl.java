@@ -2,7 +2,7 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Notice;
+import com.industry.bean.entity.NoticeDO;
 import com.industry.mapper.NoticeMapper;
 import com.industry.service.NoticeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2022-06-26
  */
 @Service
-public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> implements NoticeService {
+public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, NoticeDO> implements NoticeService {
 
     private NoticeMapper noticeMapper;
 
@@ -28,7 +28,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     }
 
     @Override
-    public int insert(Notice notice) {
+    public int insert(NoticeDO notice) {
         return noticeMapper.insert(notice);
     }
 
@@ -38,12 +38,12 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     }
 
     @Override
-    public IPage<Notice> queryList(Page<Notice> page) {
+    public IPage<NoticeDO> queryList(Page<NoticeDO> page) {
         return noticeMapper.queryList(page);
     }
 
     @Override
-    public Notice queryById(Integer id) {
+    public NoticeDO queryById(Integer id) {
         return noticeMapper.selectById(id);
     }
 }

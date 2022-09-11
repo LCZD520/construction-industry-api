@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentCertificateMapper">
+
+    <insert id="insertBatch" parameterType="List">
+        insert into construction_industry_api.t_talent_certificate
+        (talent_id, level_major,initial_conversion
+        , issue_cert_time, continuing_education_date
+        , creator_id,gmt_create, regenerator_id, gmt_modified)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.talentId}
+            ,#{item.levelMajor}
+            ,#{item.initialConversion}
+            ,#{item.issueCertTime}
+            ,#{item.continuingEducationDate}
+            ,#{item.creatorId}
+            ,#{item.gmtCreate}
+            ,#{item.regeneratorId}
+            ,#{item.gmtModified} )
+        </foreach>
+    </insert>
+    <select id="selectIdsByTalentId" resultType="Integer">
+        select id
+        from construction_industry_api.t_talent_certificate
+        where talent_id = #{id}
+    </select>
+
+    <resultMap id="TalentsByTenderExitMap" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection
+                property="listCertificates"
+                ofType="TalentCertificateDO"
+                select="selectCertificates"
+                column="id"/>
+    </resultMap>
+
+    <select id="selectCertificates" resultType="TalentCertificateDO">
+        select id,
+               talent_id,
+               remark,
+               level_major,
+               initial_conversion,
+               issue_cert_time,
+               continuing_education_date,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_certificate
+        where talent_id = #{id}
+    </select>
+
+    <select id="getTalentsByTenderExit" resultMap="TalentsByTenderExitMap" resultType="TalentDO">
+        select
+        t1.id
+        ,t1.full_name
+        ,t1.sex
+        ,t1.area
+        ,t1.social_security
+        ,t1.telephone_number
+        ,t1.qq_number
+        ,t1.education
+        ,t1.title
+        ,t1.tender_exit
+        ,t1.class_three_personnel
+        ,t1.issue_cert_time
+        ,t1.continuing_education_date
+        ,t1.certificate_status
+        ,t1.talent_status
+        ,t1.talent_price
+        ,t1.talent_price_number
+        ,t1.number_unit
+        ,t1.creator_id
+        ,t1.gmt_create
+        ,t1.regenerator_id
+        ,t1.gmt_modified
+        ,t1.remark
+        from construction_industry_api.t_talent as t1
+        where
+        tender_exit = #{tenderExit}
+        and
+        class_three_personnel = #{classThreePersonnel}
+        and talent_status = 1
+        and t1.id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        order by t1.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="getTalentIdsByCondition" resultType="Integer">
+        select distinct talent_id
+        from construction_industry_api.t_talent_certificate
+        where json_contains(level_major, #{levelMajor})
+          and initial_conversion = #{initialConversion}
+    </select>
+</mapper>

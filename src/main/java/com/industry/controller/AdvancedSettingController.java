@@ -3,11 +3,11 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.AdvancedSetting;
-import com.industry.entity.vo.ListPagesVo;
+import com.industry.bean.entity.AdvancedSettingDO;
+import com.industry.bean.common.ListPages;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.AdvancedSettingService;
-import com.industry.util.ResultEntity;
+import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,17 +42,17 @@ public class AdvancedSettingController {
     @GetMapping("/list")
     public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
             , @RequestParam("pageSize") Integer pageSize) {
-        IPage<AdvancedSetting> iPage = service.queryList(new Page<>(currentPage, pageSize));
-        ListPagesVo<AdvancedSetting> listPagesVo
-                = new ListPagesVo<>(iPage.getRecords()
+        IPage<AdvancedSettingDO> iPage = service.queryList(new Page<>(currentPage, pageSize));
+        ListPages<AdvancedSettingDO> listPages
+                = new ListPages<>(iPage.getRecords()
                 , iPage.getTotal()
                 , iPage.getCurrent()
                 , iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, listPagesVo);
+        return result.success(ResultCodeEnum.SUCCESS, listPages);
     }
 
     @PostMapping("/insert")
-    public ResultEntity insert(@RequestBody AdvancedSetting advancedSetting) {
+    public ResultEntity insert(@RequestBody AdvancedSettingDO advancedSetting) {
         int insert = service.insert(advancedSetting);
         if (insert > 0) {
             return result.success(ResultCodeEnum.SUCCESS_INSERT);
@@ -71,7 +71,7 @@ public class AdvancedSettingController {
 
     @GetMapping("/detail/{id}")
     public ResultEntity queryById(@PathVariable("id") Integer id) {
-        AdvancedSetting advancedSetting = service.queryById(id);
+        AdvancedSettingDO advancedSetting = service.queryById(id);
         if (advancedSetting != null) {
             return result.success(ResultCodeEnum.SUCCESS, advancedSetting);
         }
@@ -79,7 +79,7 @@ public class AdvancedSettingController {
     }
 
     @PutMapping("/update")
-    public ResultEntity update(@RequestBody AdvancedSetting advancedSetting) {
+    public ResultEntity update(@RequestBody AdvancedSettingDO advancedSetting) {
         log.info("advancedSetting:{}", advancedSetting);
         boolean b = service.updateById(advancedSetting);
         if (b) {

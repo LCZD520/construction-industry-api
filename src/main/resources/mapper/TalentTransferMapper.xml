@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.TalentTransferMapper">
+
+    <select id="listTalentTransfers" resultType="TalentTransferDO">
+        select id,
+               talent_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_talent_transfer
+        where talent_id = #{id}
+    </select>
+
+    <resultMap id="detailMap" type="TalentTransferDO">
+        <id column="id" property="id"/>
+        <collection property="listTalentApprovalFlows" ofType="TalentApprovalFlowDO">
+            <id column="id2" property="id"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="creator_id2" property="creatorId"/>
+        </collection>
+    </resultMap>
+    <select id="getDetailById" resultMap="detailMap" resultType="TalentTransferDO">
+        select t1.id,
+               t1.talent_id,
+               t1.bank_name,
+               t1.open_bank,
+               t1.account_name,
+               t1.bank_card_no,
+               t1.transfer_amount,
+               t1.funds_purpose,
+               t1.application_status,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.remark,
+               t2.id         as id2,
+               t2.talent_transfer_id,
+               t2.status,
+               t2.gmt_create as gmt_create2,
+               t2.creator_id as creator_id2,
+               t2.approval_opinion
+        from construction_industry_api.t_talent_transfer as t1
+                 left join construction_industry_api.t_talent_approval_flow as t2
+                           on t1.id = t2.talent_transfer_id
+        where t1.id = #{id}
+    </select>
+</mapper>

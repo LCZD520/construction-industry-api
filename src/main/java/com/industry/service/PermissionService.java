@@ -1,7 +1,6 @@
 package com.industry.service;
 
-import com.industry.entity.Menu;
-import com.industry.entity.Permission;
+import com.industry.bean.entity.PermissionDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -14,9 +13,9 @@ import java.util.List;
  * @author lc
  * @since 2022-06-28
  */
-public interface PermissionService extends IService<Permission> {
+public interface PermissionService extends IService<PermissionDO> {
 
-    int insert(Permission permission);
+    int insert(PermissionDO permission);
 
-    List<Permission> queryListPermissions();
+    List<PermissionDO> queryListPermissions();
 }

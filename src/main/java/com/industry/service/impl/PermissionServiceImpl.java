@@ -1,7 +1,7 @@
 package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.industry.entity.Permission;
+import com.industry.bean.entity.PermissionDO;
 import com.industry.mapper.PermissionMapper;
 import com.industry.service.PermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2022-06-28
  */
 @Service
-public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, PermissionDO> implements PermissionService {
 
     private PermissionMapper mapper;
 
@@ -30,29 +30,29 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
-    public int insert(Permission permission) {
+    public int insert(PermissionDO permission) {
         return mapper.insert(permission);
     }
 
     @Override
-    public List<Permission> queryListPermissions() {
-        QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
-        List<Permission> permissions = new ArrayList<>();
+    public List<PermissionDO> queryListPermissions() {
+        QueryWrapper<PermissionDO> queryWrapper = new QueryWrapper<>();
+        List<PermissionDO> permissions = new ArrayList<>();
         queryWrapper.eq("parent_id", 0);
         // 一级权限
-        List<Permission> rootPermission = mapper.selectList(queryWrapper);
+        List<PermissionDO> rootPermission = mapper.selectList(queryWrapper);
         queryWrapper.clear();
         queryWrapper.ne("parent_id", 0);
         // 非一级权限
-        List<Permission> nonRootPermission = mapper.selectList(queryWrapper);
-        for (Permission permission : rootPermission) {
+        List<PermissionDO> nonRootPermission = mapper.selectList(queryWrapper);
+        for (PermissionDO permission : rootPermission) {
             permissions.add(getSubList(permission, nonRootPermission));
         }
         return permissions;
     }
 
-    public Permission getSubList(Permission rootPermission, List<Permission> list) {
-        for (Permission permission : list) {
+    private PermissionDO getSubList(PermissionDO rootPermission, List<PermissionDO> list) {
+        for (PermissionDO permission : list) {
             if (rootPermission.getPermissionId().equals(permission.getParentId())) {
                 rootPermission.getSubListPermissions().add(getSubList(permission, list));
             }

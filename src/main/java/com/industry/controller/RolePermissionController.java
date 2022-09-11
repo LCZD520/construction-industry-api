@@ -3,8 +3,8 @@ package com.industry.controller;
 
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.RolePermissionService;
-import com.industry.util.ResultEntity;
-import com.industry.entity.request.RoleInsertOrUpdateBatchRequest;
+import com.industry.bean.common.ResultEntity;
+import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

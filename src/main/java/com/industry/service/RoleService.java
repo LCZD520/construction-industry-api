@@ -2,7 +2,8 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.entity.Role;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.RoleDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,12 +16,23 @@ import java.util.List;
  * @author lc
  * @since 2022-06-30
  */
-public interface RoleService extends IService<Role> {
+public interface RoleService extends IService<RoleDO> {
 
-    IPage<Role> getListRoles(Page<Role> page);
 
-    int insert(Role role);
+    int insert(RoleDO role);
 
-    Role getRoleById(Integer id);
+    RoleDO getRoleById(Integer id);
 
+    /**
+     * 分页获取角色列表
+     * @param page ListPages<RoleDO>
+     * @return ListPages<RoleDO>
+     */
+    ListPages<RoleDO> getListRoles(ListPages<RoleDO> page);
+
+    /**
+     * 获取角色列表
+     * @return ListPages<RoleDO>
+     */
+    List<RoleDO> getListRolesAll();
 }
