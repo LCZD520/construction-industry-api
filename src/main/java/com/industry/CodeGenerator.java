@@ -105,7 +105,7 @@ public class CodeGenerator {
 
         // 生成的表名
         strategy.setInclude(
-                "t_enterprise_transfer");
+                "t_user_role");
         // 去除表前缀
         strategy.setTablePrefix("t_");
         // 自动填充配置

@@ -10,6 +10,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -22,6 +23,14 @@ import java.util.List;
 @Data
 public class UserRequest implements Serializable {
     private static final long serialVersionUID = -371828410719277231L;
+
+    /**
+     * 用户id
+     */
+    @NotNull(message = "用户id不能为空", groups = {Update.class})
+    @Null(message = "用户id必须为空", groups = {Insert.class})
+    private Integer userId;
+
     /**
      * 机构id
      */

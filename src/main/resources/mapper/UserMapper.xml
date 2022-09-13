@@ -8,10 +8,9 @@
         <result column="is_first_login" property="firstLogin" jdbcType="TINYINT"/>
     </resultMap>
     <insert id="insertUser" parameterType="com.industry.auth.AuthUser" useGeneratedKeys="true" keyProperty="userId">
-        insert into construction_industry_api.t_user(
-         mechanism_id, gmt_create, gmt_modified, creator_id,
-         regenerator_id, username, password, full_name,
-         telephone_number, sex, age, is_on_job)
+        insert into construction_industry_api.t_user(mechanism_id, gmt_create, gmt_modified, creator_id,
+                                                     regenerator_id, username, password, full_name,
+                                                     telephone_number, sex, age, is_on_job)
         values (#{mechanismId},
                 #{gmtCreate},
                 #{gmtModified},
@@ -25,6 +24,37 @@
                 #{age},
                 #{onJob})
     </insert>
+    <update id="updateUserById">
+        update construction_industry_api.t_user
+        set full_name        = #{fullName},
+            mechanism_id     = #{mechanismId},
+            is_on_job        = #{onJob},
+            sex              = #{sex},
+            age              = #{sex},
+            telephone_number = #{telephoneNumber},
+            gmt_modified     = #{gmtModified},
+            regenerator_id   = #{regeneratorId}
+        where user_id = #{userId}
+    </update>
+    <update id="resetPassword">
+        update construction_industry_api.t_user
+        set password = #{password}
+        where user_id = #{id}
+    </update>
+
+    <delete id="removeByRoleIds">
+        delete from construction_industry_api.t_user_role
+        where role_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByUserId">
+        delete
+        from construction_industry_api.t_user
+        where user_id = #{id}
+    </delete>
 
     <select id="queryUserByUsername" resultMap="queryUserByUsernameResultMap" resultType="com.industry.auth.AuthUser">
         select user_id,
@@ -57,6 +87,7 @@
 
     <resultMap id="listAllUsersMap" type="com.industry.auth.AuthUser">
         <id column="user_id" property="userId"/>
+        <id column="mechanism_id" property="mechanismId"/>
         <result column="is_enabled" property="enabled"/>
         <result column="is_on_job" property="onJob"/>
         <result column="is_first_login" property="firstLogin"/>
@@ -93,35 +124,42 @@
         select count(*)
         from construction_industry_api.t_user
     </select>
-    <select id="listUsersByMechanismId" resultMap="listAllUsersMap" resultType="com.industry.auth.AuthUser">
+    <select id="listUsersByMechanismIds" resultMap="listAllUsersMap" resultType="com.industry.auth.AuthUser">
         select user_id,
-               mechanism_id,
-               gmt_create,
-               gmt_modified,
-               creator_id,
-               regenerator_id,
-               is_enabled,
-               username,
-               full_name,
-               telephone_number,
-               sex,
-               age,
-               is_on_job,
-               is_first_login
+        mechanism_id,
+        gmt_create,
+        gmt_modified,
+        creator_id,
+        regenerator_id,
+        is_enabled,
+        username,
+        full_name,
+        telephone_number,
+        sex,
+        age,
+        is_on_job,
+        is_first_login
         from construction_industry_api.t_user
-        where mechanism_id in (
-            select m1.mechanism_id
-            from (select * from t_mechanism where parent_id is not null) m1,
-                 (select @pid := #{mechanismId}) pd
-            where find_in_set(parent_id, @pid) > 0
-                      and @pid := concat(@pid, ',', mechanism_id)
-            union
-            select mechanism_id
-            from t_mechanism
-            where mechanism_id = #{mechanismId}
-        )
+        where mechanism_id in
+        <foreach collection="mechanismIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        order by user_id desc
         limit #{page.currentPage},#{page.pageSize}
     </select>
+
+    <select id="selectMechanismIds" resultType="Integer">
+        select m1.mechanism_id
+        from (select * from t_mechanism where parent_id is not null) m1,
+             (select @pid := #{mechanismId}) pd
+        where find_in_set(parent_id, @pid) > 0
+                  and @pid := concat(@pid, ',', mechanism_id)
+        union
+        select mechanism_id
+        from t_mechanism
+        where mechanism_id = #{mechanismId}
+    </select>
+
     <select id="getCountByMechanismId" resultType="Long">
         select count(*)
         from construction_industry_api.t_user
@@ -139,11 +177,33 @@
     </select>
 
     <resultMap id="getDetailById" type="com.industry.auth.AuthUser">
+        <id column="user_id" property="userId"/>
+        <result column="mechanism_id" property="mechanismId"/>
         <result column="is_enabled" property="enabled" jdbcType="TINYINT"/>
         <result column="is_on_job" property="onJob" jdbcType="TINYINT"/>
         <result column="is_first_login" property="firstLogin" jdbcType="TINYINT"/>
         <association property="mechanism" select="selectMechanismName" column="mechanism_id"/>
+        <collection property="listRoleIds" select="selectRoleIds" column="user_id"/>
+        <collection property="listRoles" select="selectRoles" ofType="RoleDO" column="user_id"/>
     </resultMap>
+
+    <select id="selectRoleIds" resultType="Integer">
+        select tr.role_id
+        from t_user_role tur
+                 left join t_user tu on tur.user_id = tu.user_id
+                 left join t_role tr on tr.role_id = tur.role_id
+        where tu.user_id = #{user_id}
+    </select>
+
+    <select id="selectRoles" resultType="RoleDO">
+        select tr.role_id,
+               tr.role_id,
+               tr.role_name
+        from t_user_role tur
+                 left join t_user tu on tur.user_id = tu.user_id
+                 left join t_role tr on tr.role_id = tur.role_id
+        where tu.user_id = #{user_id}
+    </select>
 
     <select id="getDetailById" resultType="com.industry.auth.AuthUser" resultMap="getDetailById">
         select user_id,
@@ -160,6 +220,16 @@
                age,
                is_on_job,
                is_first_login
+        from construction_industry_api.t_user
+        where user_id = #{id}
+    </select>
+    <select id="getListRoleIds" resultType="Integer">
+        select role_id
+        from construction_industry_api.t_user_role
+        where user_id = #{userId}
+    </select>
+    <select id="selectByUserId" resultType="com.industry.auth.AuthUser">
+        select user_id
         from construction_industry_api.t_user
         where user_id = #{id}
     </select>

@@ -36,7 +36,7 @@ public class TalentEntryRecordServiceImpl extends ServiceImpl<TalentEntryRecordM
     @Override
     public ListPages<TalentEntryRecordDO> listTalentEntryRecords(ListPages<TalentEntryRecordDO> page) {
         List<TalentEntryRecordDO> talentEntryRecords = mapper.listTalentEntryRecords(page);
-        page.setCurrentPage(page.getCurrentPage() + 1);
+        page.setCurrentPage(page.getCurrentPage() / 10 + 1);
         page.setList(talentEntryRecords);
         page.setTotal(mapper.getCount());
         return page;

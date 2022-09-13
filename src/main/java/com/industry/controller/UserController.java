@@ -10,11 +10,14 @@ import com.industry.convert.UserConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -96,6 +99,43 @@ public class UserController {
         } else {
             return result.failure(ResultCodeEnum.INSERT_FAILURE);
         }
+    }
+
+    @PutMapping("/update")
+    public ResultEntity update(@RequestBody @Validated UserRequest user) {
+        AuthUser user1 = convert.convertToDo(user);
+        int rows = service.update(user1);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
+        } else if (rows == -1) {
+            return result.failure(ResultCodeEnum.USER_ACCOUNT_NO_FOUND_ERROR);
+        } else {
+            return result.failure(ResultCodeEnum.FAIL_MODIFIED);
+        }
+    }
+
+    @PutMapping("/reset-password/{id}")
+    public ResultEntity resetPassword(@PathVariable("id") @Validated @NotNull(message = "用户id不能为空") Integer id) {
+        int rows = service.resetPassword(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
+        }
+        if (rows == -1) {
+            return result.success(ResultCodeEnum.SUCCESS_NOT_EXIST_MODIFIED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_MODIFIED);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResultEntity deleteUser(@PathVariable("id") @Validated @NotNull(message = "用户id不能为空") Integer id) {
+        int rows = service.deleteByUserId(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_DELETED);
+        }
+        if (rows == -1) {
+            return result.success(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_DELETED);
     }
 }
 

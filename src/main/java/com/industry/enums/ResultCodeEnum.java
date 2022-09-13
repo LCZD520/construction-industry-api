@@ -54,6 +54,7 @@ public enum ResultCodeEnum {
     USER_ACCOUNT_CREDENTIAL_ERROR(false, "4008", "账号或密码错误"),
     USER_ACCOUNT_REGISTER_ERROR(false, "4009", "注册失败"),
     USER_ACCOUNT_ALREADY_EXIST_ERROR(false, "4009", "用户已存在"),
+    USER_ACCOUNT_NO_FOUND_ERROR(false, "4009", "您要修改的账户不存在"),
 
     SUCCESS_APPLY_TRANSFER(true, "00000", "转账申请成功"),
     FAIL_APPLY_EXISTED_TALENT(false, "4000", "转账申请失败，存在已分配人才"),

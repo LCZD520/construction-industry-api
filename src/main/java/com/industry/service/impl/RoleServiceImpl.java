@@ -46,7 +46,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RoleDO> implements 
     public ListPages<RoleDO> getListRoles(ListPages<RoleDO> page) {
         page.setList(mapper.getListRoles(page));
         page.setTotal(mapper.getCount());
-        page.setCurrentPage(page.getCurrentPage() + 1);
+        page.setCurrentPage(page.getCurrentPage() / 10 + 1);
         return page;
     }
 

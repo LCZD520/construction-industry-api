@@ -1,12 +1,12 @@
 package com.industry;
 
+import com.industry.bean.common.ListPages;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.DigestUtils;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,9 +21,12 @@ class ConstructionIndustryApiApplicationTests {
         list1.add(1);
         list1.add(2);
         list1.add(3);
+        list1.add(4);
         List<Integer> list2 = new ArrayList<>();
         list2.add(1);
         list2.add(2);
+        list2.add(5);
+//        list2.add(6);
 
         List<Integer> collect =
                 list1.stream().filter(item -> !list2.contains(item)).collect(Collectors.toList());
@@ -48,4 +51,5 @@ class ConstructionIndustryApiApplicationTests {
         log.info("matches:{}", matches);
 
     }
+
 }

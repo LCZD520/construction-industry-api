@@ -32,14 +32,71 @@ public interface UserMapper extends BaseMapper<AuthUser> {
 
     List<AuthUser> listAllUsers(@Param("page") ListPages<AuthUser> page);
 
+    /**
+     * 获取用户总数
+     *
+     * @return Long
+     */
     Long getCount();
 
-    List<AuthUser> listUsersByMechanismId(@Param("page") ListPages<AuthUser> page
-            , @Param("mechanismId") Integer mechanismId);
+    /**
+     * 获取用户列表
+     *
+     * @param page         ListPages<AuthUser>
+     * @param mechanismIds 机构id集合
+     * @return List<AuthUser>
+     */
+    List<AuthUser> listUsersByMechanismIds(@Param("page") ListPages<AuthUser> page
+            , @Param("mechanismIds") List<Integer> mechanismIds);
 
+    /**
+     * 获取用户总数
+     *
+     * @param mechanismId 机构id
+     * @return Long
+     */
     Long getCountByMechanismId(@Param("mechanismId") Integer mechanismId);
 
     AuthUser getDetailById(@Param("id") Integer id);
 
     int insertUser(AuthUser user);
+
+    List<Integer> getListRoleIds(@Param("userId") Integer userId);
+
+    /**
+     * 递归查询所有子机构id
+     *
+     * @param mechanismId 机构id
+     * @return List<Integer>
+     */
+    List<Integer> selectMechanismIds(@Param("mechanismId") Integer mechanismId);
+
+    int updateUserById(AuthUser user);
+
+    int removeByRoleIds(@Param("list") List<Integer> list);
+
+    /**
+     * 根据id查询用户
+     *
+     * @param id 用户id
+     * @return AuthUser
+     */
+    AuthUser selectByUserId(@Param("id") Integer id);
+
+    /**
+     * 重置密码
+     *
+     * @param id 用户id
+     * @param password 新密码
+     * @return 受影响rows
+     */
+    int resetPassword(@Param("id") Integer id, @Param("password") String password);
+
+    /**
+     * 删除用户
+     *
+     * @param id 用户id
+     * @return 受影响rows
+     */
+    int deleteByUserId(@Param("id") Integer id);
 }
