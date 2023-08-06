@@ -7,9 +7,11 @@ import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.LogisticsDO;
 import com.industry.bean.request.LogisticsRequest;
+import com.industry.bean.search.LogisticsSearch;
 import com.industry.convert.LogisticsConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.LogisticsService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Map;
 
 /**
  * <p>
@@ -49,28 +50,6 @@ public class LogisticsController {
         this.service = service;
     }
 
-    @GetMapping("/list")
-    public ResultEntity listLogistics(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize
-            , @RequestParam(value = "talentId", required = false, defaultValue = "0") Integer talentId
-            , @RequestParam(value = "enterpriseId", required = false, defaultValue = "0") Integer enterpriseId
-            , @RequestParam("logisticsType") Integer logisticsType) {
-        IPage<LogisticsDO> iPage = null;
-        if (enterpriseId == 0 && logisticsType == 1) {
-            iPage = service.listTalentLogistics(new Page<>(currentPage, pageSize), talentId);
-        }
-        if (talentId == 0 && logisticsType == 2) {
-            iPage = service.listEnterpriseLogistics(new Page<>(currentPage, pageSize), enterpriseId);
-        }
-        assert iPage != null;
-        ListPages<LogisticsDO> listPages
-                = new ListPages<>(iPage.getRecords()
-                , iPage.getTotal()
-                , iPage.getCurrent()
-                , iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, listPages);
-    }
-
     @GetMapping("/detail/{id}")
     public ResultEntity getDetailById(@PathVariable("id") Integer id) {
         log.info("id:{}", id);
@@ -91,6 +70,19 @@ public class LogisticsController {
                 , iPage.getCurrent()
                 , iPage.getSize());
         return result.success(ResultCodeEnum.SUCCESS, listPages);
+    }
+
+    @ApiOperation(value = "条件分页获取后勤管理列表", httpMethod = "POST")
+    @PostMapping("list-all")
+    public ResultEntity list(@RequestBody LogisticsSearch search) {
+        ListPages<LogisticsDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<LogisticsDO> list
+                = service.listByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
     @PutMapping("/confirm")

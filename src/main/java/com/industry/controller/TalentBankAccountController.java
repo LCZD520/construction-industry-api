@@ -48,7 +48,6 @@ public class TalentBankAccountController {
     @PostMapping("/insert")
     public ResultEntity insert(@RequestBody TalentBankAccountRequest talentBankAccountRequest) {
         TalentBankAccountDO talentBankAccountDO = convert.convertToDo(talentBankAccountRequest);
-        log.info("talentBankAccountDO:{}", talentBankAccountDO);
         final int insert = service.insert(talentBankAccountDO);
         if (insert > 0) {
             return result.success(ResultCodeEnum.SUCCESS_INSERT);

@@ -23,4 +23,14 @@ public interface ApprovalSettingMapper extends BaseMapper<ApprovalSettingDO> {
     int insertBatch(List<ApprovalSettingDO> list);
 
     int deleteBatch(@Param("type") Integer type);
+
+    List<ApprovalSettingDO> listApprovalSettings();
+
+    /**
+     * 获取入账/转账/业绩审批设置
+     *
+     * @param type 类型（1-入账,2-转账,3-业绩）
+     * @return List<ApprovalSettingDO>
+     */
+    List<ApprovalSettingDO> listApprovalSettingsByType(@Param("type") int type);
 }

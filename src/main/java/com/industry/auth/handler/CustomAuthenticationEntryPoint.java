@@ -20,12 +20,13 @@ import java.io.IOException;
  */
 @Component
 public class CustomAuthenticationEntryPoint extends JsonUtil implements AuthenticationEntryPoint {
+    private static final long serialVersionUID = 7199579744094025468L;
+
     @Autowired
     private ResultEntity resultEntity;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         this.writeJson(response,resultEntity.failure(ResultCodeEnum.USER_UNAUTHORIZED_OR_SESSION_EXPIRED));
-
     }
 }

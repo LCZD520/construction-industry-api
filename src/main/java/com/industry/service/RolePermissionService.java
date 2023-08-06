@@ -3,6 +3,7 @@ package com.industry.service;
 import com.industry.bean.entity.RolePermissionDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -14,5 +15,6 @@ import com.industry.bean.request.RoleInsertOrUpdateBatchRequest;
  */
 public interface RolePermissionService extends IService<RolePermissionDO> {
 
+    @Transactional(rollbackFor = Exception.class)
     int insertBatch(RoleInsertOrUpdateBatchRequest role);
 }

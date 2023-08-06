@@ -105,9 +105,19 @@ public class AuthUser implements UserDetails {
     @TableField(exist = false)
     private List<RoleDO> listRoles;
 
+    /**
+     * 拥有的权限
+     */
+    private Collection<? extends GrantedAuthority> authorities;
+
+    /**
+     * 获取权限
+     *
+     * @return 所有权限集合
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.authorities;
     }
 
     @Override

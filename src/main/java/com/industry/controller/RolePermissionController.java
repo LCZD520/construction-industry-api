@@ -43,10 +43,9 @@ public class RolePermissionController {
 
     @PostMapping("/insert-batch")
     public ResultEntity insertBatch(@RequestBody RoleInsertOrUpdateBatchRequest role) {
-        log.info("role:{}", role);
         int i = service.insertBatch(role);
-        if (i > 0) {
-            return result.success(ResultCodeEnum.SUCCESS_INSERT);
+        if (i >= 0) {
+            return result.success(ResultCodeEnum.SUCCESS_SAVE);
         }
         return result.failure(ResultCodeEnum.INSERT_FAILURE);
     }

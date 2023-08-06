@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.TalentTransferMapper">
+    <update id="updateApplicationStatusById">
+        update construction_industry_api.t_talent_transfer
+        set application_status = #{auditStatus}
+        where id = #{talentTransferId}
+    </update>
 
     <select id="listTalentTransfers" resultType="TalentTransferDO">
         select id,
@@ -25,6 +30,7 @@
         <id column="id" property="id"/>
         <collection property="listTalentApprovalFlows" ofType="TalentApprovalFlowDO">
             <id column="id2" property="id"/>
+            <result column="audit_result" property="auditResult" jdbcType="TINYINT"/>
             <result column="gmt_create2" property="gmtCreate"/>
             <result column="creator_id2" property="creatorId"/>
         </collection>
@@ -46,7 +52,9 @@
                t1.remark,
                t2.id         as id2,
                t2.talent_transfer_id,
-               t2.status,
+               t2.next_audit_role_id,
+               t2.audit_status,
+               t2.audit_result,
                t2.gmt_create as gmt_create2,
                t2.creator_id as creator_id2,
                t2.approval_opinion
@@ -54,5 +62,331 @@
                  left join construction_industry_api.t_talent_approval_flow as t2
                            on t1.id = t2.talent_transfer_id
         where t1.id = #{id}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent_transfer
+    </select>
+
+    <resultMap id="listAllTalentTransfersMap" type="TalentTransferDO">
+        <result column="id" property="id"/>
+        <association property="talent"/>
+        <association property="talentOrder"/>
+    </resultMap>
+
+    <select id="selectTalent" resultType="OrderSelectedTalentDO">
+        select id,
+               talent_order_id,
+               enterprise_application_transfer_id,
+               talent_id,
+               area,
+               class_three_personnel,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               enterprise_offer,
+               enterprise_offer_number,
+               enterprise_offer_unit,
+               contract_balance,
+               market_development_fee,
+               market_development_fee_unit,
+               is_confirmed,
+               is_assigned,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               full_name,
+               level_major_initial_conversion,
+               enterprise_name,
+               creator_id,
+               qualification_agency_demand_id,
+               type
+        from construction_industry_api.t_order_selected_talent
+        where id = #{talent_id}
+    </select>
+
+    <select id="listAllTalentTransfers" resultType="TalentTransferDO" resultMap="listAllTalentTransfersMap">
+        select ttt.id,
+               ttt.talent_id,
+               ttt.bank_name,
+               ttt.open_bank,
+               ttt.account_name,
+               ttt.bank_card_no,
+               ttt.transfer_amount,
+               ttt.funds_purpose,
+               ttt.application_status,
+               ttt.creator_id,
+               ttt.gmt_create,
+               ttt.regenerator_id,
+               ttt.gmt_modified,
+               ttt.remark,
+               tost.id,
+               tost.talent_order_id,
+               tost.enterprise_application_transfer_id,
+               tost.talent_id,
+               tost.area,
+               tost.class_three_personnel,
+               tost.talent_price,
+               tost.talent_price_number,
+               tost.number_unit,
+               tost.enterprise_offer,
+               tost.enterprise_offer_number,
+               tost.enterprise_offer_unit,
+               tost.contract_balance,
+               tost.market_development_fee,
+               tost.market_development_fee_unit,
+               tost.is_confirmed,
+               tost.is_assigned,
+               tost.gmt_create,
+               tost.regenerator_id,
+               tost.gmt_modified,
+               tost.full_name,
+               tost.level_major_initial_conversion,
+               tost.enterprise_name,
+               tost.creator_id,
+               tost.qualification_agency_demand_id,
+               tost.type,
+               tto.enterprise_name
+        from construction_industry_api.t_talent_transfer as ttt
+                 left join construction_industry_api.t_order_selected_talent as tost on ttt.talent_id = tost.talent_id
+                 left join construction_industry_api.t_talent_order tto on tto.id = tost.talent_order_id
+        group by ttt.id
+        order by ttt.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <resultMap id="getAuditDetailByIdMap" type="TalentTransferDO">
+        <id column="id" property="id"/>
+        <result column="talent_id" property="talentId"/>
+        <association property="talent"/>
+        <association property="talentOrder"/>
+        <collection property="listTalentEntryRecords" select="selectListTalentEntryRecords"
+                    column="talent_id"
+                    ofType="TalentEntryRecordDO"/>
+        <collection property="listTalentTransfers" select="selectTalentTransfers" column="talent_id"
+                    ofType="TalentTransferDO"/>
+        <collection property="listTalentApprovalFlows" select="selectListTalentApprovalFlows" column="id"
+                    ofType="TalentApprovalFlowDO"/>
+    </resultMap>
+
+    <resultMap id="getDetailByIdMap" type="TalentEntryRecordDO">
+        <id column="id" property="id"/>
+        <result column="talent_order_id" property="talentOrderId"/>
+        <association property="talentEntry">
+            <id column="id2" property="id"/>
+            <id column="creator_id2" property="creatorId"/>
+            <id column="gmt_create2" property="gmtCreate"/>
+            <id column="regenerator_id2" property="regeneratorId"/>
+            <id column="gmt_modified2" property="gmtModified"/>
+        </association>
+        <collection
+                property="listTalentEntryRecords" column="talent_id"
+                ofType="TalentEntryRecordDO" select="selectListEntrys">
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectListEntrys" resultMap="selectListEntrysMap" resultType="talentEntryRecordDO">
+        select t1.id
+             , t1.talent_entry_id
+             , t1.status
+             , t1.talent_id
+             , t1.full_name
+             , t1.entry_amount
+             , t1.funds_purpose
+             , t1.other_fee
+             , t1.contract_balance
+             , t1.enterprise_offer
+             , t1.enterprise_offer_number
+             , t1.enterprise_offer_unit
+             , t1.talent_price
+             , t1.talent_price_number
+             , t1.number_unit
+             , t1.creator_id
+             , t1.gmt_create
+             , t1.regenerator_id
+             , t1.gmt_modified
+             , t1.talent_order_id
+             , t1.approval_opinion
+             , t2.id             as id2
+             , t2.enterprise_account_id
+             , t2.talent_order_id
+             , t2.transferor_info
+             , t2.transfer_way
+             , t2.transfer_date
+             , t2.creator_id     as creator_id2
+             , t2.gmt_create     as gmt_create2
+             , t2.regenerator_id as regenerator_id2
+             , t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_entry_record as t1
+                 left join construction_industry_api.t_talent_entry as t2
+                           on t1.talent_entry_id = t2.id
+        where t1.talent_id = #{talent_id}
+    </select>
+
+    <resultMap id="selectListEntrysMap" type="talentEntryRecordDO">
+        <id column="id" property="id"/>
+        <association property="talentEntry">
+            <id column="id2" property="id"/>
+            <id column="creator_id2" property="creatorId"/>
+            <id column="gmt_create2" property="gmtCreate"/>
+            <id column="regenerator_id2" property="regeneratorId"/>
+            <id column="gmt_modified2" property="gmtModified"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListTalentEntryRecords" resultMap="getDetailByIdMap" resultType="TalentEntryRecordDO">
+        select t1.id,
+               t1.talent_entry_id,
+               t1.status,
+               t1.talent_id,
+               t1.full_name,
+               t1.entry_amount,
+               t1.funds_purpose,
+               t1.other_fee,
+               t1.contract_balance,
+               t1.enterprise_offer,
+               t1.enterprise_offer_number,
+               t1.enterprise_offer_unit,
+               t1.talent_price,
+               t1.talent_price_number,
+               t1.number_unit,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.talent_order_id,
+               t1.approval_opinion,
+               t2.id             as id2,
+               t2.enterprise_account_id,
+               t2.talent_order_id,
+               t2.transferor_info,
+               t2.transfer_way,
+               t2.transfer_date,
+               t2.creator_id     as creator_id2,
+               t2.gmt_create     as gmt_create2,
+               t2.regenerator_id as regenerator_id2,
+               t2.gmt_modified   as gmt_modified2
+        from construction_industry_api.t_talent_entry_record as t1
+                 left join construction_industry_api.t_talent_entry as t2
+                           on t2.id = t1.talent_entry_id
+        where t1.talent_id = #{id}
+    </select>
+
+    <resultMap id="selectTalentTransfersMap" type="TalentTransferDO">
+        <id column="id" property="id"/>
+        <collection property="listTalentApprovalFlows" ofType="TalentApprovalFlowDO">
+            <id column="id2" property="id"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectTalentTransfers" resultType="TalentTransferDO" resultMap="selectTalentTransfersMap">
+        select ttt.id,
+               ttt.talent_id,
+               ttt.bank_name,
+               ttt.open_bank,
+               ttt.account_name,
+               ttt.bank_card_no,
+               ttt.transfer_amount,
+               ttt.funds_purpose,
+               ttt.application_status,
+               ttt.creator_id,
+               ttt.gmt_create,
+               ttt.regenerator_id,
+               ttt.gmt_modified,
+               ttt.remark,
+               ttaf.id         as id2,
+               ttaf.talent_transfer_id,
+               ttaf.audit_status,
+               ttaf.audit_result,
+               ttaf.approval_opinion,
+               ttaf.next_audit_role_id,
+               ttaf.creator_id as creator_id2,
+               ttaf.gmt_create as gmt_create2
+        from construction_industry_api.t_talent_transfer as ttt
+                 left join construction_industry_api.t_talent_approval_flow as ttaf on ttt.id = ttaf.talent_transfer_id
+        where talent_id = #{talent_id}
+    </select>
+
+    <select id="selectListTalentApprovalFlows" resultType="TalentApprovalFlowDO">
+        select id,
+               talent_transfer_id,
+               audit_status,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_talent_approval_flow
+        where talent_transfer_id = #{id}
+    </select>
+
+    <select id="getAuditDetailById" resultType="TalentTransferDO" resultMap="getAuditDetailByIdMap">
+        select t1.id,
+               t1.talent_id,
+               t1.bank_name,
+               t1.open_bank,
+               t1.account_name,
+               t1.bank_card_no,
+               t1.transfer_amount,
+               t1.funds_purpose,
+               t1.application_status,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t1.remark,
+               tto.id,
+               tto.enterprise_id,
+               tto.orderno,
+               tto.enterprise_name,
+               tto.enterprise_demand_ids,
+               tto.order_status,
+               tto.order_demand,
+               tto.source,
+               tto.gmt_create,
+               tto.gmt_modified,
+               tto.regenerator_id,
+               tto.creator_id,
+               tost.id,
+               tost.talent_order_id,
+               tost.enterprise_application_transfer_id,
+               tost.talent_id,
+               tost.area,
+               tost.class_three_personnel,
+               tost.talent_price,
+               tost.talent_price_number,
+               tost.number_unit,
+               tost.enterprise_offer,
+               tost.enterprise_offer_number,
+               tost.enterprise_offer_unit,
+               tost.contract_balance,
+               tost.market_development_fee,
+               tost.market_development_fee_unit,
+               tost.is_confirmed,
+               tost.is_assigned,
+               tost.gmt_create,
+               tost.regenerator_id,
+               tost.gmt_modified,
+               tost.full_name,
+               tost.level_major_initial_conversion,
+               tost.enterprise_name,
+               tost.creator_id,
+               tost.qualification_agency_demand_id,
+               tost.type,
+               tter.talent_entry_id
+        from construction_industry_api.t_talent_transfer as t1
+                 left join construction_industry_api.t_order_selected_talent as tost on t1.talent_id = tost.talent_id
+                 left join construction_industry_api.t_talent_order tto on tto.id = tost.talent_order_id
+                 left join construction_industry_api.t_talent_entry_record as tter on t1.talent_id = tter.talent_id
+        where t1.id = #{id}
+    </select>
+    <select id="selectByIdAndStatus" resultType="Integer">
+        select count(*)
+        from construction_industry_api.t_talent_transfer
+        where talent_id = #{id}
+          and application_status = #{status}
     </select>
 </mapper>

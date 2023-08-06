@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyApprovalFlowMapper">
+
+    <resultMap id="getLatestRecordByQualificationAgencyTransferIdMap" type="QualificationAgencyApprovalFlowDO">
+        <id column="id" property="id"/>
+        <result column="audit_result" property="auditResult" jdbcType="TINYINT"/>
+    </resultMap>
+    <insert id="insertAuditRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_qualification_agency_approval_flow
+        (qualification_agency_transfer_id, audit_status, audit_result, approval_opinion, next_audit_role_id, creator_id,
+         gmt_create)
+        values (#{qualificationAgencyTransferId},
+                #{auditStatus},
+                #{auditResult},
+                #{approvalOpinion},
+                #{nextAuditRoleId},
+                #{creatorId},
+                #{gmtCreate})
+    </insert>
+
+    <select id="getLatestRecordByQualificationAgencyTransferId"
+            resultType="QualificationAgencyApprovalFlowDO"
+            resultMap="getLatestRecordByQualificationAgencyTransferIdMap">
+        select id,
+               qualification_agency_transfer_id,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_qualification_agency_approval_flow
+        where id =
+              (select max(id)
+               from construction_industry_api.t_qualification_agency_approval_flow
+               where qualification_agency_transfer_id = #{id})
+    </select>
+</mapper>

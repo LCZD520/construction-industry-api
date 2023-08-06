@@ -4,13 +4,14 @@
     <insert id="insertTalentOrder" useGeneratedKeys="true" keyProperty="id">
         insert into construction_industry_api.t_talent_order
         (enterprise_id, orderno, enterprise_name, enterprise_demand_ids, order_status,
-         order_demand, creator_id, gmt_create, regenerator_id, gmt_modified)
+         order_demand, source, creator_id, gmt_create, regenerator_id, gmt_modified)
         values ( #{enterpriseId}
                , #{orderno}
                , #{enterpriseName}
                , #{enterpriseDemandIds}
                , #{orderStatus}
                , #{orderDemand}
+               , #{source}
                , #{creatorId}
                , #{gmtCreate}
                , #{regeneratorId}
@@ -33,7 +34,8 @@
         select max(orderno)
         from construction_industry_api.t_talent_order
         where gmt_create between #{today}' 00:00:00'
-                  and #{today}' 23:59:59';
+            and #{today}' 23:59:59'
+          and source = 'enterprise'
     </select>
 
     <resultMap id="listTalentOrdersMap" type="TalentOrderDO">
@@ -47,11 +49,10 @@
     <select id="TalentsMap" resultType="OrderSelectedTalentDO">
         select id,
                talent_order_id,
-               enterprise_name,
-               talent_id,
                enterprise_application_transfer_id,
+               talent_id,
                area,
-               level_major_initial_conversion,
+               class_three_personnel,
                talent_price,
                talent_price_number,
                number_unit,
@@ -63,11 +64,15 @@
                market_development_fee_unit,
                is_confirmed,
                is_assigned,
-               creator_id,
                gmt_create,
                regenerator_id,
                gmt_modified,
-               full_name
+               full_name,
+               level_major_initial_conversion,
+               enterprise_name,
+               creator_id,
+               qualification_agency_demand_id,
+               type
         from construction_industry_api.t_order_selected_talent
         where talent_order_id = #{id}
     </select>
@@ -143,7 +148,8 @@
     <select id="getMaxOrderStatusByEnterpriseId" resultType="Integer">
         select max(order_status)
         from construction_industry_api.t_talent_order
-        where enterprise_id = #{id};
+        where enterprise_id = #{id}
+          and source = #{source}
     </select>
     <select id="getMaxOrdernoByEnterpriseId" resultType="TalentOrderDO">
         select id,
@@ -152,15 +158,166 @@
                enterprise_name,
                enterprise_demand_ids,
                order_status,
-               order_demand
+               order_demand,
+               source
         from construction_industry_api.t_talent_order
         where orderno = (select max(orderno)
                          from construction_industry_api.t_talent_order
-                         where enterprise_id = #{id});
+                         where enterprise_id = #{id}
+                           and source = #{source});
     </select>
     <select id="getListTalentOrderIdsByEnterpriseId" resultType="Integer">
         select id
         from construction_industry_api.t_talent_order
-        where enterprise_id = #{id};
+        where enterprise_id = #{id}
+          and source = #{source}
+    </select>
+    <select id="listAllTalentOrders" resultMap="listTalentOrdersMap" resultType="TalentOrderDO">
+        select id,
+               enterprise_id,
+               orderno,
+               enterprise_name,
+               enterprise_demand_ids,
+               order_status,
+               order_demand,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_order
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountListAllOrders" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent_order
+    </select>
+    <select id="getMaxOrderno2" resultType="String">
+        select max(orderno)
+        from construction_industry_api.t_talent_order
+        where gmt_create between #{today}' 00:00:00'
+            and #{today}' 23:59:59'
+          and source = 'qualificationAgency'
+    </select>
+
+    <resultMap id="listByConditionPagesMap" type="TalentOrderDO">
+        <id column="id" property="id"/>
+        <result column="creator_id2" property="enterpriseCreatorId"/>
+        <result column="creator_id3" property="qualificationAgencyCreatorId"/>
+        <collection property="selectedTalents"
+                    column="id"
+                    select="getListSelectedTalentsById"/>
+    </resultMap>
+    <select id="listByConditionPages" resultType="TalentOrderDO" resultMap="listByConditionPagesMap">
+        select tto.id,
+        tto.enterprise_id,
+        tto.orderno,
+        tto.enterprise_name,
+        tto.enterprise_demand_ids,
+        tto.order_status,
+        tto.order_demand,
+        tto.source,
+        tto.gmt_create,
+        tto.gmt_modified,
+        tto.regenerator_id,
+        tto.creator_id,
+        te.creator_id as creator_id2,
+        tqa.creator_id as creator_id3,
+        tost.id,
+        tost.talent_order_id,
+        tost.enterprise_application_transfer_id,
+        tost.talent_id,
+        tost.area,
+        tost.class_three_personnel,
+        tost.talent_price,
+        tost.talent_price_number,
+        tost.number_unit,
+        tost.enterprise_offer,
+        tost.enterprise_offer_number,
+        tost.enterprise_offer_unit,
+        tost.contract_balance,
+        tost.market_development_fee,
+        tost.market_development_fee_unit,
+        tost.is_confirmed,
+        tost.is_assigned,
+        tost.gmt_create as gmt_create2,
+        tost.regenerator_id as gmt_create2,
+        tost.gmt_modified as gmt_modified2,
+        tost.full_name,
+        tost.level_major_initial_conversion,
+        tost.enterprise_name,
+        tost.creator_id as creator_id2,
+        tost.qualification_agency_demand_id,
+        tost.type
+        from t_talent_order as tto
+        left join t_enterprise as te on tto.enterprise_id = te.id
+        left join t_qualification_agency as tqa on tto.enterprise_id = tqa.id
+        left join t_order_selected_talent as tost on tto.id = tost.talent_order_id
+        where 1 = 1
+        <if test="search.orderno != null and search.orderno != ''">
+            and tto.orderno like concat('%',#{search.orderno},'%')
+        </if>
+        <if test="search.enterpriseName != null and search.enterpriseName != ''">
+            and tto.enterprise_name like concat('%',#{search.enterpriseName},'%')
+        </if>
+        <if test="search.fullName != null and search.fullName != ''">
+            and tost.full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <bind name="search.status" value="search.status"/>
+        <if test="search.status != null">
+            and tto.order_status = #{search.status}
+        </if>
+        <bind name="search.enterpriseCreatorId" value="search.enterpriseCreatorId"/>
+        <if test="search.enterpriseCreatorId != null">
+            and (te.creator_id = #{search.enterpriseCreatorId} or
+            tqa.creator_id = #{search.enterpriseCreatorId} )
+        </if>
+        <bind name="search.startDate" value="search.startDate"/>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tto.gmt_create &gt;= #{search.startDate}
+        </if>
+        <bind name="search.endDate" value="search.endDate"/>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tto.gmt_create &lt;= #{search.endDate}
+        </if>
+        group by tto.id
+        order by tto.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*) from (
+        select tto.id
+        from t_talent_order as tto
+        left join t_enterprise as te on tto.enterprise_id = te.id
+        left join t_qualification_agency as tqa on tto.enterprise_id = tqa.id
+        left join t_order_selected_talent as tost on tto.id = tost.talent_order_id
+        where 1 = 1
+        <if test="search.orderno != null and search.orderno != ''">
+            and tto.orderno like concat('%',#{search.orderno},'%')
+        </if>
+        <if test="search.enterpriseName != null and search.enterpriseName != ''">
+            and tto.enterprise_name like concat('%',#{search.enterpriseName},'%')
+        </if>
+        <if test="search.fullName != null and search.fullName != ''">
+            and tost.full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <bind name="search.status" value="search.status"/>
+        <if test="search.status != null">
+            and tto.order_status = #{search.status}
+        </if>
+        <bind name="search.enterpriseCreatorId" value="search.enterpriseCreatorId"/>
+        <if test="search.enterpriseCreatorId != null">
+            and (te.creator_id = #{search.enterpriseCreatorId} or
+            tqa.creator_id = #{search.enterpriseCreatorId} )
+        </if>
+        <bind name="search.startDate" value="search.startDate"/>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tto.gmt_create &gt;= #{search.startDate}
+        </if>
+        <bind name="search.endDate" value="search.endDate"/>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tto.gmt_create &lt;= #{search.endDate}
+        </if>
+        group by tto.id
+        ) as t3
     </select>
 </mapper>

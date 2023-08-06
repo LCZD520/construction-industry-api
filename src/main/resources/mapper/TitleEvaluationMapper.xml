@@ -2,4 +2,368 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.TitleEvaluationMapper">
 
+    <insert id="insertTitleEvaluation" parameterType="TitleEvaluationDO" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_title_evaluation
+        (customer_type, customer_name, telephone_number, principal, creator_id, gmt_create, regenerator_id,
+         gmt_modified, remark)
+        values (#{customerType}, #{customerName}, #{telephoneNumber},
+                #{principal}, #{creatorId},
+                #{gmtCreate}, #{regeneratorId}, #{gmtModified}, #{remark})
+    </insert>
+    <update id="updateBatchAssessorStatusByIds">
+        update construction_industry_api.t_title_assessor
+        set title_evaluation_order_id = #{id},evaluation_status = 2
+        where id in
+        <foreach collection="listSelectedIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateRemarks">
+        update construction_industry_api.t_title_evaluation
+        set remark = #{remarks.remark}
+        where id = #{remarks.id}
+    </update>
+    <update id="updateStatus">
+        update construction_industry_api.t_title_evaluation
+        set status = #{status}
+        where id = #{id}
+    </update>
+    <update id="updateTitleEvaluationById">
+        update construction_industry_api.t_title_evaluation
+        set customer_type    = #{titleEvaluation.customerType},
+            customer_name    = #{titleEvaluation.customerName},
+            telephone_number = #{titleEvaluation.telephoneNumber},
+            principal        = #{titleEvaluation.principal},
+            remark           = #{titleEvaluation.remark}
+        where id = #{titleEvaluation.id}
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_title_evaluation
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>    <delete id="deleteTitleEvaluationById">
+        delete
+        from construction_industry_api.t_title_evaluation
+        where id = #{id}
+    </delete>
+
+    <resultMap id="getListTitleEvaluationsMap" type="TitleEvaluationDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="getListTitleEvaluations" resultType="TitleEvaluationDO" resultMap="getListTitleEvaluationsMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_title_evaluation
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="selectListAssessors" resultType="TitleAssessorDO">
+        select id,
+               title_evaluation_id,
+               title_evaluation_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               education,
+               graduation_major,
+               evaluation_major,
+               title_evaluation,
+               certificate_nature,
+               agency_amount,
+               appraisal_way,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               evaluation_fee,
+               evaluation_status
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </select>
+
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_title_evaluation
+    </select>
+    <select id="getCountById" resultType="Integer">
+        select count(*)
+        from construction_industry_api.t_title_evaluation
+        where id = #{id}
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="TitleEvaluationDO">
+        <id column="id" property="id"/>
+        <collection property="listAssessors" ofType="TitleAssessorDO" select="selectAssessorsById" column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="selectAssessorsByIdMap" type="TitleAssessorDO">
+        <id column="id" property="id"/>
+        <collection property="listImages" ofType="PictureDO" select="selectImages" column="id">
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectImages" resultType="PictureDO">
+        select id,
+               resource_id,
+               namespace,
+               type,
+               name,
+               url,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_picture
+        where resource_id = #{id}
+          and namespace = 'title-evaluation'
+          and type = 'assessor'
+    </select>
+
+    <select id="selectAssessorsById" resultType="TitleAssessorDO" resultMap="selectAssessorsByIdMap">
+        select distinct id,
+                        title_evaluation_id,
+                        title_evaluation_order_id,
+                        sex,
+                        identity_card,
+                        telephone_number,
+                        education,
+                        graduation_major,
+                        evaluation_major,
+                        title_evaluation,
+                        certificate_nature,
+                        agency_amount,
+                        appraisal_way,
+                        creator_id,
+                        gmt_create,
+                        regenerator_id,
+                        gmt_modified,
+                        evaluation_fee,
+                        full_name,
+                        evaluation_status
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultType="TitleEvaluationDO" resultMap="getDetailByIdMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_title_evaluation
+        where id = #{id}
+    </select>
+    <select id="getWaitAssessor" resultType="TitleAssessorDO">
+        select id,
+               title_evaluation_id,
+               title_evaluation_order_id,
+               sex,
+               identity_card,
+               telephone_number,
+               education,
+               graduation_major,
+               evaluation_major,
+               title_evaluation,
+               certificate_nature,
+               agency_amount,
+               appraisal_way,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               evaluation_fee,
+               full_name,
+               evaluation_status
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+          and evaluation_status = 1
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="getUnselectedWaitAssessor" resultType="TitleAssessorDO">
+        select id,
+        title_evaluation_id,
+        title_evaluation_order_id,
+        sex,
+        identity_card,
+        telephone_number,
+        education,
+        graduation_major,
+        evaluation_major,
+        title_evaluation,
+        certificate_nature,
+        agency_amount,
+        appraisal_way,
+        creator_id,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        evaluation_fee,
+        full_name,
+        evaluation_status
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountUnselectedWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getUnselectedWaitAssessorIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="selectFullNameBatchByIds" resultType="String">
+        select full_name
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+        and id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getMaxOrderno" resultType="String">
+        select max(orderno)
+        from construction_industry_api.t_title_evaluation_order
+        where gmt_create between #{today}' 00:00:00'
+                  and #{today}' 23:59:59';
+    </select>
+    <select id="getTotalAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+        and id in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getListTitleEvaluationsIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </select>
+    <resultMap id="listTitleEvaluationsMap" type="TitleEvaluationDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="selectCountAssessors" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </select>
+
+    <select id="selectTotalAgencyAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </select>
+
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_title_evaluation
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+    </select>
+    <select id="listTitleEvaluationsByConditionPages" resultType="TitleEvaluationDO"
+            resultMap="listTitleEvaluationsMap">
+        select id,
+        customer_type,
+        customer_name,
+        telephone_number,
+        principal,
+        status,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        remark,
+        creator_id
+        from construction_industry_api.t_title_evaluation
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.industry.mapper;
 
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.EnterpriseTransferDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.industry.bean.entity.OrderSelectedTalentDO;
@@ -42,4 +43,36 @@ public interface EnterpriseTransferMapper extends BaseMapper<EnterpriseTransferD
     List<EnterpriseTransferDO> getListTransferRecords(Integer id);
 
     EnterpriseTransferDO getDetailById(@Param("id") Integer id);
+
+    /**
+     * 获取转账记录总数
+     *
+     * @return Long
+     */
+    Long getCount();
+
+    /**
+     * 获取企业转账记录
+     *
+     * @param page ListPages<EnterpriseTransferDO>
+     * @return List<EnterpriseTransferDO>
+     */
+    List<EnterpriseTransferDO> listTransferRecords(@Param("page") ListPages<EnterpriseTransferDO> page);
+
+    /**
+     * 更新审核状态
+     * @param enterpriseTransferId 企业转账id
+     * @param auditStatus 审核状态
+     * @return 受影响rows
+     */
+    int updateApplicationStatusById(@Param("enterpriseTransferId") Integer enterpriseTransferId, @Param("auditStatus") String auditStatus);
+
+    /**
+     * 获取审批详情
+     * @param id id
+     * @return EnterpriseTransferDO
+     */
+    EnterpriseTransferDO getAuditDetailById(@Param("id") Integer id);
+
+    List<EnterpriseTransferDO> listAllEnterpriseTransfers(@Param("page") ListPages<EnterpriseTransferDO> page);
 }

@@ -2,4 +2,349 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.ClassThreePersonMapper">
 
+    <insert id="insertClassThreePerson" parameterType="ClassThreePersonDO" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_class_three_person
+        (customer_type, customer_name, telephone_number, principal, creator_id, gmt_create, regenerator_id,
+         gmt_modified, remark)
+        values (#{customerType}, #{customerName}, #{telephoneNumber},
+                #{principal}, #{creatorId},
+                #{gmtCreate}, #{regeneratorId}, #{gmtModified}, #{remark})
+    </insert>
+    <update id="updateBatchAssessorStatusByIds">
+        update construction_industry_api.t_class_three_assessor
+        set class_three_person_order_id = #{id},evaluation_status = 2
+        where id in
+        <foreach collection="listSelectedIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateRemarks">
+        update construction_industry_api.t_class_three_person
+        set remark = #{remarks.remark}
+        where id = #{remarks.id}
+    </update>
+    <update id="updateStatus">
+        update construction_industry_api.t_class_three_person
+        set status = #{status}
+        where id = #{id}
+    </update>
+    <update id="updateClassThreePersonById">
+        update construction_industry_api.t_class_three_person
+        set customer_type    = #{classThreePerson.customerType},
+            customer_name    = #{classThreePerson.customerName},
+            telephone_number = #{classThreePerson.telephoneNumber},
+            principal        = #{classThreePerson.principal},
+            remark           = #{classThreePerson.remark}
+        where id = #{classThreePerson.id}
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_class_three_person
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>
+    <delete id="deleteClassThreePersonById">
+        delete
+        from construction_industry_api.t_class_three_person
+        where id = #{id}
+    </delete>
+
+    <resultMap id="getListClassThreePersonsMap" type="ClassThreePersonDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="getListClassThreePersons" resultType="ClassThreePersonDO" resultMap="getListClassThreePersonsMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_class_three_person
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="selectListAssessors" resultType="ClassThreeAssessorDO">
+        select id,
+               class_three_person_id,
+               class_three_person_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               security_certificate,
+               three_category,
+               item_nature,
+               min_zheng_tong_account,
+               min_zheng_tong_password,
+               agency_amount,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               evaluation_fee,
+               evaluation_status
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+    </select>
+
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_person
+    </select>
+    <select id="getCountById" resultType="Integer">
+        select count(*)
+        from construction_industry_api.t_class_three_person
+        where id = #{id}
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="ClassThreePersonDO">
+        <id column="id" property="id"/>
+        <collection property="listAssessors" ofType="ClassThreeAssessorDO" select="selectAssessorsById" column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="selectAssessorsByIdMap" type="ClassThreeAssessorDO">
+        <id column="id" property="id"/>
+        <collection property="listImages" ofType="PictureDO" select="selectImages" column="id">
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectImages" resultType="PictureDO">
+        select id,
+               resource_id,
+               namespace,
+               type,
+               name,
+               url,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_picture
+        where resource_id = #{id}
+          and namespace = 'class-three-person'
+          and type = 'assessor'
+    </select>
+
+    <select id="selectAssessorsById" resultType="ClassThreeAssessorDO" resultMap="selectAssessorsByIdMap">
+        select distinct id,
+                        class_three_person_id,
+                        class_three_person_order_id,
+                        full_name,
+                        sex,
+                        identity_card,
+                        telephone_number,
+                        security_certificate,
+                        three_category,
+                        item_nature,
+                        min_zheng_tong_account,
+                        min_zheng_tong_password,
+                        agency_amount,
+                        creator_id,
+                        gmt_create,
+                        regenerator_id,
+                        gmt_modified,
+                        evaluation_fee,
+                        evaluation_status
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultType="ClassThreePersonDO" resultMap="getDetailByIdMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_class_three_person
+        where id = #{id}
+    </select>
+    <select id="getWaitAssessor" resultType="ClassThreeAssessorDO">
+        select id,
+               class_three_person_id,
+               class_three_person_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               security_certificate,
+               three_category,
+               item_nature,
+               min_zheng_tong_account,
+               min_zheng_tong_password,
+               agency_amount,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               evaluation_fee,
+               evaluation_status
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+          and evaluation_status = 1
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="getUnselectedWaitAssessor" resultType="ClassThreeAssessorDO">
+        select id, class_three_person_id, class_three_person_order_id, full_name, sex, identity_card, telephone_number,
+        security_certificate, three_category, item_nature, min_zheng_tong_account, min_zheng_tong_password,
+        agency_amount, creator_id, gmt_create, regenerator_id, gmt_modified, evaluation_fee, evaluation_status
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountUnselectedWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getUnselectedWaitAssessorIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="selectFullNameBatchByIds" resultType="String">
+        select full_name
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+        and id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getMaxOrderno" resultType="String">
+        select max(orderno)
+        from construction_industry_api.t_class_three_person_order
+        where gmt_create between #{today}' 00:00:00'
+                  and #{today}' 23:59:59';
+    </select>
+    <select id="getTotalAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+        and id in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getListClassThreePersonsIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+    </select>
+    <resultMap id="listClassThreePersonsMap" type="ClassThreePersonDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="selectCountAssessors" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+    </select>
+
+    <select id="selectTotalAgencyAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_id = #{id}
+    </select>
+
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_person
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+    </select>
+    <select id="listClassThreePersonsByConditionPages" resultType="ClassThreePersonDO"
+            resultMap="listClassThreePersonsMap">
+        select id,
+        customer_type,
+        customer_name,
+        telephone_number,
+        principal,
+        status,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        remark,
+        creator_id
+        from construction_industry_api.t_class_three_person
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
 </mapper>

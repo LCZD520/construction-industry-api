@@ -54,4 +54,20 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, PictureDO> im
         return mapper.deleteById(id);
     }
 
+    @Override
+    public List<PictureDO> listPicturesByIds(List<Integer> listIds) {
+        return mapper.listPicturesByIds(listIds);
+    }
+
+    @Override
+    public int deleteBatchByIds(List<Integer> listIds) {
+        synchronized (this) {
+            final List<PictureDO> list = mapper.listPicturesByIds(listIds);
+            if (list.size() == listIds.size()) {
+                return mapper.deleteBatchByIds(listIds);
+            }
+            return -1;
+        }
+    }
+
 }

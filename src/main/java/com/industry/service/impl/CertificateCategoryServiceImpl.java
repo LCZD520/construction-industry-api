@@ -65,6 +65,15 @@ public class CertificateCategoryServiceImpl extends ServiceImpl<CertificateCateg
         return mapper.getDetailById(id);
     }
 
+    @Override
+    public int deleteById(Integer id) {
+        final CertificateCategoryDO category = mapper.selectById(id);
+        if (category == null) {
+            return -1;
+        }
+        return mapper.deleteById(id);
+    }
+
     private CertificateCategoryDO getSubList(CertificateCategoryDO rootCertificateCategory, List<CertificateCategoryDO> list) {
         for (CertificateCategoryDO certificateCategoryDO : list) {
             if (rootCertificateCategory.getId().equals(certificateCategoryDO.getParentId())) {

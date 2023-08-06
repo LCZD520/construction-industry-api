@@ -3,6 +3,8 @@ package com.industry.controller;
 
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.ApprovalSettingDO;
+import com.industry.bean.view.ApprovalSettingVO;
+import com.industry.enums.ResultCodeEnum;
 import com.industry.service.ApprovalSettingService;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +43,20 @@ public class ApprovalSettingController {
     }
 
     @PutMapping("/save/{type}")
-    public void save(
+    public ResultEntity save(
             @PathVariable("type") @NotNull(message = "type不能为空") Integer type,
             @RequestBody @Size(min = 1, message = "审批节点至少1个") List<ApprovalSettingDO> list) {
-        log.info("type:{}", type);
-        service.saveApprovalSetting(list, type);
+        final int rows = service.saveApprovalSetting(list, type);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_SAVE);
+        }
+        return result.failure(ResultCodeEnum.FAIL_SAVE);
+    }
+
+    @GetMapping("/list")
+    public ResultEntity getList() {
+        final ApprovalSettingVO listConfigs = service.getListConfigs();
+        return result.success(ResultCodeEnum.SUCCESS, listConfigs);
     }
 }
 

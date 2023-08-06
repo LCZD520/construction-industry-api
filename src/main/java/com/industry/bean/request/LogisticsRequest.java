@@ -18,16 +18,17 @@ import java.math.BigDecimal;
  */
 @Data
 public class LogisticsRequest {
-    @Null(message = "主键id必须为空",groups = Insert.class)
+    @Null(message = "主键id必须为空", groups = Insert.class)
     @ApiModelProperty(value = "主键id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "人才主键id")
-    private Integer talentId;
+    @ApiModelProperty(value = "人才/企业主键id")
+    private Integer resourceId;
 
-    @ApiModelProperty(value = "企业主键id")
-    private Integer enterpriseId;
+    @ApiModelProperty(value = "客户名称")
+    @TableField("customer_name")
+    private String customerName;
 
     @ApiModelProperty(value = "后勤记录添加备注")
     private String addRemark;

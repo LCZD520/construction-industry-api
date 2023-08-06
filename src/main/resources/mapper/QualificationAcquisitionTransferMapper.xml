@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAcquisitionTransferMapper">
+    <update id="updateApplicationStatusById">
+        update construction_industry_api.t_qualification_acquisition_transfer
+        set application_status = #{auditStatus}
+        where id = #{qualificationAcquisitionTransferId}
+    </update>
+
+    <select id="getListTransferRecords" resultType="QualificationAcquisitionTransferDO">
+        select id,
+               qualification_acquisition_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_acquisition_transfer
+        where qualification_acquisition_id = #{id}
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="QualificationAcquisitionTransferDO">
+        <id column="id" property="id"/>
+        <result column="qualification_acquisition_id" property="qualificationAcquisitionId"/>
+        <association property="transferCustomers" select="selectTransferCustomersById"
+                     column="qualification_acquisition_id"/>
+        <collection property="listTransferApproveFlows" select="selectListTransferApproveFlowsById" column="id"
+                    ofType="QualificationAcquisitionApprovalFlowDO">
+        </collection>
+    </resultMap>
+
+    <select id="selectListTransferApproveFlowsById" resultType="QualificationAcquisitionApprovalFlowDO">
+        select id,
+               qualification_acquisition_transfer_id,
+               audit_status,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_qualification_acquisition_approval_flow
+        where qualification_acquisition_transfer_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultType="QualificationAcquisitionTransferDO" resultMap="getDetailByIdMap">
+        select id,
+               qualification_acquisition_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_acquisition_transfer
+        where id = #{id}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_acquisition_transfer
+    </select>
+
+    <resultMap id="getListTransferRecordsPageMap" type="QualificationAcquisitionTransferDO">
+        <id column="id" property="id"/>
+        <id column="qualification_acquisition_id" property="qualificationAcquisitionId"/>
+        <association property="transferCustomers" select="selectTransferCustomersById"
+                     column="qualification_acquisition_id"/>
+    </resultMap>
+
+    <select id="selectTransferCustomersById" resultType="String">
+        select transfer_customers
+        from construction_industry_api.t_qualification_acquisition
+        where id = #{qualification_acquisition_id}
+    </select>
+
+    <select id="getListTransferRecordsPage"
+            resultType="QualificationAcquisitionTransferDO" resultMap="getListTransferRecordsPageMap">
+        select id,
+               qualification_acquisition_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_acquisition_transfer
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <resultMap id="listTransferRecordsMap" type="QualificationAcquisitionTransferDO">
+        <id column="id" property="id"/>
+        <result column="transfer_intended_customer" property="transferCustomers"/>
+        <result column="id3" property="qualificationTransferCreatorId"/>
+        <result column="acquisition_intended_customer" property="acquisitionIntendedCustomer"/>
+        <association property="qualificationTransferOrder">
+            <id column="id2" property="id"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="gmt_modified2" property="gmtModified"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="regenerator_id2" property="regeneratorId"/>
+        </association>
+    </resultMap>
+    <select id="listTransferRecords"
+            resultType="QualificationAcquisitionTransferDO"
+            resultMap="listTransferRecordsMap">
+        select tqat.id,
+        tqat.qualification_acquisition_id,
+        tqat.bank_name,
+        tqat.open_bank,
+        tqat.account_name,
+        tqat.bank_card_no,
+        tqat.transfer_amount,
+        tqat.funds_purpose,
+        tqat.application_status,
+        tqat.creator_id,
+        tqat.gmt_create,
+        tqat.regenerator_id,
+        tqat.gmt_modified,
+        tqat.remark,
+        tqa.transfer_customers as transfer_intended_customer,
+        tqto.id as id2,
+        tqto.orderno,
+        tqto.transfer_customer_id,
+        tqto.transaction_amount,
+        tqto.payment_way,
+        tqto.status,
+        tqto.gmt_create as gmt_create2,
+        tqto.gmt_modified as gmt_modified2,
+        tqto.creator_id as creator_id2,
+        tqto.regenerator_id as regenerator_id2,
+        tqto.qualification_transfer_id,
+        tqt.id as id3,
+        tqt.transfer_customers as acquisition_intended_customer
+        from construction_industry_api.t_qualification_acquisition_transfer as tqat
+        left join construction_industry_api.t_qualification_acquisition as tqa
+        on tqat.qualification_acquisition_id = tqa.id
+        left join t_qualification_transfer_order tqto on tqat.qualification_acquisition_id = tqto.transfer_customer_id
+        left join t_qualification_transfer as tqt on tqto.qualification_transfer_id = tqt.id
+        where 1 = 1
+        <if test="search.acquisitionIntendedCustomer != null and search.acquisitionIntendedCustomer != ''">
+            and tqt.transfer_customers like concat('%',#{search.acquisitionIntendedCustomer},'%')
+        </if>
+        <if test="search.transferIntendedCustomer != null and search.transferIntendedCustomer != ''">
+            and tqa.transfer_customers like concat('%',#{search.transferIntendedCustomer},'%')
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and tqat.application_status = #{search.status}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tqat.gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tqat.gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.creatorId != null">
+            and tqat.creator_id &lt;= #{search.creatorId}
+        </if>
+        group by tqat.id
+        order by tqat.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_acquisition_transfer as tqat
+        left join construction_industry_api.t_qualification_acquisition as tqa
+        on tqat.qualification_acquisition_id = tqa.id
+        left join t_qualification_transfer_order tqto on tqat.qualification_acquisition_id = tqto.transfer_customer_id
+        left join t_qualification_transfer as tqt on tqto.qualification_transfer_id = tqt.id
+        where 1 = 1
+        <if test="search.acquisitionIntendedCustomer != null and search.acquisitionIntendedCustomer != ''">
+            and tqt.transfer_customers like concat('%',#{search.acquisitionIntendedCustomer},'%')
+        </if>
+        <if test="search.transferIntendedCustomer != null and search.transferIntendedCustomer != ''">
+            and tqa.transfer_customers like concat('%',#{search.transferIntendedCustomer},'%')
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and tqat.application_status = #{search.status}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tqat.gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tqat.gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.creatorId != null">
+            and tqat.creator_id &lt;= #{search.creatorId}
+        </if>
+    </select>
+</mapper>

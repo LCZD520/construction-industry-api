@@ -25,13 +25,13 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.lc.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.industry.controller"))
                 .build().enable(true);
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("手机商城后台管理系统")
+                .title("广西恒筑系统")
                 .version("1.0.0")
                 .build();
     }

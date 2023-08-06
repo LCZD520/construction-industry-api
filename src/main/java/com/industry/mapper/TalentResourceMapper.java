@@ -2,10 +2,14 @@ package com.industry.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.TalentResourceDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.industry.bean.search.TalentResourceSearch;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -27,4 +31,21 @@ public interface TalentResourceMapper extends BaseMapper<TalentResourceDO> {
     IPage<TalentResourceDO> listSharedTalentResources(Page<TalentResourceDO> page);
 
     IPage<TalentResourceDO> listTalentResourcesByUserId(Page<TalentResourceDO> page, @Param("userId") Integer userId);
+
+    /**
+     * 条件分页获取人才资源列表
+     *
+     * @param page   ListPages<TalentResourceDO> page
+     * @param search TalentResourceSearch
+     * @return List<TalentResourceDO>
+     */
+    List<TalentResourceDO> listTalentResourcesByConditionPages(
+            @Param("page") ListPages<TalentResourceDO> page,
+            @Param("search") TalentResourceSearch search);
+
+    /**
+     * @param search TalentResourceSearch
+     * @return Long
+     */
+    Long getCountByCondition(@Param("search") TalentResourceSearch search);
 }

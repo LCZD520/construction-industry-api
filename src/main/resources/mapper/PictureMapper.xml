@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.PictureMapper">
-    <insert id="insertPictureBatch">
+    <insert id="insertPictureBatch" keyProperty="id" useGeneratedKeys="true">
         insert into construction_industry_api.t_picture
-        value (id,resource_id,namespace,type,name,url,creator_id,gmt_create)
+        (id,resource_id,namespace,type,name,url,creator_id,gmt_create)
         values
-        <foreach collection="list" item="item" separator="," open="(" close=")" index="index">
-            #{id},
-            #{resourceId},
-            #{namespace},
-            #{type},
-            #{name},
-            #{url},
-            #{creatorId},
-            #{gmtCreate}
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.id},
+            #{item.resourceId},
+            #{item.namespace},
+            #{item.type},
+            #{item.name},
+            #{item.url},
+            #{item.creatorId},
+            #{item.gmtCreate})
         </foreach>
     </insert>
+    <insert id="insertPictureBatch2" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_picture
+        (resource_id,namespace,type,name,url,creator_id,gmt_create)
+        values
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.resourceId},
+            #{item.namespace},
+            #{item.type},
+            #{item.name},
+            #{item.url},
+            #{item.creatorId},
+            #{item.gmtCreate})
+        </foreach>
+    </insert>
+    <delete id="deleteBatchByIds">
+        delete from construction_industry_api.t_picture where id in (
+        <foreach collection="listIds" separator="," item="item">
+            #{item}
+        </foreach>
+        )
+    </delete>
+    <delete id="deleteBatchByConditions">
+        delete from construction_industry_api.t_picture where resource_id in (
+        <foreach collection="listDeleteRecordIds" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+        and namespace = #{namespace} and type = #{type}
+    </delete>
 
 
     <select id="listPicturesByResourceId" resultType="PictureDO">
@@ -31,5 +60,49 @@
         where namespace = #{namespace}
           and type = #{type}
           and resource_id = #{resourceId}
+    </select>
+    <select id="listPicturesByIds" resultType="PictureDO">
+        select id, resource_id, namespace, type, name, url, creator_id, gmt_create
+        from construction_industry_api.t_picture
+        where id in (
+        <foreach collection="listIds" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="getListIdsByTitleEvaluationId" resultType="Integer">
+        select id
+        from construction_industry_api.t_picture
+        where resource_id in (
+            select id
+            from construction_industry_api.t_title_assessor
+            where title_evaluation_id = #{id}
+        )
+          and type = 'assessor'
+          and namespace = 'title-evaluation'
+    </select>
+
+    <select id="getListIdsByClassThreePersonId" resultType="Integer">
+        select id
+        from construction_industry_api.t_picture
+        where resource_id in (
+            select id
+            from construction_industry_api.t_class_three_assessor
+            where class_three_person_id = #{id}
+        )
+          and type = 'assessor'
+          and namespace = 'class-three-person'
+    </select>
+
+    <select id="getListIdsByEducationPromotionId" resultType="Integer">
+        select id
+        from construction_industry_api.t_picture
+        where resource_id in (
+            select id
+            from construction_industry_api.t_education_promotion_assessor
+            where education_promotion_id = #{id}
+        )
+          and type = 'assessor'
+          and namespace = 'education-promotion'
     </select>
 </mapper>

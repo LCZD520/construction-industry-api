@@ -1,17 +1,11 @@
 package com.industry.bean.request;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.industry.bean.entity.OrderSelectedTalentDO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Update;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -47,6 +41,7 @@ public class TalentOrderRequest implements Serializable {
     private String orderDemand;
 
     @ApiModelProperty(value = "已选人才")
+    @Size(min = 1, message = "人才列表不能为空")
     private List<OrderSelectedTalentRequest> selectedTalents;
 
 }

@@ -1,7 +1,5 @@
 package com.industry.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.RoleDO;
 import com.industry.mapper.RoleMapper;
@@ -43,9 +41,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RoleDO> implements 
     }
 
     @Override
-    public ListPages<RoleDO> getListRoles(ListPages<RoleDO> page) {
-        page.setList(mapper.getListRoles(page));
-        page.setTotal(mapper.getCount());
+    public ListPages<RoleDO> getListRoles(ListPages<RoleDO> page, String roleName, Boolean enabled) {
+        page.setList(mapper.getListRoles(page, roleName, enabled));
+        page.setTotal(mapper.getCount(roleName, enabled));
         page.setCurrentPage(page.getCurrentPage() / 10 + 1);
         return page;
     }
@@ -53,5 +51,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, RoleDO> implements 
     @Override
     public List<RoleDO> getListRolesAll() {
         return mapper.getListRolesAll();
+    }
+
+    @Override
+    public int disableRole(Integer id) {
+        synchronized (this) {
+            final RoleDO role = mapper.getRoleById(id);
+            if (role == null) {
+                return -1;
+            }
+            return mapper.disableRole(id);
+        }
+    }
+
+    @Override
+    public int enableRole(Integer id) {
+        synchronized (this) {
+            final RoleDO role = mapper.getRoleById(id);
+            if (role == null) {
+                return -1;
+            }
+            return mapper.enableRole(id);
+        }
     }
 }

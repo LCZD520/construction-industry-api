@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author lc
- * @since 2022-07-21
+ * @since 2022-12-24
  */
 @RestController
-@RequestMapping("/talent-approval-flow-do")
+@RequestMapping("/talent-approval-flow")
 public class TalentApprovalFlowController {
 
 }

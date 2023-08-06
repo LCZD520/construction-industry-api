@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyPerformConfirmMapper">
+
+    <select id="selectByQualificationAgencyId"
+            resultType="QualificationAgencyPerformConfirmDO">
+        select id, qualification_agency_id,confirm_result
+        from construction_industry_api.t_qualification_agency_perform_confirm
+        where qualification_agency_id = #{id}
+    </select>
+</mapper>

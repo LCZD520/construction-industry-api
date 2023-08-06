@@ -74,5 +74,8 @@ public class PictureDO implements Serializable {
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)
     private LocalDateTime gmtCreate;
 
+    @ApiModelProperty(value = "文件base64位格式")
+    @TableField(exist = false)
+    private String base64Str;
 
 }

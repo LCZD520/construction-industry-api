@@ -8,9 +8,11 @@ import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.TalentResourceDO;
 import com.industry.bean.request.TalentResourceRequest;
+import com.industry.bean.search.TalentResourceSearch;
 import com.industry.convert.TalentResourceConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.TalentResourceService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Update;
@@ -123,5 +125,19 @@ public class TalentResourceController {
         }
         return result.failure(ResultCodeEnum.ERROR_NOT_EXIST);
     }
+
+    @ApiOperation(value = "条件分页获取人才资源列表", httpMethod = "POST")
+    @PostMapping("/list")
+    public ResultEntity list(@RequestBody TalentResourceSearch search) {
+        ListPages<TalentResourceDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<TalentResourceDO> list
+                = service.listTalentResourcesByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+    
 }
 

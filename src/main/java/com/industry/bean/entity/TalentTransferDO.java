@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_talent_transfer")
-@ApiModel(value="TalentTransferDO对象", description="人才转账表")
+@ApiModel(value = "TalentTransferDO对象", description = "人才转账表")
 public class TalentTransferDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,7 +62,7 @@ public class TalentTransferDO implements Serializable {
 
     @ApiModelProperty(value = "申请状态")
     @TableField("application_status")
-    private Integer applicationStatus;
+    private String applicationStatus;
 
     @ApiModelProperty(value = "创建人id")
     @TableField(value = "creator_id", fill = FieldFill.INSERT)
@@ -90,4 +90,27 @@ public class TalentTransferDO implements Serializable {
     @TableField(exist = false)
     private List<TalentApprovalFlowDO> listTalentApprovalFlows;
 
+    @ApiModelProperty(value = "人才")
+    @TableField(exist = false)
+    private OrderSelectedTalentDO talent;
+
+    @ApiModelProperty(value = "当前审批角色id")
+    @TableField(exist = false)
+    private Integer currentAuditRoleId;
+
+    @ApiModelProperty(value = "人才转账记录")
+    @TableField(exist = false)
+    private List<TalentTransferDO> listTalentTransfers;
+
+    @ApiModelProperty(value = "人才入账记录")
+    @TableField(exist = false)
+    private List<TalentEntryRecordDO> listTalentEntryRecords;
+
+    @ApiModelProperty(value = "人才入账")
+    @TableField(exist = false)
+    private List<TalentEntryDO> listTalentEntrys;
+
+    @ApiModelProperty(value = "订单")
+    @TableField(exist = false)
+    private TalentOrderDO talentOrder;
 }

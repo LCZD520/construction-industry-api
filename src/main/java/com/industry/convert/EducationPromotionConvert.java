@@ -1,9 +1,7 @@
 package com.industry.convert;
 
-import com.industry.bean.entity.CertificateCategoryDO;
-import com.industry.bean.entity.TitleEvaluationDO;
-import com.industry.bean.request.CertificateCategoryRequest;
-import com.industry.bean.request.TitleEvaluationRequest;
+import com.industry.bean.entity.EducationPromotionDO;
+import com.industry.bean.request.EducationPromotionRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -12,12 +10,12 @@ import org.mapstruct.factory.Mappers;
  * @date 2022/7/9
  */
 @Mapper(componentModel = "spring")
-public interface TitleEvaluationConvert {
-    public TitleEvaluationConvert INSTANCE = Mappers.getMapper(TitleEvaluationConvert.class);
+public interface EducationPromotionConvert {
+    public EducationPromotionConvert INSTANCE = Mappers.getMapper(EducationPromotionConvert.class);
     /**
      * 转换成实体类
-     * @param request TitleEvaluationRequest
-     * @return TitleEvaluationDO
+     * @param request EducationPromotionRequest
+     * @return EducationPromotionDO
      */
-    TitleEvaluationDO convertToDo(TitleEvaluationRequest request);
+    EducationPromotionDO convertToDo(EducationPromotionRequest request);
 }

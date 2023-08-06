@@ -1,8 +1,11 @@
 package com.industry.service.impl;
 
-import com.industry.bean.entity.OrderSelectedTalentDO;
-import com.industry.bean.entity.TalentEntryDO;
-import com.industry.bean.entity.TalentEntryRecordDO;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.*;
+import com.industry.bean.search.TalentEntrySearch;
 import com.industry.mapper.OrderSelectedTalentMapper;
 import com.industry.mapper.TalentEntryMapper;
 import com.industry.mapper.TalentEntryRecordMapper;
@@ -12,7 +15,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,5 +97,29 @@ public class TalentEntryServiceImpl extends ServiceImpl<TalentEntryMapper, Talen
         }
         recordService.saveBatch(listNotExists);
         return i;
+    }
+
+    @Override
+    public ListPages<TalentEntryRecordDO> listTalentEntryByConditionPages(ListPages<TalentEntryRecordDO> page, TalentEntrySearch search) {
+        String startDateStr = search.getStartDate();
+        String endDateStr = search.getEndDate();
+        if (startDateStr != null && !StringUtils.isEmpty(startDateStr)) {
+            final LocalDateTime startTime = LocalDateTimeUtil.of(DateUtil.parse(startDateStr));
+            final String newStartTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.beginOfDay(startTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setStartDate(newStartTimeStr);
+        }
+        if (endDateStr != null && !StringUtils.isEmpty(endDateStr)) {
+            final LocalDateTime endTime = LocalDateTimeUtil.of(DateUtil.parse(endDateStr));
+            final String newEndTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.endOfDay(endTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setEndDate(newEndTimeStr);
+        }
+        log.info("search:{}", search);
+        final List<TalentEntryRecordDO> list = mapper.listTalentEntryByConditionPages(page, search);
+        page.setList(list);
+        page.setTotal(mapper.getCountByCondition(search));
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        return page;
     }
 }

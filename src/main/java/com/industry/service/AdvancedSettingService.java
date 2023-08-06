@@ -2,6 +2,7 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.AdvancedSettingDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,4 +23,14 @@ public interface AdvancedSettingService extends IService<AdvancedSettingDO> {
     int deleteById(Integer id);
 
     AdvancedSettingDO queryById(Integer id);
+
+    /**
+     * 条件分页获取列表
+     *
+     * @param page       ListPages<AdvancedSettingDO>
+     * @param configName configName
+     * @param configCode configCode
+     * @return ListPages<AdvancedSettingDO>
+     */
+    ListPages<AdvancedSettingDO> listByConditionPages(ListPages<AdvancedSettingDO> page, String configName, String configCode);
 }

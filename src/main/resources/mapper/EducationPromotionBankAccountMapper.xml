@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EducationPromotionBankAccountMapper">
+
+    <select id="getListEducationPromotionBankAccountById"
+            resultType="EducationPromotionBankAccountRequest">
+        select id,
+               education_promotion_order_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no
+        from construction_industry_api.t_education_promotion_bank_account
+        where education_promotion_order_id = #{id}
+    </select>
+    <select id="getEducationPromotionBankAccountById"
+            resultType="EducationPromotionBankAccountRequest">
+        select id,
+               education_promotion_order_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no
+        from construction_industry_api.t_education_promotion_bank_account
+        where id = #{id}
+    </select>
+</mapper>

@@ -1,13 +1,22 @@
 package com.industry.service.impl;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.AdvancedSettingDO;
+import com.industry.bean.entity.TalentEntryRecordDO;
 import com.industry.mapper.AdvancedSettingMapper;
 import com.industry.service.AdvancedSettingService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -45,5 +54,14 @@ public class AdvancedSettingServiceImpl extends ServiceImpl<AdvancedSettingMappe
     @Override
     public AdvancedSettingDO queryById(Integer id) {
         return mapper.queryById(id);
+    }
+
+    @Override
+    public ListPages<AdvancedSettingDO> listByConditionPages(ListPages<AdvancedSettingDO> page, String configName, String configCode) {
+        final List<AdvancedSettingDO> list = mapper.listByConditionPages(page, configName, configCode);
+        page.setList(list);
+        page.setTotal(mapper.getCountByCondition(configName, configCode));
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        return page;
     }
 }

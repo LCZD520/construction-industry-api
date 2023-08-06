@@ -34,4 +34,12 @@ public interface CertificateCategoryService extends IService<CertificateCategory
      * @return CertificateCategoryDO
      */
     CertificateCategoryDO getDetailById(Integer id);
+
+    /**
+     * 删除证书类别
+     *
+     * @param id 证书类别id
+     * @return 受影响rows
+     */
+    int deleteById(Integer id);
 }

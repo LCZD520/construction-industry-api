@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.InputQuantityStatisticsMapper">
+
+    <resultMap id="listMap" type="InputQuantityStatisticsDO">
+        <id column="user_id" property="userId"/>
+        <collection property="listRoleIds" column="{userId=user_id}" ofType="Integer" select="selectListRoleIds"/>
+    </resultMap>
+    <select id="selectListRoleIds" resultType="Integer">
+        select role_id
+        from t_user_role
+        where user_id = #{userId}
+    </select>
+
+    <select id="list"
+            resultMap="listMap"
+            resultType="InputQuantityStatisticsDO">
+        select tu.user_id,
+               tu.full_name,
+               tm.mechanism_name,
+               ifnull(total_talent, 0)                    as totalTalent,
+               ifnull(total_enterprise, 0)                as totalEnterprise,
+               ifnull(total_qualification_acquisition, 0) as totalQualificationAcquisition,
+               ifnull(total_qualification_transfer, 0)    as totalQualificationTransfer,
+               ifnull(total_qualification_agency, 0)      as totalQualificationAgency,
+               ifnull(total_title_evaluation, 0)          as totalTitleEvaluation,
+               ifnull(total_class_three_person, 0)        as totalClassThreePerson,
+               ifnull(total_education_promotion, 0)       as totalEducationPromotion
+        from t_user as tu
+                 left join (select creator_id, count(*) as total_talent from t_talent group by creator_id) as tt
+                           on tu.user_id = tt.creator_id
+                 left join (select creator_id, count(*) as total_enterprise from t_enterprise group by creator_id) as te
+                           on tu.user_id = te.creator_id
+                 left join (select creator_id, count(*) as total_qualification_acquisition
+                            from t_qualification_acquisition
+                            group by creator_id) as tqa on tu.user_id = tqa.creator_id
+                 left join (select creator_id, count(*) as total_qualification_transfer
+                            from t_qualification_transfer
+                            group by creator_id) as tqt on tu.user_id = tqt.creator_id
+                 left join (select creator_id, count(*) as total_qualification_agency
+                            from t_qualification_agency
+                            group by creator_id) as tqa2 on tu.user_id = tqa2.creator_id
+                 left join (select creator_id, count(*) as total_title_evaluation
+                            from t_title_evaluation
+                            group by creator_id) as tte on tu.user_id = tte.creator_id
+                 left join (select creator_id, count(*) as total_class_three_person
+                            from t_class_three_person
+                            group by creator_id) as tctp on tu.user_id = tctp.creator_id
+                 left join (select creator_id, count(*) as total_education_promotion
+                            from t_education_promotion
+                            group by creator_id) as tep on tu.user_id = tep.creator_id
+                 left join t_mechanism as tm on tm.mechanism_id = tu.mechanism_id
+        order by tu.user_id
+    </select>
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.ClassThreePersonOrderMapper">
+
+    <insert id="insertOrder" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_class_three_person_order
+        (orderno, class_three_person_id, assessor_num, agency_total_amount, creator_id, gmt_create, regenerator_id,
+         gmt_modified)
+        values (#{orderno},
+                #{classThreePersonId},
+                #{assessorNum},
+                #{agencyTotalAmount},
+                #{creatorId},
+                #{gmtCreate},
+                #{regeneratorId},
+                #{gmtModified})
+    </insert>
+    <select id="listOrders" resultType="ClassThreePersonOrderDO">
+        select id,
+               orderno,
+               class_three_person_id,
+               assessor_num,
+               agency_total_amount,
+               order_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_class_three_person_order
+        where class_three_person_id = #{id}
+        order by id desc
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="ClassThreePersonOrderDO">
+        <id column="id" property="id"/>
+        <association property="classThreePerson" select="selectClassThreePersonById"
+                     column="class_three_person_id"/>
+        <association property="totalEvaluationFee" select="selectTotalEvaluationFee"
+                     column="class_three_person_order_id"/>
+        <collection property="listAssessors" ofType="ClassThreeAssessorDO">
+            <id column="id2" property="id"/>
+            <result column="class_three_person_id2" property="classThreePersonId"/>
+            <result column="creator_id2" property="creatorId"/>
+            <result column="gmt_create2" property="gmtCreate"/>
+            <result column="regenerator_id2" property="regeneratorId"/>
+            <result column="gmt_modified2" property="gmtModified"/>
+        </collection>
+    </resultMap>
+    <select id="selectTotalEvaluationFee" resultType="BigDecimal">
+        select sum(evaluation_fee)
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_order_id = #{class_three_person_order_id}
+    </select>
+
+    <select id="getDetailById" resultType="ClassThreePersonOrderDO" resultMap="getDetailByIdMap">
+        select t1.id,
+               t1.orderno,
+               t1.class_three_person_id,
+               t1.assessor_num,
+               t1.agency_total_amount,
+               t1.order_status,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t2.id                    as id2,
+               t2.class_three_person_id as class_three_person_id2,
+               t2.class_three_person_order_id,
+               t2.full_name,
+               t2.sex,
+               t2.identity_card,
+               t2.telephone_number,
+               t2.security_certificate,
+               t2.three_category,
+               t2.item_nature,
+               t2.min_zheng_tong_account,
+               t2.min_zheng_tong_password,
+               t2.agency_amount,
+               t2.creator_id,
+               t2.gmt_create,
+               t2.regenerator_id,
+               t2.gmt_modified,
+               t2.evaluation_fee,
+               t2.agency_amount,
+               t2.evaluation_status,
+               t2.creator_id            as creator_id2,
+               t2.gmt_create            as gmt_create2,
+               t2.regenerator_id        as regenerator_id2,
+               t2.gmt_modified          as gmt_modified2
+        from construction_industry_api.t_class_three_person_order as t1
+                 left join construction_industry_api.t_class_three_assessor as t2
+                           on t1.id = t2.class_three_person_order_id
+        where t1.id = #{id}
+    </select>
+    <select id="getCountListAllOrders" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_class_three_person_order as tteo
+        left join construction_industry_api.t_class_three_person as tte on tte.id = tteo.class_three_person_id
+        where 1 = 1
+        <if test="customerName != null and customerName != ''">
+            and tte.customer_name like concat('%',#{customerName},'%')
+        </if>
+        <if test="status != null">
+            and tteo.order_status = #{status}
+        </if>
+    </select>
+
+    <resultMap id="listAllOrdersMap" type="ClassThreePersonOrderDO">
+        <id column="id" property="id"/>
+        <association property="classThreePerson" select="selectClassThreePersonById"
+                     column="class_three_person_id">
+        </association>
+    </resultMap>
+
+    <select id="selectClassThreePersonById" resultType="ClassThreePersonDO">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               status,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               creator_id
+        from construction_industry_api.t_class_three_person
+        where id = #{class_three_person_id}
+    </select>
+
+    <select id="listAllOrders" resultType="ClassThreePersonOrderDO" resultMap="listAllOrdersMap">
+        select
+        tteo.id,
+        tteo.orderno,
+        tteo.class_three_person_id,
+        tteo.assessor_num,
+        tteo.agency_total_amount,
+        tteo.order_status,
+        tteo.creator_id,
+        tteo.gmt_create,
+        tteo.regenerator_id,
+        tteo.gmt_modified
+        from construction_industry_api.t_class_three_person_order as tteo
+        left join construction_industry_api.t_class_three_person as tte on tte.id = tteo.class_three_person_id
+        where 1 = 1
+        <if test="customerName != null and customerName != ''">
+            and tte.customer_name like concat('%',#{customerName},'%')
+        </if>
+        <if test="status != null">
+            and tteo.order_status = #{status}
+        </if>
+        order by tteo.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="selectIdsByIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_class_three_assessor where id in
+        (<foreach collection="ids" item="item" separator=",">
+        #{item}
+    </foreach>)
+    </select>
+    <select id="selectOrderById" resultType="ClassThreePersonOrderDO">
+        select id,
+               orderno,
+               class_three_person_id,
+               assessor_num,
+               agency_total_amount,
+               order_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_class_three_person_order
+        where id = #{id}
+    </select>
+    <select id="listAssessorsByOrderId" resultType="ClassThreeAssessorDO">
+        select id,
+               class_three_person_id,
+               class_three_person_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               security_certificate,
+               three_category,
+               item_nature,
+               min_zheng_tong_account,
+               min_zheng_tong_password,
+               agency_amount,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               evaluation_fee,
+               evaluation_status
+        from construction_industry_api.t_class_three_assessor
+        where class_three_person_order_id = #{id}
+    </select>
+
+
+    <update id="updateAssessorByIds">
+        update construction_industry_api.t_class_three_assessor
+        set agency_amount = case id
+        <foreach collection="list" item="item" index="index">
+            when #{item.id} then #{item.agencyAmount}
+        </foreach>
+        end,
+        evaluation_fee = case id
+        <foreach collection="list" item="item" index="index">
+            when #{item.id} then #{item.evaluationFee}
+        </foreach>
+        end
+        where id in
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+    <update id="updateOrderById">
+        update construction_industry_api.t_class_three_person_order
+        set order_status = #{status}
+        where id = #{id}
+    </update>
+</mapper>

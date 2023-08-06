@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,11 @@ public class TalentOrderDO implements Serializable {
     @TableField("order_demand")
     private String orderDemand;
 
+
+    @ApiModelProperty(value = "订单来源")
+    @TableField("source")
+    private String source;
+
     @ApiModelProperty(value = "创建人id")
     @TableField(value = "creator_id", fill = FieldFill.INSERT)
     private Integer creatorId;
@@ -75,11 +81,20 @@ public class TalentOrderDO implements Serializable {
 
     @ApiModelProperty(value = "已选人才")
     @TableField(exist = false)
+    @Size(min = 1, message = "请选择人才")
     private List<OrderSelectedTalentDO> selectedTalents;
 
     @ApiModelProperty(value = "企业需求")
     @TableField(exist = false)
     private List<EnterpriseDemandDO> enterpriseDemands;
+
+    @ApiModelProperty(value = "企业录入人id")
+    @TableField(exist = false)
+    private Integer enterpriseCreatorId;
+
+    @ApiModelProperty(value = "资质代办录入人id")
+    @TableField(exist = false)
+    private Integer qualificationAgencyCreatorId;
 
 
 }

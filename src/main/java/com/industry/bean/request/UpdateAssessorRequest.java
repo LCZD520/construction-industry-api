@@ -3,7 +3,10 @@ package com.industry.bean.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -11,15 +14,19 @@ import java.util.List;
  * @date 2022/9/17
  */
 @Data
-public class UnselectedAssessorRequest {
+public class UpdateAssessorRequest {
 
-    @ApiModelProperty(value = "当前页")
-    @NotNull(message = "当前页不能为空")
-    private Long currentPage;
+    @ApiModelProperty(value = "评审人员id")
+    @NotNull(message = "评审人员id不能为空")
+    private Integer id;
 
-    @ApiModelProperty(value = "页数大小")
-    private Long pageSize;
+    @ApiModelProperty(value = "代办费用")
+    @NotNull(message = "代办费用不能为空")
+    @DecimalMin(value = "0.01", message = "代办费用必须大于0")
+    private BigDecimal agencyAmount;
 
-    @ApiModelProperty(value = "已选评审人员id")
-    private List<Integer> listSelectedIds;
+    @ApiModelProperty(value = "评审费用")
+    @NotNull(message = "评审费用不能为空")
+    @DecimalMin(value = "0.01", message = "评审费用必须大于0")
+    private BigDecimal evaluationFee;
 }

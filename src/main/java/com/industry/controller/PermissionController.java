@@ -2,6 +2,7 @@ package com.industry.controller;
 
 
 import com.industry.bean.entity.PermissionDO;
+import com.industry.bean.entity.RolePermissionDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.PermissionService;
 import com.industry.bean.common.ResultEntity;
@@ -49,12 +50,16 @@ public class PermissionController {
         return result.success(ResultCodeEnum.INSERT_FAILURE);
     }
 
-    @GetMapping("/get-list-permissions")
+    @GetMapping("/list")
     public ResultEntity queryList() {
-        Map<String, List<PermissionDO>> map = new HashMap<>();
         List<PermissionDO> permissions = service.queryListPermissions();
-        map.put("listPermissions",permissions);
-        return result.success(ResultCodeEnum.SUCCESS, map);
+        return result.success(ResultCodeEnum.SUCCESS, permissions);
+    }
+
+    @GetMapping("/list/{id}")
+    public ResultEntity queryListByRoleId(@PathVariable("id") Integer id) {
+        List<Integer> permissions = service.queryListPermissionsByRoleId(id);
+        return result.success(ResultCodeEnum.SUCCESS, permissions);
     }
 
 }

@@ -55,6 +55,7 @@ public class EnterpriseDemandRequest {
     @ApiModelProperty(value = "市场开发费单位")
     private Integer marketDevelopmentFeeUnit;
 
+    @NotNull(message = "职称不能为空", groups = {Insert.class, Update.class})
     @ApiModelProperty(value = "职称")
     private Integer title;
 

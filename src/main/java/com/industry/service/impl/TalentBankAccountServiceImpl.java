@@ -30,7 +30,9 @@ public class TalentBankAccountServiceImpl extends ServiceImpl<TalentBankAccountM
 
     @Override
     public int insert(TalentBankAccountDO talentBankAccountDO) {
-        return mapper.insert(talentBankAccountDO);
+        synchronized (this) {
+            return mapper.insert(talentBankAccountDO);
+        }
     }
 
     @Override
@@ -40,11 +42,13 @@ public class TalentBankAccountServiceImpl extends ServiceImpl<TalentBankAccountM
 
     @Override
     public int deleteById(Integer id) {
-        final TalentBankAccountDO talentBankAccountDO = mapper.selectById(id);
-        if (talentBankAccountDO == null) {
-            return -1;
+        synchronized (this) {
+            final TalentBankAccountDO talentBankAccountDO = mapper.selectById(id);
+            if (talentBankAccountDO == null) {
+                return -1;
+            }
+            return mapper.deleteById(id);
         }
-        return mapper.deleteById(id);
     }
 
     @Override
@@ -54,10 +58,12 @@ public class TalentBankAccountServiceImpl extends ServiceImpl<TalentBankAccountM
 
     @Override
     public int updateTalentBankAccountById(TalentBankAccountDO talentBankAccountDO) {
-        final TalentBankAccountDO talentBankAccount = mapper.selectById(talentBankAccountDO.getId());
-        if (talentBankAccount == null) {
-            return -1;
+        synchronized (this) {
+            final TalentBankAccountDO talentBankAccount = mapper.selectById(talentBankAccountDO.getId());
+            if (talentBankAccount == null) {
+                return -1;
+            }
+            return mapper.updateById(talentBankAccountDO);
         }
-        return mapper.updateById(talentBankAccountDO);
     }
 }

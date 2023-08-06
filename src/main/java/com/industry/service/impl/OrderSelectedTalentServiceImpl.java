@@ -9,6 +9,7 @@ import com.industry.bean.entity.OrderSelectedTalentDO;
 import com.industry.bean.entity.TalentOrderDO;
 import com.industry.mapper.EnterpriseDemandMapper;
 import com.industry.mapper.OrderSelectedTalentMapper;
+import com.industry.mapper.TalentMapper;
 import com.industry.mapper.TalentOrderMapper;
 import com.industry.service.OrderSelectedTalentService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class OrderSelectedTalentServiceImpl extends ServiceImpl<OrderSelectedTal
 
     private TalentOrderMapper talentOrderMapper;
 
+    private TalentMapper talentMapper;
+
     private EnterpriseDemandMapper demandMapper;
 
     @Autowired
@@ -43,6 +46,11 @@ public class OrderSelectedTalentServiceImpl extends ServiceImpl<OrderSelectedTal
     @Autowired
     public void setMapper(OrderSelectedTalentMapper mapper) {
         this.mapper = mapper;
+    }
+
+    @Autowired
+    public void setTalentMapper(TalentMapper talentMapper) {
+        this.talentMapper = talentMapper;
     }
 
     @Autowired
@@ -71,6 +79,7 @@ public class OrderSelectedTalentServiceImpl extends ServiceImpl<OrderSelectedTal
             return 0;
         }
         talentOrderMapper.updateOrderStatus(order.getTalentOrderId());
+        talentMapper.updateTalentStatusById(order.getTalentId(), 3);
         return mapper.updateConfirmById(id);
     }
 

@@ -3,6 +3,7 @@ package com.industry.service;
 import com.industry.bean.entity.TalentBankAccountDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.industry.bean.request.TalentBankAccountRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public interface TalentBankAccountService extends IService<TalentBankAccountDO> 
      * @param talentBankAccountDO talentBankAccountDO实体
      * @return 受影响行数
      */
+    @Transactional(rollbackFor = Exception.class)
     int insert(TalentBankAccountDO talentBankAccountDO);
 
     /**
@@ -38,6 +40,7 @@ public interface TalentBankAccountService extends IService<TalentBankAccountDO> 
      * @param id 银行账户id
      * @return -1(不存在该记录) 1(删除成功) 0(删除失败)
      */
+    @Transactional(rollbackFor = Exception.class)
     int deleteById(Integer id);
 
     /**
@@ -54,5 +57,6 @@ public interface TalentBankAccountService extends IService<TalentBankAccountDO> 
      * @param talentBankAccountDO talentBankAccountDO实体
      * @return -1(不存在该记录) 1(更新成功) 0(更新失败)
      */
+    @Transactional(rollbackFor = Exception.class)
     int updateTalentBankAccountById(TalentBankAccountDO talentBankAccountDO);
 }

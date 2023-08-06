@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author lc
- * @since 2022-07-21
+ * @since 2022-12-24
  */
 public interface TalentApprovalFlowService extends IService<TalentApprovalFlowDO> {
 

@@ -56,11 +56,13 @@ public class RoleController {
 
     @GetMapping("/list")
     public ResultEntity getListRoles(@RequestParam("currentPage") Long currentPage
-            , @RequestParam("pageSize") Long pageSize) {
+            , @RequestParam("pageSize") Long pageSize
+            , @RequestParam(value = "roleName", required = false, defaultValue = "") String roleName
+            , @RequestParam(value = "enabled", required = false) Boolean enabled) {
         ListPages<RoleDO> page = new ListPages<>();
         page.setPageSize(pageSize);
         page.setCurrentPage((currentPage - 1) * pageSize);
-        ListPages<RoleDO> list = service.getListRoles(page);
+        ListPages<RoleDO> list = service.getListRoles(page, roleName, enabled);
         return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
@@ -94,5 +96,24 @@ public class RoleController {
     public void delete() {
 
     }
+
+    @PostMapping("/disable/{id}")
+    public ResultEntity disableRole(@PathVariable("id") Integer id) {
+        final int row = service.disableRole(id);
+        if (row > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_ROLE_DISABLE);
+        }
+        return result.failure(ResultCodeEnum.ROLE_NOT_FOUND);
+    }
+
+    @PostMapping("/enable/{id}")
+    public ResultEntity enableRole(@PathVariable("id") Integer id) {
+        final int row = service.enableRole(id);
+        if (row > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_ROLE_ENABLED);
+        }
+        return result.failure(ResultCodeEnum.ROLE_NOT_FOUND);
+    }
+
 }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.QualificationAcquisitionApplicationMapper">
 
-    <select id="queryList" resultType="com.industry.bean.entity.QualificationAcquisitionApplication">
+    <select id="queryList" resultType="QualificationAcquisitionApplication">
         select qualification_acquisition_application_id,
                gmt_create,
                gmt_modified,
@@ -13,9 +13,9 @@
                applied_transfer_amount,
                purpose_funds,
                transfer_account
-        from t_qualification_acquisition_application
+        from construction_industry_api.t_qualification_acquisition_application
     </select>
-    <select id="queryById" resultType="com.industry.bean.entity.QualificationAcquisitionApplication" parameterType="Integer">
+    <select id="queryById" resultType="QualificationAcquisitionApplication" parameterType="Integer">
         select qualification_acquisition_application_id,
                gmt_create,
                gmt_modified,
@@ -26,7 +26,7 @@
                applied_transfer_amount,
                purpose_funds,
                transfer_account
-        from t_qualification_acquisition_application
+        from construction_industry_api.t_qualification_acquisition_application
         where qualification_acquisition_application_id = #{id}
     </select>
 </mapper>

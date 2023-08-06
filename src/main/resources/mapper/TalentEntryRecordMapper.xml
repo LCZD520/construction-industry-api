@@ -5,7 +5,11 @@
     <resultMap id="listTalentEntryRecordsMap" type="TalentEntryRecordDO">
         <id column="id" property="id"/>
         <result column="talent_entry_id" property="talentEntryId"/>
+        <result column="talent_order_id" property="talentOrderId"/>
         <association property="talentEntry" column="talent_entry_id" select="selectTalentEntry">
+            <id column="id" property="id"/>
+        </association>
+        <association property="talentOrder" column="talent_order_id" select="selectTalentOrder">
             <id column="id" property="id"/>
         </association>
     </resultMap>
@@ -187,5 +191,11 @@
                  left join construction_industry_api.t_talent_entry as t2
                            on t2.id = t1.talent_entry_id
         where t1.id = #{id}
+    </select>
+    <select id="selectByIdAndStatus" resultType="Integer">
+        select count(*)
+        from construction_industry_api.t_talent_entry_record
+        where talent_id = #{id}
+          and status = #{status}
     </select>
 </mapper>

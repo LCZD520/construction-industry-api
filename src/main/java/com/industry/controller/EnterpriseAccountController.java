@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 公司账户表 前端控制器
@@ -48,6 +50,12 @@ public class EnterpriseAccountController {
                 , iPage.getCurrent()
                 , iPage.getSize());
         return result.success(ResultCodeEnum.SUCCESS, listPages);
+    }
+
+    @GetMapping("/list-all")
+    public ResultEntity get() {
+        List<EnterpriseAccountDO> list = service.getListAll();
+        return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
     @PostMapping("/insert")

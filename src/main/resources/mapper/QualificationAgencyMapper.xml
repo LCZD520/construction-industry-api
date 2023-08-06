@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.QualificationAgencyMapper">
+    <update id="updateStatusById">
+        update construction_industry_api.t_qualification_agency
+        set status = #{status}
+        where id = #{id}
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_qualification_agency
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>
 
     <select id="listQualificationAgencys" resultType="QualificationAgencyDO">
         select id,
@@ -97,5 +107,83 @@
                  left join construction_industry_api.t_qualification_agency_other_person t3
                            on t1.id = t3.qualification_agency_id
         where t1.id = #{id}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from t_qualification_agency
+        where 1 = 1
+        <if test="search.agencyCompany != null and search.agencyCompany != ''">
+            and agency_company like concat('%',#{search.agencyCompany},'%')
+        </if>
+        <if test="search.agencyQualification != null and search.agencyQualification != ''">
+            and json_contains(agency_qualification,json_array(#{search.agencyQualification}))
+        </if>
+        <if test="search.area != null and search.area.size() > 0">
+            and area in(
+            <foreach collection="search.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+    </select>
+    <select id="listQualificationAgencysByConditionPages"
+            resultType="QualificationAgencyDO">
+        select id,
+        agency_company,
+        payment_way,
+        area,
+        agency_amount,
+        status,
+        creator_id,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        remark,
+        agency_qualification
+        from t_qualification_agency
+        where 1 = 1
+        <if test="search.agencyCompany != null and search.agencyCompany != ''">
+            and agency_company like concat('%',#{search.agencyCompany},'%')
+        </if>
+        <if test="search.agencyQualification != null and search.agencyQualification != ''">
+            and json_contains(agency_qualification,json_array(#{search.agencyQualification}))
+        </if>
+        <if test="search.area != null and search.area.size() > 0">
+            and area in(
+            <foreach collection="search.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
     </select>
 </mapper>

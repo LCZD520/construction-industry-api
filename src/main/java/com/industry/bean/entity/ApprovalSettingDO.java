@@ -34,10 +34,6 @@ public class ApprovalSettingDO implements Serializable {
     @TableField("role_id")
     private Integer roleId;
 
-    @ApiModelProperty(value = "排序")
-    @TableField("sort")
-    private Integer sort;
-
     @ApiModelProperty(value = "类型")
     @TableField("type")
     private Integer type;

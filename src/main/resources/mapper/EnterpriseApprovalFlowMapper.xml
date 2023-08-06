@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.EnterpriseApprovalFlowMapper">
+    <insert id="insertAuditRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into construction_industry_api.t_enterprise_approval_flow
+        (enterprise_transfer_id, audit_status, audit_result, approval_opinion, next_audit_role_id, creator_id,
+         gmt_create)
+        values (#{enterpriseTransferId},
+                #{auditStatus},
+                #{auditResult},
+                #{approvalOpinion},
+                #{nextAuditRoleId},
+                #{creatorId},
+                #{gmtCreate})
+    </insert>
+
+    <resultMap id="getLatestRecordByTalentTransferIdMap" type="EnterpriseApprovalFlowDO">
+        <id column="id" property="id"/>
+        <result column="audit_result" property="auditResult" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <select id="getLatestRecordByEnterpriseTransferId"
+            resultType="EnterpriseApprovalFlowDO" resultMap="getLatestRecordByTalentTransferIdMap">
+        select id,
+               enterprise_transfer_id,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_enterprise_approval_flow
+        where id =
+              (select max(id)
+               from construction_industry_api.t_enterprise_approval_flow
+               where enterprise_transfer_id = #{enterpriseTransferId})
+    </select>
+    <select id="getListAudits" resultType="EnterpriseApprovalFlowDO">
+        select id,
+               enterprise_transfer_id,
+               audit_status,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_enterprise_approval_flow
+        where enterprise_transfer_id = #{id}
+    </select>
+</mapper>

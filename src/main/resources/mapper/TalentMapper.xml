@@ -4,8 +4,10 @@
 
     <insert id="save" parameterType="TalentDO" useGeneratedKeys="true" keyProperty="id">
         insert into construction_industry_api.t_talent
-        values ( #{id}
-               , #{fullName}
+        (full_name, sex, area, social_security, telephone_number, qq_number, education, title, tender_exit,
+         class_three_personnel, issue_cert_time, continuing_education_date, certificate_status, talent_status,
+         talent_price, talent_price_number, number_unit, creator_id, gmt_create, regenerator_id, gmt_modified, remark)
+        values ( #{fullName}
                , #{sex}
                , #{area}
                , #{socialSecurity}
@@ -35,6 +37,16 @@
         <foreach collection="listTalentIds" open="(" close=")" item="item" separator=",">
             #{item}
         </foreach>
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_talent
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>
+    <update id="updateTalentStatusById">
+        update construction_industry_api.t_talent
+        set talent_status = #{status}
+        where id = #{id}
     </update>
 
     <resultMap id="certificateMap" type="TalentCertificateDO">
@@ -145,5 +157,302 @@
              on t1.id = t2.talent_id
         where t1.id = #{id}
         order by t1.id desc
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent
+        where 1 = 1
+        <bind name="talent.fullName" value="talent.fullName"/>
+        <if test="talent.fullName != null and talent.fullName != ''">
+            and full_name like concat('%',#{talent.fullName},'%')
+        </if>
+        <if test="talent.levelMajor != null or talent.levelMajor != '' or talent.initialConversion != null">
+            and id in (
+            select distinct (talent_id)
+            from construction_industry_api.t_talent_certificate
+            <bind name="talent.levelMajor" value="talent.levelMajor"/>
+            where 1 = 1
+            <if test="talent.levelMajor != null and talent.levelMajor != ''">
+                and json_contains(level_major, json_array(#{talent.levelMajor}))
+            </if>
+            <bind name="talent.initialConversion" value="talent.initialConversion"/>
+            <if test="talent.initialConversion != null">
+                and initial_conversion = #{talent.initialConversion}
+            </if>)
+        </if>
+        <bind name="talent.area" value="talent.area"/>
+        <if test="talent.area != null and talent.area.size() > 0">
+            and area in(
+            <foreach collection="talent.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <bind name="talent.socialSecurity" value="talent.socialSecurity"/>
+        <if test="talent.socialSecurity != null and talent.socialSecurity.size() > 0">
+            and social_security in(
+            <foreach collection="talent.socialSecurity" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <bind name="talent.title" value="talent.title"/>
+        <if test="talent.title != null">
+            and title = #{talent.title}
+        </if>
+        <bind name="talent.classThreePersonnel" value="talent.classThreePersonnel"/>
+        <if test="talent.classThreePersonnel != null">
+            and class_three_personnel = #{talent.classThreePersonnel}
+        </if>
+        <bind name="talent.tenderExit" value="talent.tenderExit"/>
+        <if test="talent.tenderExit != null">
+            and tender_exit = #{talent.tenderExit}
+        </if>
+        <bind name="talent.talentStatus" value="talent.talentStatus"/>
+        <if test="talent.talentStatus != null">
+            and talent_status = #{talent.talentStatus}
+        </if>
+        <bind name="talent.creatorId" value="talent.creatorId"/>
+        <if test="talent.creatorId != null">
+            and creator_id = #{talent.creatorId}
+        </if>
+        <bind name="talent.startDate" value="talent.startDate"/>
+        <if test="talent.startDate != null and talent.startDate != ''">
+            and gmt_create &gt;= #{talent.startDate}
+        </if>
+        <bind name="talent.endDate" value="talent.endDate"/>
+        <if test="talent.endDate != null and talent.endDate != ''">
+            and gmt_create &lt;= #{talent.endDate}
+        </if>
+        <bind name="talent.deleted" value="talent.deleted"/>
+        <if test="talent.deleted != null">
+            and is_deleted = #{talent.deleted}
+        </if>
+    </select>
+    <select id="listTalents" resultType="TalentDO" resultMap="talentMap2">
+        select id,
+        full_name,
+        sex,
+        area,
+        social_security,
+        telephone_number,
+        qq_number,
+        education,
+        title,
+        tender_exit,
+        class_three_personnel,
+        issue_cert_time,
+        continuing_education_date,
+        certificate_status,
+        talent_status,
+        talent_price,
+        talent_price_number,
+        number_unit,
+        creator_id,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        remark
+        from construction_industry_api.t_talent
+        where 1 = 1
+        <bind name="talent.fullName" value="talent.fullName"/>
+        <if test="talent.fullName != null and talent.fullName != ''">
+            and full_name like concat('%',#{talent.fullName},'%')
+        </if>
+        <if test="talent.levelMajor != null or talent.levelMajor != '' or talent.initialConversion != null">
+            and id in (
+            select distinct (talent_id)
+            from construction_industry_api.t_talent_certificate
+            <bind name="talent.levelMajor" value="talent.levelMajor"/>
+            where 1 = 1
+            <if test="talent.levelMajor != null and talent.levelMajor != ''">
+                and json_contains(level_major, json_array(#{talent.levelMajor}))
+            </if>
+            <bind name="talent.initialConversion" value="talent.initialConversion"/>
+            <if test="talent.initialConversion != null">
+                and initial_conversion = #{talent.initialConversion}
+            </if>)
+        </if>
+        <bind name="talent.area" value="talent.area"/>
+        <if test="talent.area != null and talent.area.size() > 0">
+            and area in(
+            <foreach collection="talent.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <bind name="talent.socialSecurity" value="talent.socialSecurity"/>
+        <if test="talent.socialSecurity != null and talent.socialSecurity.size() > 0">
+            and social_security in(
+            <foreach collection="talent.socialSecurity" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <bind name="talent.title" value="talent.title"/>
+        <if test="talent.title != null">
+            and title = #{talent.title}
+        </if>
+        <bind name="talent.classThreePersonnel" value="talent.classThreePersonnel"/>
+        <if test="talent.classThreePersonnel != null">
+            and class_three_personnel = #{talent.classThreePersonnel}
+        </if>
+        <bind name="talent.tenderExit" value="talent.tenderExit"/>
+        <if test="talent.tenderExit != null">
+            and tender_exit = #{talent.tenderExit}
+        </if>
+        <bind name="talent.talentStatus" value="talent.talentStatus"/>
+        <if test="talent.talentStatus != null">
+            and talent_status = #{talent.talentStatus}
+        </if>
+        <bind name="talent.creatorId" value="talent.creatorId"/>
+        <if test="talent.creatorId != null">
+            and creator_id = #{talent.creatorId}
+        </if>
+        <bind name="talent.startDate" value="talent.startDate"/>
+        <if test="talent.startDate != null and talent.startDate != ''">
+            and gmt_create &gt;= #{talent.startDate}
+        </if>
+        <bind name="talent.endDate" value="talent.endDate"/>
+        <if test="talent.endDate != null and talent.endDate != ''">
+            and gmt_create &lt;= #{talent.endDate}
+        </if>
+        <bind name="talent.deleted" value="talent.deleted"/>
+        <if test="talent.deleted != null">
+            and is_deleted = #{talent.deleted}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <resultMap id="getAlternativeTalentsMap" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection property="listCertificates" ofType="TalentCertificateDO" select="selectListCertificatesById"
+                    column="id"/>
+    </resultMap>
+
+    <select id="selectListCertificatesById" resultType="TalentCertificateDO">
+        select id,
+               talent_id,
+               remark,
+               level_major,
+               initial_conversion,
+               issue_cert_time,
+               continuing_education_date,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_certificate
+        where talent_id = #{id}
+    </select>
+
+    <select id="getAlternativeTalents" resultType="TalentDO" resultMap="getAlternativeTalentsMap">
+        select id, full_name, sex, area, social_security, telephone_number, qq_number, education, title, tender_exit,
+        class_three_personnel, issue_cert_time, continuing_education_date, certificate_status, talent_status,
+        talent_price, talent_price_number, number_unit, creator_id, gmt_create, regenerator_id, gmt_modified, remark
+        from construction_industry_api.t_talent
+        where id in (
+        select distinct (talent_id)
+        from construction_industry_api.t_talent_certificate
+        where
+        <if test="search.levelMajorInitialConversion != null and search.levelMajorInitialConversion.size() > 0">
+            <foreach collection="search.levelMajorInitialConversion" item="item" separator="or">
+                (json_contains(level_major, #{item.levelMajor}) and initial_conversion = #{item.initialConversion})
+            </foreach>
+        </if>
+        )
+        <if test="search.tenderExit != null">
+            and tender_exit = #{search.tenderExit}
+        </if>
+        and talent_status = 1
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getAlternativeTalentsCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent
+        where id in (
+        select distinct (talent_id)
+        from construction_industry_api.t_talent_certificate
+        where
+        <if test="search.levelMajorInitialConversion != null and search.levelMajorInitialConversion.size() > 0">
+            <foreach collection="search.levelMajorInitialConversion" item="item" separator="or">
+                (json_contains(level_major, #{item.levelMajor}) and initial_conversion = #{item.initialConversion})
+            </foreach>
+        </if>
+        )
+        <if test="search.tenderExit != null">
+            and tender_exit = #{search.tenderExit}
+        </if>
+        and talent_status = 1
+    </select>
+    <select id="getOrderedTalentIds" resultType="String">
+        select full_name from construction_industry_api.t_talent where id in (
+        <foreach collection="listTalentIds" separator="," item="item">
+            #{item}
+        </foreach>
+        ) and talent_status != 1
+    </select>
+    <select id="getCanOrderTalentIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_talent
+        where talent_status = 1
+    </select>
+    <select id="getTalentsByCondition2" resultType="TalentDO" resultMap="talentMap2">
+        select id, full_name, sex, area, social_security, telephone_number, qq_number, education, title, tender_exit,
+        class_three_personnel, issue_cert_time, continuing_education_date, certificate_status, talent_status,
+        talent_price, talent_price_number, number_unit, creator_id, gmt_create, regenerator_id, gmt_modified, remark
+        from construction_industry_api.t_talent
+        where talent_status = 1
+        <bind name="search.fullName" value="search.fullName"/>
+        <if test="search.fullName != null and search.fullName != ''">
+            and full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <bind name="search.levelMajor" value="search.levelMajor"/>
+        <if test="search.levelMajor != null and search.levelMajor != ''">
+            and id in (
+            select distinct (talent_id)
+            from construction_industry_api.t_talent_certificate
+            where json_contains(level_major, json_array(#{search.levelMajor}))
+            )
+        </if>
+        <bind name="search.tenderExit" value="search.tenderExit"/>
+        <if test="search.tenderExit != null">
+            and tender_exit = #{search.tenderExit}
+        </if>
+        <bind name="search.listSelectedIds" value="search.listSelectedIds"/>
+        <if test="search.listSelectedIds != null and search.listSelectedIds.size() > 0">
+            and id not in(
+            <foreach collection="search.listSelectedIds" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getTalentsCountByCondition2" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent
+        where talent_status = 1
+        <bind name="search.fullName" value="search.fullName"/>
+        <if test="search.fullName != null and search.fullName != ''">
+            and full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <bind name="search.levelMajor" value="search.levelMajor"/>
+        <if test="search.levelMajor != null and search.levelMajor != ''">
+            and id in (
+            select distinct (talent_id)
+            from construction_industry_api.t_talent_certificate
+            where json_contains(level_major, json_array(#{search.levelMajor}))
+            )
+        </if>
+        <bind name="search.tenderExit" value="search.tenderExit"/>
+        <if test="search.tenderExit != null">
+            and tender_exit = #{search.tenderExit}
+        </if>
+        <bind name="search.listSelectedIds" value="search.listSelectedIds"/>
+        <if test="search.listSelectedIds != null and search.listSelectedIds.size() > 0">
+            and id not in(
+            <foreach collection="search.listSelectedIds" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
     </select>
 </mapper>

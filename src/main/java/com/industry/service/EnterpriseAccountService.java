@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.industry.bean.entity.EnterpriseAccountDO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 公司账户表 服务类
@@ -22,4 +24,11 @@ public interface EnterpriseAccountService extends IService<EnterpriseAccountDO> 
     int insert(EnterpriseAccountDO enterpriseAccount);
 
     IPage<EnterpriseAccountDO> queryList(Page<EnterpriseAccountDO> page);
+
+    /**
+     * 获取所有公司账户
+     *
+     * @return List<EnterpriseAccountDO>
+     */
+    List<EnterpriseAccountDO> getListAll();
 }

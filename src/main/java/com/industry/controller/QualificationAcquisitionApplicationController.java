@@ -3,6 +3,7 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.annotation.aop.OperationLog;
 import com.industry.bean.entity.QualificationAcquisitionApplication;
 import com.industry.bean.common.ListPages;
 import com.industry.enums.ResultCodeEnum;
@@ -86,5 +87,6 @@ public class QualificationAcquisitionApplicationController {
         }
         return result.success(ResultCodeEnum.FAIL_MODIFIED);
     }
+
 }
 

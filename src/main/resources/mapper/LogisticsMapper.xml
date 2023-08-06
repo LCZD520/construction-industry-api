@@ -4,8 +4,8 @@
 
     <select id="listTalentLogistics" resultType="LogisticsDO">
         select id,
-               talent_id,
-               enterprise_id,
+               resource_id,
+               customer_name,
                add_remark,
                logistics_project_type,
                detail_item,
@@ -22,14 +22,15 @@
                regenerator_id,
                gmt_modified
         from construction_industry_api.t_logistics
-        where talent_id = #{talentId}
+        where resource_id = #{talentId}
+          and logistics_type = 1
         order by gmt_create desc
     </select>
 
     <select id="listEnterpriseLogistics" resultType="LogisticsDO">
         select id,
-               talent_id,
-               enterprise_id,
+               resource_id,
+               customer_name,
                add_remark,
                logistics_project_type,
                detail_item,
@@ -46,14 +47,15 @@
                regenerator_id,
                gmt_modified
         from construction_industry_api.t_logistics
-        where enterprise_id = #{enterpriseId}
+        where resource_id = #{enterpriseId}
+          and logistics_type = 2
         order by gmt_create desc
     </select>
 
     <select id="listAllLogistics" resultType="LogisticsDO">
         select id,
-               talent_id,
-               enterprise_id,
+               resource_id,
+               customer_name,
                add_remark,
                logistics_project_type,
                detail_item,
@@ -74,5 +76,60 @@
     </select>
     <select id="listLogistics" resultType="LogisticsDO">
 
+    </select>
+
+    <resultMap id="listByConditionPagesMap" type="LogisticsDO">
+        <id property="id" column="id"/>
+        <id property="confirm" column="is_confirm" jdbcType="TINYINT" javaType="Boolean"/>
+    </resultMap>
+
+    <select id="listByConditionPages" resultType="LogisticsDO" resultMap="listByConditionPagesMap">
+        select id, resource_id, customer_name, add_remark, logistics_project_type, detail_item, address,
+        telephone_number, recipient, logistics_type, is_confirm, status, confirm_remark, confirm_cost, creator_id,
+        gmt_create, regenerator_id, gmt_modified
+        from construction_industry_api.t_logistics
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            and customer_name like concat('%',#{search.customerName},'%')
+        </if>
+        <if test="search.status != null">
+            and status = #{search.status}
+        </if>
+        <if test="search.logisticsProjectType != null">
+            and logistics_project_type = #{search.logisticsProjectType}
+        </if>
+        <if test="search.creatorId != null">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*) from construction_industry_api.t_logistics
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            and customer_name like concat('%',#{search.customerName},'%')
+        </if>
+        <if test="search.status != null">
+            and status = #{search.status}
+        </if>
+        <if test="search.logisticsProjectType != null">
+            and logistics_project_type = #{search.logisticsProjectType}
+        </if>
+        <if test="search.creatorId != null">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
     </select>
 </mapper>

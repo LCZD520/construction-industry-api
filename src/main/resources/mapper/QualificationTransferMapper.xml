@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.QualificationTransferMapper">
+    <update id="updateStatusById">
+        update construction_industry_api.t_qualification_transfer
+        set status = #{status}
+        where id = #{id}
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_qualification_transfer
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>
 
     <select id="listQualificationTransfer" resultType="QualificationTransferDO">
         select id,
@@ -15,5 +25,157 @@
                remark
         from construction_industry_api.t_qualification_transfer
         order by id desc
+    </select>
+    <select id="getListCanPlaceOrders" resultType="QualificationAcquisitionDO">
+        select id,
+               remark,
+               status,
+               transfer_customers,
+               area,
+               category_and_grade,
+               acquisition_amount,
+               safety_permit,
+               construction_progress,
+               qualified_personnel,
+               gmt_create,
+               creator_id,
+               gmt_modified,
+               regenerator_id,
+               acquisition_date
+        from construction_industry_api.t_qualification_acquisition
+        where status = 1
+          and json_contains(category_and_grade, #{categoryAndGrade})
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="countCanPlaceOrders" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_acquisition
+        where status = 1
+          and json_contains(category_and_grade, #{categoryAndGrade})
+    </select>
+    <select id="getListUnselectTransferCustomers"
+            resultType="QualificationAcquisitionDO">
+        select id,
+        remark,
+        status,
+        transfer_customers,
+        area,
+        category_and_grade,
+        acquisition_amount,
+        safety_permit,
+        construction_progress,
+        qualified_personnel,
+        gmt_create,
+        creator_id,
+        gmt_modified,
+        regenerator_id,
+        acquisition_date
+        from construction_industry_api.t_qualification_acquisition
+        where status = 1
+        <if test="selectedTransferCustomer == null">
+            and id is not null
+        </if>
+        <if test="selectedTransferCustomer != null">
+            and id != #{selectedTransferCustomer}
+        </if>
+        and json_contains(category_and_grade, #{categoryAndGrade})
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="countUnselectTransferCustomers" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_acquisition
+        where status = 1
+        <if test="selectedTransferCustomer == null">
+            and id is not null
+        </if>
+        <if test="selectedTransferCustomer != null">
+            and id != #{selectedTransferCustomer}
+        </if>
+        and json_contains(category_and_grade, #{categoryAndGrade})
+    </select>
+    <select id="getDetailById" resultType="QualificationTransferDO">
+        select id,
+               transfer_customers,
+               qualification_requirements,
+               area,
+               status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_transfer
+        where id = #{id}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*) from t_qualification_transfer
+        where 1 = 1
+        <if test="search.transferCustomers != null and search.transferCustomers != ''">
+            <bind name="search.transferCustomers" value="'%'+search.transferCustomers+'%'"/>
+            and transfer_customers like #{search.transferCustomers}
+        </if>
+        <if test="search.qualificationRequirements != null and search.qualificationRequirements != ''">
+            and json_contains(qualification_requirements,json_array(#{search.qualificationRequirements}))
+        </if>
+        <if test="search.area != null and search.area.size() > 0">
+            and area in(
+            <foreach collection="search.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+    </select>
+    <select id="listQualificationTransfersByConditionPages"
+            resultType="QualificationTransferDO">
+        select id, transfer_customers, qualification_requirements, area, status, creator_id, gmt_create, regenerator_id,
+        gmt_modified, remark
+        from t_qualification_transfer
+        where 1 = 1
+        <if test="search.transferCustomers != null and search.transferCustomers != ''">
+            <bind name="search.transferCustomers" value="'%'+search.transferCustomers+'%'"/>
+            and transfer_customers like #{search.transferCustomers}
+        </if>
+        <if test="search.qualificationRequirements != null and search.qualificationRequirements != ''">
+            and json_contains(qualification_requirements,json_array(#{search.qualificationRequirements}))
+        </if>
+        <if test="search.area != null and search.area.size() > 0">
+            and area in(
+            <foreach collection="search.area" item="item" separator=",">
+                #{item}
+            </foreach>)
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+        order by id
+        limit #{page.currentPage},#{page.pageSize}
     </select>
 </mapper>

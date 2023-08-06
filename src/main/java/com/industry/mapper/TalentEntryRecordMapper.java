@@ -31,9 +31,10 @@ public interface TalentEntryRecordMapper extends BaseMapper<TalentEntryRecordDO>
 
     /**
      * 财务审批人才入账
-     * @param status 状态
+     *
+     * @param status          状态
      * @param approvalOpinion 审批意见
-     * @param id id
+     * @param id              id
      * @return 受影响rows
      */
     int updateStatusById(@Param("status") int status
@@ -42,10 +43,20 @@ public interface TalentEntryRecordMapper extends BaseMapper<TalentEntryRecordDO>
 
     /**
      * 更新订单id
-     * @param talentOrderId 新的订单id
+     *
+     * @param talentOrderId         新的订单id
      * @param originalTalentOrderId 原来订单id
      * @return 受影响rows
      */
     int updateTalentOrderId(@Param("talentOrderId") Integer talentOrderId
-            ,@Param("originalTalentOrderId")  Integer originalTalentOrderId);
+            , @Param("originalTalentOrderId") Integer originalTalentOrderId);
+
+    /**
+     * 查询人才入账审核通过记录
+     *
+     * @param id     人才id
+     * @param status 审核通过状态
+     * @return rows
+     */
+    int selectByIdAndStatus(@Param("id") Integer id, @Param("status") int status);
 }

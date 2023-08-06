@@ -19,6 +19,20 @@
                opening_bank,
                bank_card_no,
                remark
-        from construction_industry_api.t_enterprise_account where enterprise_account_id = #{id}
+        from construction_industry_api.t_enterprise_account
+        where enterprise_account_id = #{id}
+    </select>
+    <select id="getListAll" resultType="EnterpriseAccountDO">
+        select enterprise_account_id,
+               gmt_create,
+               gmt_modified,
+               creator_id,
+               regenerator_id,
+               bank_name,
+               account_name,
+               opening_bank,
+               bank_card_no,
+               remark
+        from construction_industry_api.t_enterprise_account
     </select>
 </mapper>

@@ -4,6 +4,16 @@
     <resultMap id="roleMap" type="RoleDO">
         <result property="enabled" column="is_enabled"/>
     </resultMap>
+    <update id="disableRole">
+        update construction_industry_api.t_role
+        set is_enabled = 0
+        where role_id = #{id}
+    </update>
+    <update id="enableRole">
+        update construction_industry_api.t_role
+        set is_enabled = 1
+        where role_id = #{id}
+    </update>
     <select id="getRoleById" resultMap="roleMap" resultType="RoleDO">
         select role_id,
                gmt_create,
@@ -20,15 +30,20 @@
 
     <select id="getListRoles" resultType="RoleDO" resultMap="roleMap">
         select role_id,
-               gmt_create,
-               gmt_modified,
-               creator_id,
-               regenerator_id,
-               role_name,
-               is_enabled,
-               data_permission,
-               description
+        gmt_create,
+        gmt_modified,
+        creator_id,
+        regenerator_id,
+        role_name,
+        is_enabled,
+        data_permission,
+        description
         from construction_industry_api.t_role
+        <bind name="roleName" value="'%'+roleName+'%'"/>
+        where role_name like #{roleName}
+        <if test="enabled != null">
+            and is_enabled = #{enabled}
+        </if>
         order by role_id desc
         limit #{page.currentPage},#{page.pageSize}
     </select>
@@ -49,5 +64,10 @@
     <select id="getCount" resultType="Long">
         select count(*)
         from construction_industry_api.t_role
+        <bind name="roleName" value="'%'+roleName+'%'"/>
+        where role_name like #{roleName}
+        <if test="enabled != null">
+            and is_enabled = #{enabled}
+        </if>
     </select>
 </mapper>

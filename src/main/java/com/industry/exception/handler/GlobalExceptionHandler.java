@@ -13,8 +13,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lc
@@ -25,7 +30,6 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     private ResultEntity result;
-    private ObjectError error;
 
     @Autowired
     public void setResultEntity(ResultEntity result) {
@@ -50,16 +54,22 @@ public class GlobalExceptionHandler {
     /**
      * HTTP请求方法异常处理
      *
-     * @param e
-     * @return
+     * @param e HttpRequestMethodNotSupportedException
+     * @return ResultEntity
      */
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ResultEntity handler(HttpRequestMethodNotSupportedException e) {
         return result.failure(ResultCodeEnum.USER_METHOD_NOT_ALLOWED);
     }
 
-//    @ExceptionHandler(value = Exception.class)
-//    public ResultEntity handler(Exception e) {
-//        return result.failure(ResultCodeEnum.SYSTEM_ERROR);
-//    }
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResultEntity handler(ConstraintViolationException e) {
+        final Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+        final Set<String> strings = new HashSet<>();
+        for (ConstraintViolation<?> c : constraintViolations) {
+            strings.add(c.getMessageTemplate());
+        }
+        return result.failure(ResultCodeEnum.PARAM_ASSESSOR_FEE_VALID_FAIL, strings);
+    }
+
 }

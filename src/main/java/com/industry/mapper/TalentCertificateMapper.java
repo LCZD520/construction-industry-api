@@ -60,4 +60,9 @@ public interface TalentCertificateMapper extends BaseMapper<TalentCertificateDO>
             , @Param("list") List<Integer> listTalentIds
             , @Param("page") ListPages<TalentDO> page);
 
+    /**
+     * 获取所有证书
+     * @return List<TalentCertificateDO>
+     */
+    List<TalentCertificateDO> list();
 }

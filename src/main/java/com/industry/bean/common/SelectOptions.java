@@ -1,5 +1,6 @@
 package com.industry.bean.common;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**

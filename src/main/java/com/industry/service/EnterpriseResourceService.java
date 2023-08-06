@@ -2,8 +2,10 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.EnterpriseResourceDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.industry.bean.search.EnterpriseResourceSearch;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -65,4 +67,13 @@ public interface EnterpriseResourceService extends IService<EnterpriseResourceDO
      */
     @Transactional(rollbackFor = Exception.class)
     boolean updateEnterpriseResourceById(EnterpriseResourceDO enterprise);
+
+    /**
+     * 条件获取企业资源列表
+     *
+     * @param page   ListPages<EnterpriseResourceDO>
+     * @param search EnterpriseResourceSearch
+     * @return ListPages<EnterpriseResourceDO>
+     */
+    ListPages<EnterpriseResourceDO> listEnterpriseResourcesByConditionPages(ListPages<EnterpriseResourceDO> page, EnterpriseResourceSearch search);
 }

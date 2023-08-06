@@ -105,7 +105,7 @@ public class CodeGenerator {
 
         // 生成的表名
         strategy.setInclude(
-                "t_user_role");
+                "t_entry_registration");
         // 去除表前缀
         strategy.setTablePrefix("t_");
         // 自动填充配置

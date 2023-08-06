@@ -1,9 +1,11 @@
 package com.industry.auth;
 
+import com.industry.bean.entity.RoleDO;
 import com.industry.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,9 +36,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
     /**
      * 根据用户名查询用户
      *
-     * @param username
-     * @return
-     * @throws UsernameNotFoundException
+     * @param username 用户名
+     * @return UserDetails
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -45,21 +46,28 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (StringUtils.isEmpty(user)) {
             throw new UsernameNotFoundException("用户不存在！");
         }
-//        Role role = userService.queryUserRoleByUsername(username);
-//        user.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_root,ROLE_admin"));
+        final Collection<? extends GrantedAuthority> userAuthority = this.getUserAuthority(username);
+        //user.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList("/talent-query"));
+        user.setAuthorities(userAuthority);
         return user;
     }
 
     /**
      * 获取用户所有权限
      *
-     * @param
-     * @return
+     * @param username 用户名
+     * @return Collection<? extends GrantedAuthority>
      */
-    public Collection<? extends GrantedAuthority> getUserAuthority() {
+    public Collection<? extends GrantedAuthority> getUserAuthority(String username) {
         List<SimpleGrantedAuthority> list = new ArrayList<>();
-//        list.add(new SimpleGrantedAuthority("ROLE_root"));
-//        list.add(new SimpleGrantedAuthority("ROLE_admin"));
+        final List<String> authorities
+                = userService.getAuthorityURIByUsername(username);
+        log.info("authorities:{}", authorities);
+        authorities.forEach(item -> list.add(new SimpleGrantedAuthority(item)));
         return list;
+    }
+
+    public List<RoleDO> listRoles(String username) {
+        return userService.listRolesByUsername(username);
     }
 }

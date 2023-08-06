@@ -1,10 +1,12 @@
 package com.industry.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.EnterpriseDO;
 import com.industry.bean.entity.EnterpriseResourceDO;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.industry.bean.entity.EnterpriseResourceDemandDO;
+import com.industry.bean.search.EnterpriseResourceSearch;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -61,5 +63,23 @@ public interface EnterpriseResourceMapper extends BaseMapper<EnterpriseResourceD
      * @return IPage<EnterpriseResourceDO>
      */
     IPage<EnterpriseResourceDO> listEnterpriseResourcesByUserId(Page<EnterpriseResourceDO> page, @Param("userId") Integer userId);
+
+    /**
+     * 条件分页获取企业资源列表
+     *
+     * @param page   ListPages<EnterpriseResourceDO>
+     * @param search EnterpriseResourceSearch
+     * @return List<EnterpriseResourceDO>
+     */
+    List<EnterpriseResourceDO> listEnterpriseResourcesByConditionPages(@Param("page") ListPages<EnterpriseResourceDO> page
+            , @Param("search") EnterpriseResourceSearch search);
+
+    /**
+     * 条件获取企业资源列表总数
+     *
+     * @param search EnterpriseResourceSearch
+     * @return Long
+     */
+    Long getCountByCondition(@Param("search") EnterpriseResourceSearch search);
 
 }

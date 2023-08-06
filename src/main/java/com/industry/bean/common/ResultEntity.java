@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 @Component
 public class ResultEntity implements Serializable {
+    private static final long serialVersionUID = 3839412368549130681L;
     /**
      * 状态
      */
@@ -31,6 +32,11 @@ public class ResultEntity implements Serializable {
      */
     private Object data;
 
+    /**
+     * 接口入参
+     */
+    private Object inputParameter;
+
     public ResultEntity() {
 
     }
@@ -46,6 +52,17 @@ public class ResultEntity implements Serializable {
         this.code = resultCodeEnum.getCode();
         this.message = resultCodeEnum.getMessage();
         this.data = data;
+    }
+
+    public ResultEntity(Class<ResultCodeEnum> resultCodeEnum) {
+    }
+
+    public ResultEntity(ResultCodeEnum resultCodeEnum, Object data, Object inputParameter) {
+        this.status = resultCodeEnum.getStatus();
+        this.code = resultCodeEnum.getCode();
+        this.message = resultCodeEnum.getMessage();
+        this.data = data;
+        this.inputParameter = inputParameter;
     }
 
     /**
@@ -66,6 +83,22 @@ public class ResultEntity implements Serializable {
      */
     public ResultEntity success(ResultCodeEnum resultCodeEnum, Object data) {
         return new ResultEntity(resultCodeEnum, data);
+    }
+
+    /**
+     * 成功,返回数据
+     *
+     * @param success        ResultCodeEnum
+     * @param resultCodeEnum Class<ResultCodeEnum>
+     * @return Map
+     */
+    public ResultEntity success2(ResultCodeEnum success, Class<ResultCodeEnum> resultCodeEnum) {
+        return new ResultEntity(success, resultCodeEnum);
+    }
+
+
+    public ResultEntity success(ResultCodeEnum resultCodeEnum, Object data, Object inputParameter) {
+        return new ResultEntity(resultCodeEnum, data, inputParameter);
     }
 
     /**

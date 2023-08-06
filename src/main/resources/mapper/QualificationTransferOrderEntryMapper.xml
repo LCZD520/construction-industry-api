@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationTransferOrderEntryMapper">
+
+    <select id="listByConditionPages" resultType="QualificationTransferOrderEntryDO">
+        select id, qualification_transfer_order_id, orderno, transfer_customers, funds_purpose, entry_amount,
+        transferor_info, enterprise_account_id, bank_name, bank_card_no, account_name, opening_bank, application_status,
+        transfer_way, receipt_date, remark, qualification_transfer_creator_id, creator_id, gmt_create, regenerator_id,
+        gmt_modified, qualification_transfer_id
+        from construction_industry_api.t_qualification_transfer_order_entry
+        where 1 = 1
+        <if test="search.orderno != null and search.orderno != ''">
+            and orderno like concat('%',#{search.orderno},'%')
+        </if>
+        <if test="search.transferCustomers != null and search.transferCustomers != ''">
+            and transfer_customers like concat('%',#{search.transferCustomers},'%')
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.applicationStatus != null and search.applicationStatus != ''">
+            and application_status = #{search.applicationStatus}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*) from
+        construction_industry_api.t_qualification_transfer_order_entry
+        where 1 = 1
+        <if test="search.orderno != null and search.orderno != ''">
+            and orderno like concat('%',#{search.orderno},'%')
+        </if>
+        <if test="search.transferCustomers != null and search.transferCustomers != ''">
+            and transfer_customers like concat('%',#{search.transferCustomers},'%')
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.applicationStatus != null and search.applicationStatus != ''">
+            and application_status = #{search.applicationStatus}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+    </select>
+    <select id="listByQualificationTransferOrderId"
+            resultType="QualificationTransferOrderEntryDO">
+        select id,
+               qualification_transfer_order_id,
+               orderno,
+               transfer_customers,
+               funds_purpose,
+               entry_amount,
+               transferor_info,
+               enterprise_account_id,
+               bank_name,
+               bank_card_no,
+               account_name,
+               opening_bank,
+               application_status,
+               transfer_way,
+               receipt_date,
+               remark,
+               qualification_transfer_creator_id,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               qualification_transfer_id
+        from construction_industry_api.t_qualification_transfer_order_entry
+        where qualification_transfer_order_id = #{id}
+    </select>
+</mapper>

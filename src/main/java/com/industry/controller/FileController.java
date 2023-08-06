@@ -10,18 +10,23 @@ import com.aliyun.oss.model.OSSObject;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.PictureDO;
+import com.industry.bean.request.FileDownloadRequest;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.PictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,63 +120,6 @@ public class FileController {
         return result.failure(ResultCodeEnum.INSERT_FAILURE);
     }
 
-    @GetMapping("/download/{id}")
-    public void download(@PathVariable("id") Integer id
-            , HttpServletResponse response) {
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        OutputStream outputStream = null;
-        BufferedInputStream bis = null;
-        PictureDO picture = service.getById(id);
-        if (picture != null) {
-            try {
-                // ossObject包含文件所在的存储空间名称、文件名称、文件元信息以及一个输入流。
-                OSSObject ossObject = ossClient.getObject(
-                        new GetObjectRequest(bucketName, picture.getUrl().substring(64)));
-                bis = new BufferedInputStream(ossObject.getObjectContent());
-                response.reset();
-                response.setCharacterEncoding("utf-8");
-                response.addHeader("Content-Disposition", "attachment;filename="
-                        + new String(picture.getName().getBytes(), StandardCharsets.ISO_8859_1));
-//                response.setContentType("application/octet-stream");
-                response.setHeader("Content-Type", ossObject.getObjectMetadata().getContentType());
-                outputStream = new BufferedOutputStream(response.getOutputStream());
-                byte[] bytes = new byte[1024];
-                int len;
-                while (((len = bis.read(bytes)) > -1)) {
-                    outputStream.write(bytes, 0, len);
-                }
-//
-                outputStream.flush();
-                // 数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
-                // ossObject对象使用完毕后必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
-                ossObject.close();
-            } catch (OSSException oe) {
-                log.info("Caught an OSSException, which means your request made it to OSS, "
-                        + "but was rejected with an error response for some reason.");
-                log.info("Error Message:" + oe.getErrorMessage());
-                log.info("Error Code:" + oe.getErrorCode());
-                log.info("Request ID:" + oe.getRequestId());
-                log.info("Host ID:" + oe.getHostId());
-            } catch (Throwable ce) {
-                log.info("Caught an ClientException, which means the client encountered "
-                        + "a serious internal problem while trying to communicate with OSS, "
-                        + "such as not being able to access the network.");
-                log.info("Error Message:" + ce.getMessage());
-            } finally {
-                if (ossClient != null) {
-                    ossClient.shutdown();
-                }
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        log.info("outputStream:{}", e.getMessage());
-                    }
-                }
-            }
-        }
-    }
-
     public static String generateNewFilePath() {
         String today = DateUtil.today();
         Date parse = DateUtil.parse(today);
@@ -181,4 +129,51 @@ public class FileController {
     public static String generateNewFileName(String originalFilename) {
         return NanoIdUtils.randomNanoId() + "_" + originalFilename;
     }
+
+    private String getBase64(String url) {
+        InputStream in = null;
+        final ByteArrayOutputStream data = new ByteArrayOutputStream();
+        //读取图片字节数组
+        try {
+            URL url2 = new URL(url);
+            final byte[] by = new byte[1024];
+            // 创建链接获取图片
+            final HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            in = conn.getInputStream();
+            int len = -1;
+            while ((len = in.read(by)) != -1) {
+                data.write(by, 0, len);
+            }
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //对字节数组Base64编码
+        BASE64Encoder encoder = new BASE64Encoder();
+        //返回Base64编码过的字节数组字符串
+        String encode = encoder.encode(data.toByteArray());
+        encode = encode.replaceAll("[\\s*\t\n\r]", "");
+        return encode;
+    }
+
+    @PostMapping("/download")
+    @PreAuthorize("hasAuthority('/talent-image-download')")
+    public ResultEntity download(@RequestBody @Validated FileDownloadRequest request) {
+        return downloadFileBatch(request);
+    }
+
+    private ResultEntity downloadFileBatch(FileDownloadRequest request) {
+        final List<Integer> listIds = request.getListIds();
+        final List<PictureDO> list = service.listPicturesByIds(listIds);
+        if (!list.isEmpty()) {
+            list.forEach(picture -> {
+                final String base64 = getBase64(picture.getUrl());
+                picture.setBase64Str(base64);
+            });
+        }
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+
 }

@@ -1,34 +1,27 @@
-package com.industry.bean.entity;
+package com.industry.bean.request;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.industry.bean.entity.PictureTempDO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * <p>
- * 学历提升评审人员信息表
- * </p>
- *
  * @author lc
- * @since 2022-09-16
+ * @date 2022/7/3
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@TableName("t_education_promotion_assessor")
-@ApiModel(value="EducationPromotionAssessorDO对象", description="学历提升评审人员信息表")
-public class EducationPromotionAssessorDO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "主键id")
-    @TableId(value = "id", type = IdType.AUTO)
+public class EducationPromotionAssessorRequest {
+    @ApiModelProperty(value = "学历提升人员信息id")
+    @Null(message = "学历提升人员信息id必须为空", groups = Insert.class)
+    @NotNull(message = "学历提升人员信息id必须不能为空", groups = Update.class)
     private Integer id;
 
     @ApiModelProperty(value = "学历提升主键id")
@@ -63,6 +56,10 @@ public class EducationPromotionAssessorDO implements Serializable {
     @TableField("educational_system")
     private String educationalSystem;
 
+    @ApiModelProperty(value = "专业")
+    @TableField("major")
+    private String major;
+
     @ApiModelProperty(value = "提升费用")
     @TableField("promotion_fee")
     private BigDecimal promotionFee;
@@ -75,23 +72,5 @@ public class EducationPromotionAssessorDO implements Serializable {
     @TableField("agency_amount")
     private BigDecimal agencyAmount;
 
-    @ApiModelProperty(value = "创建人id")
-    @TableField(value = "creator_id", fill = FieldFill.INSERT)
-    private Integer creatorId;
-
-    @ApiModelProperty(value = "创建时间")
-    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField(value = "gmt_create", fill = FieldFill.INSERT)
-    private LocalDateTime gmtCreate;
-
-    @ApiModelProperty(value = "更新人id")
-    @TableField(value = "regenerator_id", fill = FieldFill.INSERT_UPDATE)
-    private Integer regeneratorId;
-
-    @ApiModelProperty(value = "更新时间")
-    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField(value = "gmt_modified", fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime gmtModified;
-
-
+    private List<PictureTempDO> listImages;
 }

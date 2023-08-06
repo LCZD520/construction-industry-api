@@ -3,14 +3,20 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.annotation.aop.OperationLog;
 import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.EnterpriseDO;
 import com.industry.bean.entity.EnterpriseDemandDO;
+import com.industry.bean.entity.TalentDO;
 import com.industry.bean.request.EnterpriseRequest;
+import com.industry.bean.search.EnterpriseSearch;
+import com.industry.bean.search.TalentSearch;
 import com.industry.convert.EnterpriseConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.EnterpriseService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,7 @@ import java.util.List;
  * @since 2022-07-09
  */
 @Slf4j
+@Api(tags = "企业查询")
 @RestController
 @RequestMapping("/enterprise")
 public class EnterpriseController {
@@ -74,6 +81,19 @@ public class EnterpriseController {
         return result.success(ResultCodeEnum.SUCCESS, listPages);
     }
 
+    @ApiOperation(value = "条件分页获取企业列表", httpMethod = "POST")
+    @PostMapping("/list")
+    public ResultEntity list(@RequestBody EnterpriseSearch search) {
+        ListPages<EnterpriseDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<EnterpriseDO> list
+                = service.listEnterprisesByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+
     @GetMapping("/detail/{id}")
     public ResultEntity get(@PathVariable("id") @NotNull @Validated Integer id) {
         log.info("id:{}", id);
@@ -103,5 +123,30 @@ public class EnterpriseController {
         return result.failure(ResultCodeEnum.FAIL_MODIFIED);
     }
 
+    @OperationLog(module = "企业查询", operationDesc = "删除企业")
+    @DeleteMapping("/delete/{id}")
+    public ResultEntity deleteById(@PathVariable Integer id) {
+        final int rows = service.deleteById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_DELETED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_DELETED);
+    }
+
+    @OperationLog(module = "企业查询", operationDesc = "恢复数据")
+    @DeleteMapping("/recovery/{id}")
+    public ResultEntity recoveryById(@PathVariable Integer id) {
+        final int rows = service.recoveryById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_RECOVERIED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_RECOVERY);
+        }
+        return result.failure(ResultCodeEnum.FAIL_RECOVERIED);
+    }
 }
 

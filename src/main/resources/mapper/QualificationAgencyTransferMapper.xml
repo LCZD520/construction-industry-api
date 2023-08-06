@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyTransferMapper">
+    <update id="updateApplicationStatusById">
+        update construction_industry_api.t_qualification_agency_transfer
+        set application_status = #{auditStatus}
+        where id = #{qualificationAgencyTransferId}
+    </update>
+
+    <select id="getListTransferRecords" resultType="QualificationAgencyTransferDO">
+        select id,
+               qualification_agency_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_agency_transfer
+        where qualification_agency_id = #{id}
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="QualificationAgencyTransferDO">
+        <id column="id" property="id"/>
+        <result column="qualification_agency_id" property="qualificationAgencyId"/>
+        <association property="agencyCompany" select="selectAgencyCompanyById" column="qualification_agency_id"/>
+        <collection property="listTransferApproveFlows" select="selectListTransferApproveFlowsById" column="id"
+                    ofType="QualificationAgencyApprovalFlowDO">
+        </collection>
+    </resultMap>
+
+    <select id="selectListTransferApproveFlowsById" resultType="QualificationAgencyApprovalFlowDO">
+        select id,
+               qualification_agency_transfer_id,
+               audit_status,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_qualification_agency_approval_flow
+        where qualification_agency_transfer_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultType="QualificationAgencyTransferDO" resultMap="getDetailByIdMap">
+        select id,
+               qualification_agency_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_agency_transfer
+        where id = #{id}
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_agency_transfer
+    </select>
+
+    <resultMap id="getListTransferRecordsPageMap" type="QualificationAgencyTransferDO">
+        <id column="id" property="id"/>
+        <id column="qualification_agency_id" property="qualificationAgencyId"/>
+        <association property="agencyCompany" select="selectAgencyCompanyById" column="qualification_agency_id"/>
+    </resultMap>
+
+    <select id="selectAgencyCompanyById" resultType="String">
+        select agency_company
+        from construction_industry_api.t_qualification_agency
+        where id = #{qualification_agency_id}
+    </select>
+
+    <select id="getListTransferRecordsPage"
+            resultType="QualificationAgencyTransferDO" resultMap="getListTransferRecordsPageMap">
+        select id,
+               qualification_agency_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_qualification_agency_transfer
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+</mapper>

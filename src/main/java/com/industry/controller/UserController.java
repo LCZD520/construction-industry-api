@@ -1,17 +1,23 @@
 package com.industry.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.industry.annotation.aop.OperationLog;
 import com.industry.auth.AuthUser;
 import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.common.SelectOptions;
+import com.industry.bean.request.ModifyPasswordRequest;
 import com.industry.bean.request.UserRequest;
 import com.industry.convert.UserConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.UserService;
+import com.industry.util.LocalCacheUtil;
+import com.industry.config.ws.WebSocket;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +41,9 @@ public class UserController {
     private ResultEntity result;
 
     private UserService service;
+
+    @Resource
+    private WebSocket socket;
 
     @Resource
     private UserConvert convert;
@@ -70,12 +79,14 @@ public class UserController {
     public ResultEntity listUsersByMechanismId(
             @RequestParam("mechanismId") Integer mechanismId
             , @RequestParam("currentPage") Long currentPage
-            , @RequestParam("pageSize") Long pageSize) {
+            , @RequestParam("pageSize") Long pageSize
+            , @RequestParam(value = "fullName", required = false, defaultValue = "") String fullName
+            , @RequestParam(value = "onJob", required = false) Boolean onJob) {
         ListPages<AuthUser> page = new ListPages<>();
         page.setPageSize(pageSize);
         page.setCurrentPage((currentPage - 1) * pageSize);
         ListPages<AuthUser> listUsers
-                = service.listUsersByMechanismId(page, mechanismId);
+                = service.listUsersByMechanismId(page, mechanismId, fullName, onJob);
         return result.success(ResultCodeEnum.SUCCESS, listUsers);
     }
 
@@ -136,6 +147,21 @@ public class UserController {
             return result.success(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
         }
         return result.failure(ResultCodeEnum.FAIL_DELETED);
+    }
+
+    @ApiOperation(value = "下线用户", httpMethod = "GET")
+    @GetMapping("/offline/{username}")
+    public ResultEntity offline(@ApiParam(value = "用户名", required = true) @PathVariable("username") String username) throws JsonProcessingException {
+        LocalCacheUtil.deleteUser(username);
+        socket.sendOneMessage("lc", new ObjectMapper().writer().writeValueAsString(LocalCacheUtil.getListLoginUsers()));
+        return result.success(ResultCodeEnum.SUCCESS);
+    }
+
+    @ApiOperation(value = "修改密码", httpMethod = "POST")
+    @OperationLog(module = "用户", operationDesc = "修改密码")
+    @PostMapping("/modify-password")
+    public ResultEntity modifyPassword(@Validated @RequestBody ModifyPasswordRequest request) {
+        return service.modifyPassword(request);
     }
 }
 

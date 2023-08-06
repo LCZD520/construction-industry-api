@@ -63,10 +63,6 @@ public class EnterpriseTransferDO implements Serializable {
     @TableField("application_status")
     private String applicationStatus;
 
-    @ApiModelProperty(value = "审核状态(0-审核，1-审核通过，2审核不通过)")
-    @TableField("audit_status")
-    private Integer auditStatus;
-
     @ApiModelProperty(value = "创建人id")
     @TableField(value = "creator_id", fill = FieldFill.INSERT)
     private Integer creatorId;
@@ -95,6 +91,18 @@ public class EnterpriseTransferDO implements Serializable {
 
     @ApiModelProperty(value = "转账审批记录")
     @TableField(exist = false)
-    private List<OrderSelectedTalentDO> listAuditRecords;
+    private List<EnterpriseApprovalFlowDO> listAuditRecords;
+
+    @ApiModelProperty(value = "当前审批角色id")
+    @TableField(exist = false)
+    private Integer currentAuditRoleId;
+
+    @ApiModelProperty(value = "企业")
+    @TableField(exist = false)
+    private EnterpriseDO enterprise;
+
+    @ApiModelProperty(value = "企业名称")
+    @TableField(exist = false)
+    private String enterpriseName;
 
 }

@@ -133,4 +133,8 @@ public class TalentDO implements Serializable {
     @TableField(exist = false)
     private List<TalentCertificateDO> listCertificates;
 
+    @ApiModelProperty(value = "人才证件")
+    @TableField(exist = false)
+    private List<TalentCertificatesDO> listTalentCertificates;
+
 }

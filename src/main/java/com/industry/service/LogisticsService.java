@@ -2,8 +2,10 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.LogisticsDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.industry.bean.search.LogisticsSearch;
 
 /**
  * <p>
@@ -42,4 +44,13 @@ public interface LogisticsService extends IService<LogisticsDO> {
      * @return iPage
      */
     IPage<LogisticsDO> listTalentLogistics(Page<LogisticsDO> page, Integer talentId);
+
+    /**
+     * 条件获取后勤管理列表
+     *
+     * @param page   ListPages<LogisticsDO>
+     * @param search LogisticsSearch
+     * @return ListPages<LogisticsDO>
+     */
+    ListPages<LogisticsDO> listByConditionPages(ListPages<LogisticsDO> page, LogisticsSearch search);
 }

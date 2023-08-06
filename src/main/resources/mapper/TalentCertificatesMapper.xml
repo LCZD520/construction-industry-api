@@ -55,4 +55,213 @@
         where talent_id = #{id}
         order by talent_certificates_id desc
     </select>
+
+    <resultMap id="listAllCertificatesMap" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection property="listCertificates" select="selectListCertificates" column="id"
+                    ofType="TalentCertificateDO">
+        </collection>
+        <collection property="listTalentCertificates" select="selectTalentCertificates" column="id"
+                    ofType="TalentCertificatesDO">
+        </collection>
+    </resultMap>
+
+    <select id="selectListCertificates" resultType="TalentCertificateDO">
+        select id,
+               talent_id,
+               remark,
+               level_major,
+               initial_conversion,
+               issue_cert_time,
+               continuing_education_date,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_talent_certificate
+        where talent_id = #{id}
+    </select>
+    <select id="selectTalentCertificates" resultType="TalentCertificatesDO">
+        select talent_certificates_id,
+               talent_id,
+               mechanism_id,
+               certificates_type,
+               certificates_whereabouts,
+               gmt_create,
+               creator_id,
+               gmt_modified,
+               regenerator_id,
+               remark
+        from construction_industry_api.t_talent_certificates
+        where talent_id = #{id}
+    </select>
+
+    <select id="listAllCertificates" resultType="TalentDO" resultMap="listAllCertificatesMap">
+        select id,
+               full_name,
+               sex,
+               area,
+               social_security,
+               telephone_number,
+               qq_number,
+               education,
+               title,
+               tender_exit,
+               class_three_personnel,
+               issue_cert_time,
+               continuing_education_date,
+               certificate_status,
+               talent_status,
+               talent_price,
+               talent_price_number,
+               number_unit,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_talent
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountListAllCertificates" resultType="java.lang.Long">
+        select count(*)
+        from construction_industry_api.t_talent
+    </select>
+    <select id="listPageCertificates" resultType="TalentCertificatesDO">
+        select talent_certificates_id,
+               talent_id,
+               mechanism_id,
+               certificates_type,
+               certificates_whereabouts,
+               gmt_create,
+               creator_id,
+               gmt_modified,
+               regenerator_id,
+               remark
+        from construction_industry_api.t_talent_certificates
+        where talent_id = #{id}
+        order by talent_certificates_id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountListCertificatesById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_talent_certificates
+        where talent_id = #{id}
+    </select>
+
+    <resultMap id="listByConditionPages" type="TalentDO">
+        <id column="id" property="id"/>
+        <collection property="listCertificates" select="selectListCertificates" column="id"
+                    ofType="TalentCertificateDO">
+        </collection>
+        <collection property="listTalentCertificates" select="selectTalentCertificates" column="id"
+                    ofType="TalentCertificatesDO">
+        </collection>
+    </resultMap>
+
+    <select id="listByConditionPages" resultType="TalentDO" resultMap="listByConditionPages">
+        select
+        tt.id,
+        tt.full_name,
+        tt.sex,
+        tt.area,
+        tt.social_security,
+        tt.telephone_number,
+        tt.qq_number,
+        tt.education,
+        tt.title,
+        tt.tender_exit,
+        tt.class_three_personnel,
+        tt.issue_cert_time,
+        tt.continuing_education_date,
+        tt.certificate_status,
+        tt.talent_status,
+        tt.talent_price,
+        tt.talent_price_number,
+        tt.number_unit,
+        tt.creator_id,
+        tt.gmt_create,
+        tt.regenerator_id,
+        tt.gmt_modified,
+        tt.remark,
+        ttc.id as id2,
+        ttc.talent_id,
+        ttc.remark,
+        ttc.level_major,
+        ttc.initial_conversion,
+        ttc.issue_cert_time,
+        ttc.continuing_education_date,
+        ttc.gmt_create as gmt_create2,
+        ttc.creator_id as creator_id2,
+        ttc.gmt_modified as gmt_modified2,
+        ttc.regenerator_id as regenerator_id2,
+        ttc.remark as remark2
+        from construction_industry_api.t_talent as tt
+        left join t_talent_certificate ttc on tt.id = ttc.talent_id
+        where 1 = 1
+        <bind name="search.fullName" value="search.fullName"/>
+        <if test="search.fullName != null and search.fullName != ''">
+            and tt.full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <bind name="search.status" value="search.status"/>
+        <if test="search.status != null">
+            and tt.talent_status = #{search.status}
+        </if>
+        <bind name="search.levelMajor" value="search.levelMajor"/>
+        <if test="search.levelMajor != null and search.levelMajor != ''">
+            and json_contains(ttc.level_major,json_array(#{search.levelMajor}))
+        </if>
+        <bind name="search.initialConversion" value="search.initialConversion"/>
+        <if test="search.initialConversion != null">
+            and ttc.initial_conversion = #{search.initialConversion}
+        </if>
+        <bind name="search.creatorId" value="search.creatorId"/>
+        <if test="search.creatorId != null">
+            and tt.creator_id = #{search.creatorId}
+        </if>
+        <bind name="search.startDate" value="search.startDate"/>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tt.gmt_create &gt;= #{search.startDate}
+        </if>
+        <bind name="search.endDate" value="search.endDate"/>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tt.gmt_create &lt;= #{search.endDate}
+        </if>
+        group by tt.id
+        order by tt.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="getCountByCondition" resultType="Long">
+        select count(*) from (
+        select tt.id
+        from t_talent as tt left join t_talent_certificate ttc on tt.id =
+        ttc.talent_id
+        where 1 = 1
+        <if test="search.fullName != null and search.fullName != ''">
+            and tt.full_name like concat('%',#{search.fullName},'%')
+        </if>
+        <if test="search.status != null">
+            and tt.talent_status = #{search.status}
+        </if>
+        <if test="search.levelMajor != null and search.levelMajor != ''">
+            and json_contains(ttc.level_major,json_array(#{search.levelMajor}))
+        </if>
+        <if test="search.initialConversion != null">
+            and ttc.initial_conversion = #{search.initialConversion}
+        </if>
+        <if test="search.creatorId != null">
+            and tt.creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tt.gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tt.gmt_create &lt;= #{search.endDate}
+        </if>
+        group by tt.id
+        ) as t3
+    </select>
+
 </mapper>

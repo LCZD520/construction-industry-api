@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * </p>
  *
  * @author lc
- * @since 2022-07-21
+ * @since 2022-12-24
  */
 @Service
 public class TalentApprovalFlowServiceImpl extends ServiceImpl<TalentApprovalFlowMapper, TalentApprovalFlowDO> implements TalentApprovalFlowService {

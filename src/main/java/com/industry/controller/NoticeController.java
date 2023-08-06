@@ -3,7 +3,10 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.AdvancedSettingDO;
 import com.industry.bean.entity.NoticeDO;
+import com.industry.bean.entity.TalentOrderDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.NoticeService;
 import com.industry.bean.common.ResultEntity;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +33,7 @@ public class NoticeController {
 
     private ResultEntity result;
 
-    private NoticeService noticeService;
+    private NoticeService service;
 
     @Autowired
     public void setResult(ResultEntity result) {
@@ -37,25 +41,37 @@ public class NoticeController {
     }
 
     @Autowired
-    public void setNoticeService(NoticeService noticeService) {
-        this.noticeService = noticeService;
+    public void setNoticeService(NoticeService service) {
+        this.service = service;
     }
 
     @GetMapping("/get-list-notices")
-    public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam("pageSize") Integer pageSize) {
-        IPage<NoticeDO> iPage = noticeService.queryList(new Page<>(currentPage, pageSize));
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("total", iPage.getTotal());
-        map.put("listNotices", iPage.getRecords());
-        map.put("currentPage", iPage.getCurrent());
-        map.put("pageSize", iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, map);
+    public ResultEntity queryList(@RequestParam("currentPage") @Min(1) Integer currentPage,
+                                  @RequestParam("pageSize") Long pageSize,
+                                  @RequestParam(value = "title", required = false) String title,
+                                  @RequestParam(value = "enabled", required = false) Integer enabled) {
+        ListPages<NoticeDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<NoticeDO> list
+                = service.listByConditionPages(page, title, enabled);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+
+    @GetMapping("/list-notices-enabled")
+    public ResultEntity get(@RequestParam("currentPage") Long currentPage
+            , @RequestParam("pageSize") Long pageSize) {
+        ListPages<NoticeDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<NoticeDO> list
+                = service.getListEnableds(page);
+        return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
     @GetMapping("/detail/{id}")
     public ResultEntity queryListById(@PathVariable("id") Integer id) {
-        NoticeDO notice = noticeService.queryById(id);
+        NoticeDO notice = service.queryById(id);
         if (notice != null) {
             return result.success(ResultCodeEnum.SUCCESS, notice);
         }
@@ -64,7 +80,7 @@ public class NoticeController {
 
     @PostMapping("/insert")
     public ResultEntity insert(@RequestBody NoticeDO notice) {
-        int insert = noticeService.insert(notice);
+        int insert = service.insert(notice);
         if (insert == 1) {
             return result.success(ResultCodeEnum.SUCCESS_INSERT);
         }
@@ -74,7 +90,7 @@ public class NoticeController {
     @PutMapping("/update")
     public ResultEntity update(@RequestBody NoticeDO notice) {
         log.info("notice:{}", notice);
-        boolean success = noticeService.updateById(notice);
+        boolean success = service.updateById(notice);
         if (success) {
             return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
         }
@@ -83,7 +99,7 @@ public class NoticeController {
 
     @DeleteMapping("/delete/{id}")
     public ResultEntity delete(@PathVariable Integer id) {
-        int delete = noticeService.delete(id);
+        int delete = service.delete(id);
         if (delete == 1) {
             return result.success(ResultCodeEnum.SUCCESS_DELETED);
         }

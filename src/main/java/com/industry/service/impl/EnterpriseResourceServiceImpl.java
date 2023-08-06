@@ -1,11 +1,14 @@
 package com.industry.service.impl;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.industry.bean.entity.EnterpriseResourceDO;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.*;
 import com.industry.bean.entity.EnterpriseResourceDemandDO;
-import com.industry.bean.entity.EnterpriseDemandDO;
-import com.industry.bean.entity.EnterpriseResourceDemandDO;
+import com.industry.bean.search.EnterpriseResourceSearch;
 import com.industry.mapper.EnterpriseDemandMapper;
 import com.industry.mapper.EnterpriseResourceDemandMapper;
 import com.industry.mapper.EnterpriseResourceMapper;
@@ -15,7 +18,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,5 +127,29 @@ public class EnterpriseResourceServiceImpl extends ServiceImpl<EnterpriseResourc
             }
         }
         return true;
+    }
+
+    @Override
+    public ListPages<EnterpriseResourceDO> listEnterpriseResourcesByConditionPages(ListPages<EnterpriseResourceDO> page, EnterpriseResourceSearch search) {
+        String startDateStr = search.getStartDate();
+        String endDateStr = search.getEndDate();
+        if (startDateStr != null && !StringUtils.isEmpty(endDateStr)) {
+            final LocalDateTime startTime = LocalDateTimeUtil.of(DateUtil.parse(startDateStr));
+            final String newStartTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.beginOfDay(startTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setStartDate(newStartTimeStr);
+        }
+        if (endDateStr != null && !StringUtils.isEmpty(endDateStr)) {
+            final LocalDateTime endTime = LocalDateTimeUtil.of(DateUtil.parse(endDateStr));
+            final String newEndTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.endOfDay(endTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setEndDate(newEndTimeStr);
+        }
+        log.info("search:{}", search);
+        final List<EnterpriseResourceDO> list = mapper.listEnterpriseResourcesByConditionPages(page, search);
+        page.setList(list);
+        page.setTotal(mapper.getCountByCondition(search));
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        return page;
     }
 }

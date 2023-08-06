@@ -2,6 +2,7 @@ package com.industry.service;
 
 import com.industry.bean.entity.ApprovalSettingDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.industry.bean.view.ApprovalSettingVO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface ApprovalSettingService extends IService<ApprovalSettingDO> {
 
     @Transactional(rollbackFor = Exception.class)
     int saveApprovalSetting(List<ApprovalSettingDO> list, Integer type);
+
+    ApprovalSettingVO getListConfigs();
 }

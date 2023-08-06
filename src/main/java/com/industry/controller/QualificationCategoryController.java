@@ -1,6 +1,7 @@
 package com.industry.controller;
 
 
+import com.industry.annotation.aop.OperationLog;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.QualificationCategoryDO;
 import com.industry.bean.entity.QualificationCategoryDO;
@@ -42,6 +43,7 @@ public class QualificationCategoryController {
         this.service = service;
     }
 
+    @OperationLog(module = "系统管理-资质类别", operationDesc = "添加资质类别", uri = "/qualification-category/insert")
     @PostMapping("/insert")
     public ResultEntity insert(@RequestBody QualificationCategoryRequest categoryRequest) {
         QualificationCategoryDO qualificationCategory = convert.convertToDo(categoryRequest);
@@ -65,6 +67,19 @@ public class QualificationCategoryController {
     public ResultEntity getDetailById(@PathVariable("id") Integer id) {
         QualificationCategoryDO qualificationCategory = service.getDetailById(id);
         return result.success(ResultCodeEnum.SUCCESS, qualificationCategory);
+    }
+
+    @OperationLog(module = "系统管理-资质类别", operationDesc = "删除资质类别", uri = "/qualification-category/delete")
+    @DeleteMapping("/delete/{id}")
+    public ResultEntity deleteById(@PathVariable Integer id) {
+        final int rows = service.deleteById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_DELETED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_DELETED);
     }
 }
 

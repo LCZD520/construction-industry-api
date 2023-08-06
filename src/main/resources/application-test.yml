@@ -1,0 +1,42 @@
+server:
+  port: 17016
+spring:
+  profiles: test
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  devtools:
+    restart:
+      enabled: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/construction_industry_api?useSSL=false&useUnicode=true&characterEncoding=UTF-8&tinyInt1isBit=false&rewriteBatchedStatements=true&allowMultiQueries=true
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 1000MB
+mybatis-plus:
+  configuration:
+    #    以日志的形式打印相关警告信息
+    AutoMappingUnknownColumnBehavior: warning
+    #    对所有的 resultMap 都进行自动映射
+    auto-mapping-behavior: full
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      table-prefix: t_
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.industry.bean
+
+jwt:
+  header: Authorization
+  secret: hjhajshfjasfasnfjahsfjahjfhasjf1

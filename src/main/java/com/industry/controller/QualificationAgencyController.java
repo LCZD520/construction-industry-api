@@ -3,13 +3,17 @@ package com.industry.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.annotation.aop.OperationLog;
 import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.QualificationAgencyDO;
+import com.industry.bean.entity.QualificationAgencyDO;
 import com.industry.bean.request.QualificationAgencyRequest;
+import com.industry.bean.search.QualificationAgencySearch;
 import com.industry.convert.QualificationAgencyConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.QualificationAgencyService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +76,19 @@ public class QualificationAgencyController {
         return result.success(ResultCodeEnum.SUCCESS, listPages);
     }
 
+    @ApiOperation(value = "条件分页获取资质代办列表", httpMethod = "POST")
+    @PostMapping("/list")
+    public ResultEntity list(@RequestBody QualificationAgencySearch search) {
+        ListPages<QualificationAgencyDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<QualificationAgencyDO> list
+                = service.listQualificationAgencysByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+
     @GetMapping("/detail/{id}")
     public ResultEntity get(@PathVariable("id") @NotNull @Validated Integer id) {
         log.info("id:{}", id);
@@ -92,6 +109,33 @@ public class QualificationAgencyController {
             return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
         }
         return result.failure(ResultCodeEnum.FAIL_MODIFIED);
+    }
+    
+
+    @OperationLog(module = "资质代办查询", operationDesc = "删除资质代办")
+    @DeleteMapping("/delete/{id}")
+    public ResultEntity deleteById(@PathVariable Integer id) {
+        final int rows = service.deleteById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_DELETED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_DELETED);
+    }
+
+    @OperationLog(module = "资质代办查询", operationDesc = "恢复数据")
+    @DeleteMapping("/recovery/{id}")
+    public ResultEntity recoveryById(@PathVariable Integer id) {
+        final int rows = service.recoveryById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_RECOVERIED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_RECOVERY);
+        }
+        return result.failure(ResultCodeEnum.FAIL_RECOVERIED);
     }
 }
 

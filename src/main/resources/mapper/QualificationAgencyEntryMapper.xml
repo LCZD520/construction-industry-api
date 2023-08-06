@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationAgencyEntryMapper">
+
+    <insert id="insertQualificationAgencyEntry" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_qualification_agency_entry
+        (agency_company_id, agency_company,
+         funds_purpose, entry_amount,
+         transferor_info, enterprise_account_id,
+         bank_name, bank_card_no, account_name,
+         opening_bank, transfer_way, receipt_date,
+         remark, creator_id, gmt_create,
+         regenerator_id, gmt_modified)
+        values (#{agencyCompanyId},
+                #{agencyCompany},
+                #{fundsPurpose},
+                #{entryAmount},
+                #{transferorInfo},
+                #{enterpriseAccountId},
+                #{bankName},
+                #{bankCardNo},
+                #{accountName},
+                #{openingBank},
+                #{transferWay},
+                #{receiptDate},
+                #{remark},
+                #{creatorId},
+                #{gmtCreate},
+                #{regeneratorId},
+                #{gmtModified})
+    </insert>
+    <select id="getList" resultType="QualificationAgencyEntryDO">
+        select id,
+               agency_company_id,
+               agency_company,
+               funds_purpose,
+               entry_amount,
+               transferor_info,
+               enterprise_account_id,
+               bank_name,
+               bank_card_no,
+               account_name,
+               opening_bank,
+               application_status,
+               transfer_way,
+               receipt_date,
+               remark,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_qualification_agency_entry
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_agency_entry
+        where 1 = 1
+        <if test="search.applicationStatus != null and search.applicationStatus != ''">
+            and application_status = #{search.applicationStatus}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+    </select>
+    <select id="listByConditionPages" resultType="QualificationAgencyEntryDO">
+        select id,
+        agency_company_id,
+        agency_company,
+        funds_purpose,
+        entry_amount,
+        transferor_info,
+        enterprise_account_id,
+        bank_name,
+        bank_card_no,
+        account_name,
+        opening_bank,
+        application_status,
+        transfer_way,
+        receipt_date,
+        remark,
+        creator_id,
+        gmt_create,
+        regenerator_id,
+        gmt_modified
+        from construction_industry_api.t_qualification_agency_entry
+        where 1 = 1
+        <if test="search.applicationStatus != null and search.applicationStatus != ''">
+            and application_status = #{search.applicationStatus}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <resultMap id="QualificationAgencyEntryDOMap" type="QualificationAgencyEntryDO">
+        <id column="id" property="id"/>
+        <result property="agencyAmount" column="agency_amount"/>
+    </resultMap>
+    <select id="getDetailById" resultType="QualificationAgencyEntryDO">
+        select t1.id,
+               t1.agency_company_id,
+               t1.agency_company,
+               t1.funds_purpose,
+               t1.entry_amount,
+               t1.transferor_info,
+               t1.enterprise_account_id,
+               t1.bank_name,
+               t1.bank_card_no,
+               t1.account_name,
+               t1.opening_bank,
+               t1.application_status,
+               t1.transfer_way,
+               t1.receipt_date,
+               t1.remark,
+               t1.creator_id,
+               t1.gmt_create,
+               t1.regenerator_id,
+               t1.gmt_modified,
+               t2.agency_amount
+        from construction_industry_api.t_qualification_agency_entry as t1
+                 left join t_qualification_agency as t2 on t1.agency_company_id = t2.id
+        where t1.id = #{id}
+    </select>
+</mapper>

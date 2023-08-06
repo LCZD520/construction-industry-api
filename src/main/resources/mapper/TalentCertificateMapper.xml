@@ -93,7 +93,28 @@
     <select id="getTalentIdsByCondition" resultType="Integer">
         select distinct talent_id
         from construction_industry_api.t_talent_certificate
-        where json_contains(level_major, #{levelMajor})
-          and initial_conversion = #{initialConversion}
+    </select>
+
+    <!--    <select id="getTalentIdsByCondition" resultType="Integer">-->
+    <!--         select distinct talent_id-->
+    <!--         from construction_industry_api.t_talent_certificate-->
+    <!--         where json_contains(level_major, #{levelMajor})-->
+    <!--           and initial_conversion = #{initialConversion}-->
+    <!--    </select>-->
+    <select id="list" resultType="TalentCertificateDO">
+        select ttc.id,
+               ttc.talent_id,
+               ttc.remark,
+               ttc.level_major,
+               ttc.initial_conversion,
+               ttc.issue_cert_time,
+               ttc.continuing_education_date,
+               ttc.creator_id,
+               ttc.gmt_create,
+               ttc.regenerator_id,
+               ttc.gmt_modified,
+               tt.class_three_personnel
+        from construction_industry_api.t_talent_certificate as ttc
+                 left join construction_industry_api.t_talent as tt on ttc.talent_id = tt.id
     </select>
 </mapper>

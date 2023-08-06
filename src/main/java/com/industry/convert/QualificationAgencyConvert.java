@@ -16,8 +16,8 @@ public interface QualificationAgencyConvert {
     /**
      * 转换成实体类
      *
-     * @param qualificationAgencyRequest
-     * @return
+     * @param qualificationAgencyRequest QualificationAgencyRequest
+     * @return QualificationAgencyDO
      */
     QualificationAgencyDO convertToDo(QualificationAgencyRequest qualificationAgencyRequest);
 }

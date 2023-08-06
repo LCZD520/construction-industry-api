@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,6 +64,6 @@ public class CertificateCategoryDO implements Serializable {
 
     @ApiModelProperty(value = "子分类")
     @TableField(exist = false)
-    List<CertificateCategoryDO> listCertificateCategory;
+    List<CertificateCategoryDO> listCertificateCategory = new ArrayList<>();;
 
 }

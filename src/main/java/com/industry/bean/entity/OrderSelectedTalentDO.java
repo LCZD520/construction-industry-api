@@ -113,6 +113,14 @@ public class OrderSelectedTalentDO implements Serializable {
     @TableField("is_confirmed")
     private Boolean assigned;
 
+    @ApiModelProperty(value = "资质代办需求id")
+    @TableField("qualification_agency_demand_id")
+    private Integer qualificationAgencyDemandId;
+
+    @ApiModelProperty(value = "资质人员所属类型")
+    @TableField("type")
+    private String type;
+
     @ApiModelProperty(value = "创建人id")
     @TableField(value = "creator_id", fill = FieldFill.INSERT)
     private Integer creatorId;

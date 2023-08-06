@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.industry.mapper.QualificationTransferTransferMapper">
+    <update id="updateApplicationStatusById">
+        update t_qualification_transfer_transfer
+        set application_status = #{auditStatus}
+        where qualification_transfer_order_id = #{qualificationTransferTransferId}
+    </update>
+
+
+    <select id="listTransferRecords" resultType="QualificationTransferTransferDO">
+        select tqtt.id,
+        tqtt.qualification_transfer_order_id,
+        tqtt.bank_name,
+        tqtt.open_bank,
+        tqtt.account_name,
+        tqtt.bank_card_no,
+        tqtt.transfer_amount,
+        tqtt.funds_purpose,
+        tqtt.application_status,
+        tqtt.creator_id,
+        tqtt.gmt_create,
+        tqtt.regenerator_id,
+        tqtt.gmt_modified,
+        tqtt.remark,
+        tqt.transfer_customers
+        from construction_industry_api.t_qualification_transfer_transfer as tqtt
+        left join t_qualification_transfer_order tqto on tqtt.qualification_transfer_order_id = tqto.id
+        left join t_qualification_transfer tqt on tqto.qualification_transfer_id = tqt.id
+        where 1 = 1
+        <if test="search.acquisitionIntendedCustomer != null and search.acquisitionIntendedCustomer != ''">
+            and tqt.transfer_customers like concat('%',#{search.acquisitionIntendedCustomer},'%')
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and tqtt.application_status = #{search.status}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tqtt.gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tqtt.gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.creatorId != null">
+            and tqtt.creator_id &lt;= #{search.creatorId}
+        </if>
+        group by tqtt.id
+        order by tqtt.id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_qualification_transfer_transfer as tqtt
+        left join t_qualification_transfer_order tqto on tqtt.qualification_transfer_order_id = tqto.id
+        left join t_qualification_transfer tqt on tqto.qualification_transfer_id = tqt.id
+        where 1 = 1
+        <if test="search.acquisitionIntendedCustomer != null and search.acquisitionIntendedCustomer != ''">
+            and tqt.transfer_customers like concat('%',#{search.acquisitionIntendedCustomer},'%')
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and tqtt.application_status = #{search.status}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and tqtt.gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and tqtt.gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.creatorId != null">
+            and tqtt.creator_id &lt;= #{search.creatorId}
+        </if>
+    </select>
+    <select id="getDetailById" resultType="QualificationTransferTransferDO">
+        select id,
+               qualification_transfer_order_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from t_qualification_transfer_transfer
+        where id = #{id}
+    </select>
+    <select id="getListTransferRecords" resultType="QualificationTransferTransferDO">
+        select id,
+               qualification_transfer_order_id,
+               bank_name,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from t_qualification_transfer_transfer
+        where qualification_transfer_order_id = #{id}
+    </select>
+</mapper>

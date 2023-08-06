@@ -6,6 +6,8 @@ import com.industry.bean.entity.EnterpriseAccountDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  * 公司账户表 Mapper 接口
@@ -20,4 +22,11 @@ public interface EnterpriseAccountMapper extends BaseMapper<EnterpriseAccountDO>
     IPage<EnterpriseAccountDO> queryList(Page<EnterpriseAccountDO> page);
 
     EnterpriseAccountDO queryById(Integer id);
+
+    /**
+     * 获取所有公司账户
+     *
+     * @return List<EnterpriseAccountDO>
+     */
+    List<EnterpriseAccountDO> getListAll();
 }

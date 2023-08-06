@@ -40,6 +40,10 @@ public class NoticeDO implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @ApiModelProperty(value = "创建人id")
+    @TableField(value = "creator_id", fill = FieldFill.INSERT)
+    private Integer creatorId;
+
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(locale = "zh",pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)

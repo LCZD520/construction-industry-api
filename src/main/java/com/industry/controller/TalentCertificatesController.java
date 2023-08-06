@@ -1,14 +1,17 @@
 package com.industry.controller;
 
 
+import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.TalentCertificatesDO;
-import com.industry.bean.entity.TalentCertificatesWhereaboutsFlowDO;
+import com.industry.bean.entity.TalentDO;
 import com.industry.bean.request.TalentCertificatesRequest;
 import com.industry.bean.request.UpdateTalentCertificatesWhereaboutsRequest;
+import com.industry.bean.search.TalentCertificatesSearch;
 import com.industry.convert.TalentCertificatesConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.TalentCertificatesService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -72,11 +75,33 @@ public class TalentCertificatesController {
         return result.failure(ResultCodeEnum.INSERT_FAILURE);
     }
 
+    @GetMapping("/list")
+    public ResultEntity listAllCertificates(@RequestParam("currentPage") Long currentPage
+            , @RequestParam("pageSize") Long pageSize) {
+        ListPages<TalentDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<TalentDO> listTalentCertificates
+                = service.listAllCertificates(page);
+        return result.success(ResultCodeEnum.SUCCESS, listTalentCertificates);
+    }
+
     @GetMapping("/list/{id}")
     public ResultEntity listCertificates(@PathVariable("id") Integer id) {
         List<TalentCertificatesDO> list = service.listCertificates(id);
         log.info("list:{}", list);
         return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+
+    @GetMapping("/list-page/{id}")
+    public ResultEntity listPagesCertificates(@RequestParam("currentPage") Long currentPage
+            , @RequestParam("pageSize") Long pageSize, @PathVariable Integer id) {
+        ListPages<TalentCertificatesDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<TalentCertificatesDO> listPageCertificates
+                = service.listPageCertificates(id, page);
+        return result.success(ResultCodeEnum.SUCCESS, listPageCertificates);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -116,6 +141,19 @@ public class TalentCertificatesController {
             return result.success(ResultCodeEnum.SUCCESS_MODIFIED);
         }
         return result.failure(ResultCodeEnum.FAIL_MODIFIED);
+    }
+
+    @ApiOperation(value = "条件分页人才证件列表", httpMethod = "POST")
+    @PostMapping("/list")
+    public ResultEntity list(@RequestBody TalentCertificatesSearch search) {
+        ListPages<TalentDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<TalentDO> list
+                = service.listByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
 }

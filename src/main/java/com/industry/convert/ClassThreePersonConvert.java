@@ -1,8 +1,8 @@
 package com.industry.convert;
 
-import com.industry.bean.entity.CertificateCategoryDO;
+import com.industry.bean.entity.ClassThreePersonDO;
 import com.industry.bean.entity.TitleEvaluationDO;
-import com.industry.bean.request.CertificateCategoryRequest;
+import com.industry.bean.request.ClassThreePersonRequest;
 import com.industry.bean.request.TitleEvaluationRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -12,12 +12,12 @@ import org.mapstruct.factory.Mappers;
  * @date 2022/7/9
  */
 @Mapper(componentModel = "spring")
-public interface TitleEvaluationConvert {
-    public TitleEvaluationConvert INSTANCE = Mappers.getMapper(TitleEvaluationConvert.class);
+public interface ClassThreePersonConvert {
+    public ClassThreePersonConvert INSTANCE = Mappers.getMapper(ClassThreePersonConvert.class);
     /**
      * 转换成实体类
-     * @param request TitleEvaluationRequest
-     * @return TitleEvaluationDO
+     * @param request ClassThreePersonRequest
+     * @return ClassThreePersonDO
      */
-    TitleEvaluationDO convertToDo(TitleEvaluationRequest request);
+    ClassThreePersonDO convertToDo(ClassThreePersonRequest request);
 }

@@ -1,4 +1,7 @@
 server:
+  compression:
+    enabled: true
+    mime-types: application/json
   port: 8848
 spring:
   profiles: dev
@@ -12,9 +15,6 @@ spring:
   devtools:
     restart:
       enabled: true
-  # 应用名称
-  application:
-    name: mobile-mall-backstage-api
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/construction_industry_api?useSSL=false&useUnicode=true&characterEncoding=UTF-8&tinyInt1isBit=false&rewriteBatchedStatements=true&allowMultiQueries=true
     driver-class-name: com.mysql.jdbc.Driver
@@ -26,13 +26,14 @@ spring:
       enabled: true
       max-file-size: 100MB
       max-request-size: 1000MB
+  main:
+    lazy-initialization: true
 mybatis-plus:
   configuration:
     #    以日志的形式打印相关警告信息
-    AutoMappingUnknownColumnBehavior: warning
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #    对所有的 resultMap 都进行自动映射
     auto-mapping-behavior: full
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       id-type: auto

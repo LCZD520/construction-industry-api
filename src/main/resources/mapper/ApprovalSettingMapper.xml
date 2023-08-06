@@ -3,11 +3,10 @@
 <mapper namespace="com.industry.mapper.ApprovalSettingMapper">
     <insert id="insertBatch" parameterType="List">
         insert into construction_industry_api.t_approval_setting
-        (role_id, sort, type, creator_id, gmt_create, regenerator_id, gmt_modified)
+        (role_id, type, creator_id, gmt_create, regenerator_id, gmt_modified)
         values
         <foreach collection="list" item="item" separator=",">
             (#{item.roleId}
-            ,#{item.sort}
             ,#{item.type}
             ,#{item.creatorId}
             ,#{item.gmtCreate}
@@ -23,6 +22,15 @@
 
     <select id="selectByType" resultType="Long" parameterType="Integer">
         select count(*)
+        from construction_industry_api.t_approval_setting
+        where type = #{type}
+    </select>
+    <select id="listApprovalSettings" resultType="ApprovalSettingDO">
+        select id, role_id, type, creator_id, gmt_create, regenerator_id, gmt_modified
+        from construction_industry_api.t_approval_setting
+    </select>
+    <select id="listApprovalSettingsByType" resultType="ApprovalSettingDO">
+        select id, role_id, type
         from construction_industry_api.t_approval_setting
         where type = #{type}
     </select>

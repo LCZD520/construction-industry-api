@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.industry.bean.entity.AdvancedSettingDO;
 import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.AdvancedSettingDO;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.AdvancedSettingService;
 import com.industry.bean.common.ResultEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Min;
 
 /**
  * <p>
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-07-01
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/advanced-setting")
 public class AdvancedSettingController {
@@ -40,15 +45,16 @@ public class AdvancedSettingController {
     }
 
     @GetMapping("/list")
-    public ResultEntity queryList(@RequestParam("currentPage") Integer currentPage
-            , @RequestParam("pageSize") Integer pageSize) {
-        IPage<AdvancedSettingDO> iPage = service.queryList(new Page<>(currentPage, pageSize));
-        ListPages<AdvancedSettingDO> listPages
-                = new ListPages<>(iPage.getRecords()
-                , iPage.getTotal()
-                , iPage.getCurrent()
-                , iPage.getSize());
-        return result.success(ResultCodeEnum.SUCCESS, listPages);
+    public ResultEntity queryList(@RequestParam("currentPage") @Min(1) Integer currentPage,
+                                  @RequestParam("pageSize") Long pageSize,
+                                  @RequestParam("configName") String configName,
+                                  @RequestParam("configCode") String configCode) {
+        ListPages<AdvancedSettingDO> page = new ListPages<>();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<AdvancedSettingDO> list
+                = service.listByConditionPages(page, configName, configCode);
+        return result.success(ResultCodeEnum.SUCCESS, list);
     }
 
     @PostMapping("/insert")

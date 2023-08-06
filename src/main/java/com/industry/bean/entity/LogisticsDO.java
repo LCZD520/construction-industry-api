@@ -1,14 +1,17 @@
 package com.industry.bean.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,7 +31,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_logistics")
-@ApiModel(value="LogisticsDO对象", description="后勤表")
+@ApiModel(value = "LogisticsDO对象", description = "后勤表")
 public class LogisticsDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,13 +40,13 @@ public class LogisticsDO implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "人才主键id")
-    @TableField("talent_id")
-    private Integer talentId;
+    @ApiModelProperty(value = "人才/企业主键id")
+    @TableField("resource_id")
+    private Integer resourceId;
 
-    @ApiModelProperty(value = "企业主键id")
-    @TableField("enterprise_id")
-    private Integer enterpriseId;
+    @ApiModelProperty(value = "客户名称")
+    @TableField("customer_name")
+    private String customerName;
 
     @ApiModelProperty(value = "后勤记录添加备注")
     @TableField("add_remark")

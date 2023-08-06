@@ -48,6 +48,10 @@ public class TalentCertificateDO implements Serializable {
     @TableField("initial_conversion")
     private Integer initialConversion;
 
+    @ApiModelProperty(value = "三类人员")
+    @TableField(exist = false)
+    private Integer classThreePersonnel;
+
     @ApiModelProperty(value = "发证时间")
     @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @TableField("issue_cert_time")

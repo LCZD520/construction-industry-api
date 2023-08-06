@@ -1,15 +1,24 @@
 package com.industry.service.impl;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.industry.bean.common.ListPages;
+import com.industry.bean.entity.TalentCertificatesDO;
 import com.industry.bean.entity.TalentCertificatesDO;
 import com.industry.bean.entity.TalentCertificatesWhereaboutsFlowDO;
+import com.industry.bean.entity.TalentDO;
 import com.industry.bean.request.UpdateTalentCertificatesWhereaboutsRequest;
+import com.industry.bean.search.TalentCertificatesSearch;
 import com.industry.mapper.TalentCertificatesMapper;
 import com.industry.mapper.TalentCertificatesWhereaboutsFlowMapper;
 import com.industry.service.TalentCertificatesService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +110,49 @@ public class TalentCertificatesServiceImpl extends ServiceImpl<TalentCertificate
             return mapper.updateCertificateBatchById(whereaboutsRequest);
         }
         return 0;
+    }
+
+    @Override
+    public ListPages<TalentDO> listAllCertificates(ListPages<TalentDO> page) {
+        List<TalentDO> list
+                = mapper.listAllCertificates(page);
+        page.setTotal(mapper.getCountListAllCertificates());
+        page.setCurrentPage(page.getCurrentPage() / 10 + 1);
+        page.setList(list);
+        return page;
+    }
+
+    @Override
+    public ListPages<TalentCertificatesDO> listPageCertificates(Integer id, ListPages<TalentCertificatesDO> page) {
+        List<TalentCertificatesDO> list
+                = mapper.listPageCertificates(id, page);
+        page.setTotal(mapper.getCountListCertificatesById(id));
+        page.setCurrentPage(page.getCurrentPage() / 10 + 1);
+        page.setList(list);
+        return page;
+    }
+
+    @Override
+    public ListPages<TalentDO> listByConditionPages(ListPages<TalentDO> page, TalentCertificatesSearch search) {
+        String startDateStr = search.getStartDate();
+        String endDateStr = search.getEndDate();
+        if (!StringUtils.isEmpty(startDateStr)) {
+            final LocalDateTime startTime = LocalDateTimeUtil.of(DateUtil.parse(startDateStr));
+            final String newStartTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.beginOfDay(startTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setStartDate(newStartTimeStr);
+        }
+        if (!StringUtils.isEmpty(endDateStr)) {
+            final LocalDateTime endTime = LocalDateTimeUtil.of(DateUtil.parse(endDateStr));
+            final String newEndTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.endOfDay(endTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setEndDate(newEndTimeStr);
+        }
+        final List<TalentDO> list = mapper.listByConditionPages(page, search);
+        page.setList(list);
+        page.setTotal(mapper.getCountByCondition(search));
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        return page;
     }
 
 }

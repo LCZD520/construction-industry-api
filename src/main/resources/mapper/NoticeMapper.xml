@@ -2,16 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.NoticeMapper">
 
-    <resultMap id="noticeResultMap" type="com.industry.bean.entity.NoticeDO">
+    <resultMap id="noticeResultMap" type="NoticeDO">
         <result property="enabled" column="is_enabled"/>
     </resultMap>
-    <select id="queryList" resultMap="noticeResultMap" resultType="com.industry.bean.entity.NoticeDO">
+    <select id="queryList" resultMap="noticeResultMap" resultType="NoticeDO">
         select id,
                gmt_create,
                gmt_modified,
                title,
                content,
-               is_enabled
-        from construction_industry_api.t_notice order by gmt_create desc 
+               is_enabled,
+               creator_id
+        from t_notice
+        order by gmt_create desc
+    </select>
+    <select id="getListEnableds" resultType="NoticeDO">
+        select id, title, gmt_create, creator_id
+        from t_notice
+        where is_enabled = 1
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountListEnableds" resultType="Long">
+        select count(*)
+        from t_notice
+        where is_enabled = 1
+    </select>
+    <select id="listByConditionPages" resultType="NoticeDO" resultMap="noticeResultMap">
+        select id, gmt_create, gmt_modified, title, content, is_enabled,creator_id from t_notice
+        where 1 = 1
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title},'%')
+        </if>
+        <if test="enabled != null">
+            and is_enabled = #{enabled}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from t_notice
+        where 1 = 1
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title},'%')
+        </if>
+        <if test="enabled != null">
+            and is_enabled = #{enabled}
+        </if>
     </select>
 </mapper>

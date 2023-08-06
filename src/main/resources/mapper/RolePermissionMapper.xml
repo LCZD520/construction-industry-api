@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.RolePermissionMapper">
-
-    <insert id="insertBatch" parameterType="com.industry.bean.request.RoleInsertOrUpdateBatchRequest">
-        insert into construction_industry_api.t_role_permission(
-        role_id, permission_id, gmt_create, gmt_modified, creator_id, regenerator_id
-        )
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="RolePermissionDO">
+        insert into construction_industry_api.t_role_permission
+        (role_id, permission_id, gmt_create, gmt_modified, creator_id, regenerator_id)
         values
         <foreach item="item" collection="list" separator=",">
-            ( #{roleId},#{item},'2022-07-01 14:00:53','2022-07-01 14:00:53',1,1)
+            (#{item.roleId},#{item.permissionId},#{item.gmtCreate},#{item.gmtModified},#{item.creatorId},#{item.regeneratorId})
         </foreach>
     </insert>
+
+    <update id="disablePermissionBatch">
+        update construction_industry_api.t_role_permission
+        set is_enabled = 0 where role_id = #{roleId} and permission_id in (
+        <foreach collection="collect" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+    <update id="enablePermissionBatch">
+        update construction_industry_api.t_role_permission
+        set is_enabled = 1 where role_id = #{roleId} and permission_id in (
+        <foreach collection="collect" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </update>
+
+    <select id="queryListPermissionIdsByRoleId" resultType="Integer">
+        select permission_id
+        from construction_industry_api.t_role_permission
+        where role_id = #{roleId}
+    </select>
+
+    <select id="queryListEnablePermissionIdsByRoleId" resultType="Integer">
+        select permission_id
+        from construction_industry_api.t_role_permission
+        where is_enabled = 1
+          and role_id = #{roleId}
+    </select>
+    <select id="queryListDisabledPermissionIdsByRoleId" resultType="Integer">
+        select permission_id
+        from construction_industry_api.t_role_permission
+        where is_enabled = 0
+          and role_id = #{roleId}
+    </select>
 </mapper>

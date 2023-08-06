@@ -1,16 +1,16 @@
 package com.industry.bean.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_class_three_person")
-@ApiModel(value="ClassThreePersonDO对象", description="三类人员表")
+@ApiModel(value = "ClassThreePersonDO对象", description = "三类人员表")
 public class ClassThreePersonDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class ClassThreePersonDO implements Serializable {
 
     @ApiModelProperty(value = "客户类型")
     @TableField("customer_type")
-    private Boolean customerType;
+    private Integer customerType;
 
     @ApiModelProperty(value = "客户名称")
     @TableField("customer_name")
@@ -53,20 +53,37 @@ public class ClassThreePersonDO implements Serializable {
     private Integer creatorId;
 
     @ApiModelProperty(value = "创建时间")
+    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(value = "gmt_create", fill = FieldFill.INSERT)
-    private Date gmtCreate;
+    private LocalDateTime gmtCreate;
 
     @ApiModelProperty(value = "更新人id")
     @TableField(value = "regenerator_id", fill = FieldFill.INSERT_UPDATE)
     private Integer regeneratorId;
 
     @ApiModelProperty(value = "更新时间")
+    @JsonFormat(locale = "zh", pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @TableField(value = "gmt_modified", fill = FieldFill.INSERT_UPDATE)
-    private Date gmtModified;
+    private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "备注")
     @TableField("remark")
     private String remark;
 
+    @ApiModelProperty(value = "状态")
+    @TableField("status")
+    private Integer status;
+
+    @ApiModelProperty(value = "三类人员列表")
+    @TableField(exist = false)
+    private List<ClassThreeAssessorDO> listAssessors;
+
+    @ApiModelProperty(value = "三类人员数目")
+    @TableField(exist = false)
+    private Long countAssessors;
+
+    @ApiModelProperty(value = "代办总金额")
+    @TableField(exist = false)
+    private BigDecimal totalAgencyAmount;
 
 }

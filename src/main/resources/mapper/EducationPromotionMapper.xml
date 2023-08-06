@@ -2,4 +2,350 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.EducationPromotionMapper">
 
+    <insert id="insertEducationPromotion" parameterType="EducationPromotionDO" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_education_promotion
+        (customer_type, customer_name, telephone_number, principal, creator_id, gmt_create, regenerator_id,
+         gmt_modified, remark)
+        values (#{customerType}, #{customerName}, #{telephoneNumber},
+                #{principal}, #{creatorId},
+                #{gmtCreate}, #{regeneratorId}, #{gmtModified}, #{remark})
+    </insert>
+    <update id="updateBatchAssessorStatusByIds">
+        update construction_industry_api.t_education_promotion_assessor
+        set education_promotion_order_id = #{id},evaluation_status = 2
+        where id in
+        <foreach collection="listSelectedIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <update id="updateRemarks">
+        update construction_industry_api.t_education_promotion
+        set remark = #{remarks.remark}
+        where id = #{remarks.id}
+    </update>
+    <update id="updateStatus">
+        update construction_industry_api.t_education_promotion
+        set status = #{status}
+        where id = #{id}
+    </update>
+    <update id="updateEducationPromotionById">
+        update construction_industry_api.t_education_promotion
+        set customer_type    = #{educationPromotion.customerType},
+            customer_name    = #{educationPromotion.customerName},
+            telephone_number = #{educationPromotion.telephoneNumber},
+            principal        = #{educationPromotion.principal},
+            remark           = #{educationPromotion.remark}
+        where id = #{educationPromotion.id}
+    </update>
+    <update id="updateDeleteStatusById">
+        update construction_industry_api.t_education_promotion
+        set is_deleted = #{deleted}
+        where id = #{id}
+    </update>
+    <delete id="deleteEducationPromotionById">
+        delete
+        from construction_industry_api.t_education_promotion
+        where id = #{id}
+    </delete>
+
+    <resultMap id="getListEducationPromotionsMap" type="EducationPromotionDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="getListEducationPromotions" resultType="EducationPromotionDO" resultMap="getListEducationPromotionsMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_education_promotion
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+
+    <select id="selectListAssessors" resultType="EducationPromotionAssessorDO">
+        select id,
+               education_promotion_id,
+               education_promotion_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               application_school,
+               major,
+               educational_system,
+               original_education,
+               improve_education,
+               evaluation_fee,
+               agency_amount,
+               evaluation_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+    </select>
+
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_education_promotion
+    </select>
+    <select id="getCountById" resultType="Integer">
+        select count(*)
+        from construction_industry_api.t_education_promotion
+        where id = #{id}
+    </select>
+
+    <resultMap id="getDetailByIdMap" type="EducationPromotionDO">
+        <id column="id" property="id"/>
+        <collection property="listAssessors" ofType="EducationPromotionAssessorDO" select="selectAssessorsById"
+                    column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="selectAssessorsByIdMap" type="EducationPromotionAssessorDO">
+        <id column="id" property="id"/>
+        <collection property="listImages" ofType="PictureDO" select="selectImages" column="id">
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectImages" resultType="PictureDO">
+        select id,
+               resource_id,
+               namespace,
+               type,
+               name,
+               url,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_picture
+        where resource_id = #{id}
+          and namespace = 'class-three-person'
+          and type = 'assessor'
+    </select>
+
+    <select id="selectAssessorsById" resultType="EducationPromotionAssessorDO" resultMap="selectAssessorsByIdMap">
+        select distinct id,
+                        education_promotion_id,
+                        education_promotion_order_id,
+                        full_name,
+                        sex,
+                        identity_card,
+                        telephone_number,
+                        application_school,
+                        major,
+                        educational_system,
+                        original_education,
+                        improve_education,
+                        evaluation_fee,
+                        agency_amount,
+                        evaluation_status,
+                        creator_id,
+                        gmt_create,
+                        regenerator_id,
+                        gmt_modified
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+    </select>
+
+    <select id="getDetailById" resultType="EducationPromotionDO" resultMap="getDetailByIdMap">
+        select id,
+               customer_type,
+               customer_name,
+               telephone_number,
+               principal,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               status
+        from construction_industry_api.t_education_promotion
+        where id = #{id}
+    </select>
+    <select id="getWaitAssessor" resultType="EducationPromotionAssessorDO">
+        select id,
+               education_promotion_id,
+               education_promotion_order_id,
+               full_name,
+               sex,
+               identity_card,
+               telephone_number,
+               application_school,
+               major,
+               educational_system,
+               original_education,
+               improve_education,
+               evaluation_fee,
+               agency_amount,
+               evaluation_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+          and evaluation_status = 1
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="getUnselectedWaitAssessor" resultType="EducationPromotionAssessorDO">
+        select id, education_promotion_id, education_promotion_order_id, full_name, sex, identity_card,
+        telephone_number, application_school, major, educational_system, original_education, improve_education,
+        evaluation_fee, agency_amount, evaluation_status, creator_id, gmt_create, regenerator_id, gmt_modified
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountUnselectedWaitAssessorById" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+        and evaluation_status = 1
+        and id not in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getUnselectedWaitAssessorIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+          and evaluation_status = 1
+    </select>
+    <select id="selectFullNameBatchByIds" resultType="String">
+        select full_name
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+        and id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getMaxOrderno" resultType="String">
+        select max(orderno)
+        from construction_industry_api.t_education_promotion_order
+        where gmt_create between #{today}' 00:00:00'
+                  and #{today}' 23:59:59';
+    </select>
+    <select id="getTotalAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+        and id in
+        <foreach collection="listSelectedIds" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getListEducationPromotionsIds" resultType="Integer">
+        select id
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+    </select>
+    <resultMap id="listEducationPromotionsMap" type="EducationPromotionDO">
+        <id column="id" property="id"/>
+        <association property="countAssessors" select="selectCountAssessors" column="id"/>
+        <association property="totalAgencyAmount" select="selectTotalAgencyAmount" column="id"/>
+    </resultMap>
+
+    <select id="selectCountAssessors" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+    </select>
+
+    <select id="selectTotalAgencyAmount" resultType="BigDecimal">
+        select sum(agency_amount)
+        from construction_industry_api.t_education_promotion_assessor
+        where education_promotion_id = #{id}
+    </select>
+
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_education_promotion
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+    </select>
+    <select id="listEducationPromotionsByConditionPages" resultType="EducationPromotionDO"
+            resultMap="listEducationPromotionsMap">
+        select id,
+        customer_type,
+        customer_name,
+        telephone_number,
+        principal,
+        status,
+        gmt_create,
+        regenerator_id,
+        gmt_modified,
+        remark,
+        creator_id
+        from construction_industry_api.t_education_promotion
+        where 1 = 1
+        <if test="search.customerName != null and search.customerName != ''">
+            <bind name="search.customerName" value="'%'+search.customerName+'%'"/>
+            and customer_name like #{search.customerName}
+        </if>
+        <if test="search.customerType != null and search.customerType != ''">
+            and customer_type = #{search.customerType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            and status = #{search.status}
+        </if>
+        <if test="search.creatorId != null and search.creatorId != ''">
+            and creator_id = #{search.creatorId}
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        <if test="search.deleted != null">
+            and is_deleted = #{search.deleted}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
 </mapper>

@@ -15,6 +15,11 @@
             #{item}
         </foreach>
     </update>
+    <update id="updateApplicationStatusById">
+        update construction_industry_api.t_enterprise_transfer
+        set application_status = #{auditStatus}
+        where id = #{enterpriseTransferId}
+    </update>
 
     <select id="getWaitAssignTalents" resultMap="getWaitAssignTalentsMap">
         select id,
@@ -74,7 +79,6 @@
                transfer_amount,
                funds_purpose,
                application_status,
-               audit_status,
                creator_id,
                gmt_create,
                regenerator_id,
@@ -92,7 +96,27 @@
                     select="listAssignedTalentsSelect"
                     column="id"
                     ofType="OrderSelectedTalentDO"/>
+
+        <collection property="listAuditRecords"
+                    select="listAuditRecordsSelect"
+                    column="id"
+                    ofType="EnterpriseApprovalFlowDO"/>
     </resultMap>
+
+
+    <select id="listAuditRecordsSelect"
+            resultType="EnterpriseApprovalFlowDO">
+        select id,
+               enterprise_transfer_id,
+               audit_status,
+               audit_result,
+               approval_opinion,
+               next_audit_role_id,
+               creator_id,
+               gmt_create
+        from construction_industry_api.t_enterprise_approval_flow
+        where enterprise_transfer_id = #{id}
+    </select>
 
     <select id="listAssignedTalentsSelect"
             resultType="OrderSelectedTalentDO"
@@ -134,7 +158,6 @@
                transfer_amount,
                funds_purpose,
                application_status,
-               audit_status,
                creator_id,
                gmt_create,
                regenerator_id,
@@ -143,5 +166,114 @@
                bank_name
         from construction_industry_api.t_enterprise_transfer
         where id = #{id}
+    </select>
+
+    <resultMap id="listTransferRecordsMap" type="EnterpriseTransferDO">
+        <result property="id" column="id"/>
+        <association property="enterprise" column="enterprise_id" select="selectEnterprise"/>
+    </resultMap>
+
+    <select id="selectEnterprise" resultType="EnterpriseDO">
+        select id,
+               enterprise_name,
+               enterprise_qualifications,
+               area,
+               contact_address,
+               contacts,
+               sex,
+               telephone_number,
+               qq_number,
+               enterprise_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark
+        from construction_industry_api.t_enterprise
+        where id = #{enterprise_id}
+    </select>
+
+    <select id="listTransferRecords" resultType="EnterpriseTransferDO" resultMap="listTransferRecordsMap">
+        select id,
+               enterprise_id,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               bank_name
+        from construction_industry_api.t_enterprise_transfer
+    </select>
+    <select id="getCount" resultType="Long">
+        select count(*)
+        from construction_industry_api.t_enterprise_transfer
+    </select>
+
+    <resultMap id="getAuditDetailByIdMap" type="EnterpriseTransferDO">
+        <id column="id" property="id"/>
+        <collection property="listAuditRecords" ofType="EnterpriseApprovalFlowDO"/>
+    </resultMap>
+
+    <select id="getAuditDetailById" resultType="EnterpriseTransferDO" resultMap="getAuditDetailByIdMap">
+        select tet.id,
+               tet.enterprise_id,
+               tet.open_bank,
+               tet.account_name,
+               tet.bank_card_no,
+               tet.transfer_amount,
+               tet.funds_purpose,
+               tet.application_status,
+               tet.creator_id,
+               tet.gmt_create,
+               tet.regenerator_id,
+               tet.gmt_modified,
+               tet.remark,
+               tet.bank_name,
+               teaf.id,
+               teaf.enterprise_transfer_id,
+               teaf.audit_status,
+               teaf.audit_result,
+               teaf.approval_opinion,
+               teaf.next_audit_role_id,
+               teaf.creator_id,
+               teaf.gmt_create,
+               te.enterprise_name
+        from construction_industry_api.t_enterprise_transfer as tet
+                 left join construction_industry_api.t_enterprise_approval_flow as teaf
+                           on teaf.enterprise_transfer_id = tet.id
+                 left join construction_industry_api.t_enterprise as te
+                           on tet.enterprise_id = te.id
+        where tet.id = #{id}
+    </select>
+
+    <resultMap id="listAllEnterpriseTransfersMap" type="EnterpriseTransferDO">
+        <result column="id" property="id"/>
+        <association property="enterprise" select="selectEnterprise" column="enterprise_id"/>
+    </resultMap>
+
+    <select id="listAllEnterpriseTransfers" resultType="EnterpriseTransferDO" resultMap="listAllEnterpriseTransfersMap">
+        select id,
+               enterprise_id,
+               open_bank,
+               account_name,
+               bank_card_no,
+               transfer_amount,
+               funds_purpose,
+               application_status,
+               creator_id,
+               gmt_create,
+               regenerator_id,
+               gmt_modified,
+               remark,
+               bank_name
+        from construction_industry_api.t_enterprise_transfer
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
     </select>
 </mapper>

@@ -7,10 +7,13 @@ import com.industry.auth.AuthUser;
 import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.EnterpriseResourceDO;
+import com.industry.bean.entity.EnterpriseResourceDO;
 import com.industry.bean.request.EnterpriseResourceRequest;
+import com.industry.bean.search.EnterpriseResourceSearch;
 import com.industry.convert.EnterpriseResourceConvert;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.EnterpriseResourceService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,5 +128,18 @@ public class EnterpriseResourceController {
         return result.failure(ResultCodeEnum.ERROR_NOT_EXIST);
     }
 
+    @ApiOperation(value = "条件分页获取企业资源列表", httpMethod = "POST")
+    @PostMapping("/list")
+    public ResultEntity list(@RequestBody EnterpriseResourceSearch search) {
+        ListPages<EnterpriseResourceDO> page = new ListPages<>();
+        Long pageSize = search.getPageSize();
+        Long currentPage = search.getCurrentPage();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((currentPage - 1) * pageSize);
+        ListPages<EnterpriseResourceDO> list
+                = service.listEnterpriseResourcesByConditionPages(page, search);
+        return result.success(ResultCodeEnum.SUCCESS, list);
+    }
+    
 }
 

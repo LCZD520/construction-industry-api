@@ -2,4 +2,144 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.TitleAssessorMapper">
 
+    <insert id="insertBatch" parameterType="List" keyProperty="id" useGeneratedKeys="true">
+        insert into construction_industry_api.t_title_assessor (id, title_evaluation_id, title_evaluation_order_id, sex,
+        identity_card, telephone_number, education, graduation_major, evaluation_major, title_evaluation,
+        certificate_nature, agency_amount, appraisal_way, creator_id, gmt_create, regenerator_id,
+        gmt_modified,evaluation_fee, full_name)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.titleEvaluationId},
+            #{item.titleEvaluationOrderId},
+            #{item.sex},
+            #{item.identityCard},
+            #{item.telephoneNumber},
+            #{item.education},
+            #{item.graduationMajor},
+            #{item.evaluationMajor},
+            #{item.titleEvaluation},
+            #{item.certificateNature},
+            #{item.agencyAmount},
+            #{item.appraisalWay},
+            #{item.creatorId},
+            #{item.gmtCreate},
+            #{item.regeneratorId},
+            #{item.gmtModified},
+            #{item.evaluationFee},
+            #{item.fullName}
+            )
+        </foreach>
+    </insert>
+    <update id="updateBatchByIds">
+        update construction_industry_api.t_title_assessor
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="fullName =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.fullName!=null and item.fullName!= ''">
+                        when id=#{item.id} then #{item.fullName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="sex =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.sex!=null and item.sex!= ''">
+                        when id=#{item.id} then #{item.sex}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="identityCard =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.identityCard!=null and item.identityCard!= ''">
+                        when id=#{item.id} then #{item.identityCard}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="telephoneNumber =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.telephoneNumber!=null and item.telephoneNumber!= ''">
+                        when id=#{item.id} then #{item.telephoneNumber}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="education =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.education!=null and item.education!= ''">
+                        when id=#{item.id} then #{item.education}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="graduation_major =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.graduationMajor!=null and item.graduationMajor!= ''">
+                        when id=#{item.id} then #{item.graduationMajor}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="evaluation_major =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.evaluationMajor!=null and item.evaluationMajor!= ''">
+                        when id=#{item.id} then #{item.evaluationMajor}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="evaluation_major =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.evaluationMajor!=null and item.evaluationMajor!= ''">
+                        when id=#{item.id} then #{item.evaluationMajor}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="titleEvaluation =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.titleEvaluation!=null and item.titleEvaluation!= ''">
+                        when id=#{item.id} then #{item.titleEvaluation}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="certificate_nature =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.certificateNature!=null and item.certificateNature!= ''">
+                        when id=#{item.id} then #{item.certificateNature}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="agencyAmount =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.agencyAmount!=null and item.agencyAmount!= ''">
+                        when id=#{item.id} then #{item.agencyAmount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="appraisalWay =case" suffix="end,">
+                <foreach collection="listUpdateRecords" item="item">
+                    <if test="item.appraisalWay!=null and item.appraisalWay!= ''">
+                        when id=#{item.id} then #{item.appraisalWay}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where
+        id in (
+        <foreach collection="listUpdateRecordIds" separator="," item="item">
+            #{item}
+        </foreach>
+        )
+    </update>
+    <delete id="deleteBatchByTitleEvaluationId">
+        delete
+        from construction_industry_api.t_title_assessor
+        where title_evaluation_id = #{id}
+    </delete>
+    <delete id="deleteBatchByTitleAssessorIds">
+        delete
+        from construction_industry_api.t_title_assessor
+        where id in
+        (
+        <foreach collection="listDeleteRecordIds" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
 </mapper>

@@ -3,6 +3,7 @@ package com.industry.auth.handler;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.util.JsonUtil;
 import com.industry.bean.common.ResultEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,8 +23,10 @@ import java.io.IOException;
  * @description: 登录认证失败处理
  * @date 2021/6/17 19:32
  */
+@Slf4j
 @Component
 public class CustomAuthenticationFailureHandler extends JsonUtil implements AuthenticationFailureHandler {
+    private static final long serialVersionUID = -4378160804462020787L;
     private ResultEntity resultEntity;
 
     @Autowired

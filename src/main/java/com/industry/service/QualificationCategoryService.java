@@ -2,6 +2,7 @@ package com.industry.service;
 
 import com.industry.bean.entity.QualificationCategoryDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,4 +38,13 @@ public interface QualificationCategoryService extends IService<QualificationCate
      * @return 受影响rows
      */
     int insert(QualificationCategoryDO qualificationCategory);
+
+    /**
+     * 删除资质分类
+     *
+     * @param id id
+     * @return 受影响rows
+     */
+    @Transactional(rollbackFor = Exception.class)
+    int deleteById(Integer id);
 }

@@ -2,4 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.industry.mapper.OperationLogMapper">
 
+    <select id="listByConditionPages" resultType="OperationLogDO">
+        select id, username, user_chinese_name, mechanism_name, module, ip, city_info, log_content, remark, creator_id,
+        gmt_create from
+        construction_industry_api.t_operation_log where 1 = 1
+        <if test="search.logContent != null and search.logContent != ''">
+            and log_content like concat('%',#{search.logContent},'%')
+        </if>
+        <if test="search.username != null and search.username != ''">
+            and username like concat('%',#{search.username},'%')
+        </if>
+        <if test="search.userChineseName != null and search.userChineseName != ''">
+            and user_chinese_name like concat('%',#{search.userChineseName},'%')
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+        order by id desc
+        limit #{page.currentPage},#{page.pageSize}
+    </select>
+    <select id="getCountByCondition" resultType="Long">
+        select count(*)
+        from t_operation_log
+        where 1 = 1
+        <if test="search.logContent != null and search.logContent != ''">
+            and log_content like concat('%',#{search.logContent},'%')
+        </if>
+        <if test="search.username != null and search.username != ''">
+            and username like concat('%',#{search.username},'%')
+        </if>
+        <if test="search.userChineseName != null and search.userChineseName != ''">
+            and user_chinese_name like concat('%',#{search.userChineseName},'%')
+        </if>
+        <if test="search.startDate != null and search.startDate != ''">
+            and gmt_create &gt;= #{search.startDate}
+        </if>
+        <if test="search.endDate != null and search.endDate != ''">
+            and gmt_create &lt;= #{search.endDate}
+        </if>
+    </select>
 </mapper>

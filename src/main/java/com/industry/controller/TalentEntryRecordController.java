@@ -3,9 +3,7 @@ package com.industry.controller;
 
 import com.industry.bean.common.ListPages;
 import com.industry.bean.common.ResultEntity;
-import com.industry.bean.entity.TalentEntryDO;
 import com.industry.bean.entity.TalentEntryRecordDO;
-import com.industry.bean.entity.TalentOrderDO;
 import com.industry.bean.request.ApprovalOpinionRequest;
 import com.industry.enums.ResultCodeEnum;
 import com.industry.service.TalentEntryRecordService;

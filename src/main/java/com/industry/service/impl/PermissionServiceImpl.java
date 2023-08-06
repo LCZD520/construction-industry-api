@@ -2,9 +2,12 @@ package com.industry.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.industry.bean.entity.PermissionDO;
+import com.industry.bean.entity.RolePermissionDO;
 import com.industry.mapper.PermissionMapper;
+import com.industry.mapper.RolePermissionMapper;
 import com.industry.service.PermissionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.industry.service.RolePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +27,16 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     private PermissionMapper mapper;
 
+    private RolePermissionMapper rolePermissionMapper;
+
     @Autowired
     public void setMapper(PermissionMapper mapper) {
         this.mapper = mapper;
+    }
+
+    @Autowired
+    public void setRolePermissionMapper(RolePermissionMapper rolePermissionMapper) {
+        this.rolePermissionMapper = rolePermissionMapper;
     }
 
     @Override
@@ -49,6 +59,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             permissions.add(getSubList(permission, nonRootPermission));
         }
         return permissions;
+    }
+
+    @Override
+    public List<Integer> queryListPermissionsByRoleId(Integer id) {
+        return rolePermissionMapper.queryListEnablePermissionIdsByRoleId(id);
     }
 
     private PermissionDO getSubList(PermissionDO rootPermission, List<PermissionDO> list) {

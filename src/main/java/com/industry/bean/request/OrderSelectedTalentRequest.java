@@ -65,4 +65,12 @@ public class OrderSelectedTalentRequest {
     @ApiModelProperty(value = "市场开发费单位")
     @TableField("market_development_fee_unit")
     private Integer marketDevelopmentFeeUnit;
+
+    @ApiModelProperty(value = "资质代办需求id")
+    @TableField("qualification_agency_demand_id")
+    private Integer qualificationAgencyDemandId;
+
+    @ApiModelProperty(value = "资质人员所属类型")
+    @TableField("type")
+    private String type;
 }

@@ -2,8 +2,10 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.QualificationAgencyDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.industry.bean.search.QualificationAgencySearch;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -18,6 +20,7 @@ public interface QualificationAgencyService extends IService<QualificationAgency
 
     /**
      * 更新资质代办
+     *
      * @param qualificationAgency QualificationAgencyDO
      * @return boolean
      */
@@ -26,6 +29,7 @@ public interface QualificationAgencyService extends IService<QualificationAgency
 
     /**
      * 获取资质代办
+     *
      * @param id 资质代办id
      * @return QualificationAgencyDO
      */
@@ -41,9 +45,37 @@ public interface QualificationAgencyService extends IService<QualificationAgency
 
     /**
      * 插入资质代办
+     *
      * @param qualificationAgency QualificationAgencyDO
      * @return 受影响rows
      */
     @Transactional(rollbackFor = Exception.class)
     int insert(QualificationAgencyDO qualificationAgency);
+
+    /**
+     * 条件分页获取资质代办列表
+     *
+     * @param page   ListPages<QualificationAgencyDO>
+     * @param search QualificationAgencySearch
+     * @return ListPages<QualificationAgencyDO>
+     */
+    ListPages<QualificationAgencyDO> listQualificationAgencysByConditionPages(ListPages<QualificationAgencyDO> page, QualificationAgencySearch search);
+
+    /**
+     * 删除资质代办
+     *
+     * @param id 资质代办id
+     * @return 受影响rows
+     */
+    @Transactional(rollbackFor = Exception.class)
+    int deleteById(Integer id);
+
+    /**
+     * 恢复数据
+     *
+     * @param id 资质代办id
+     * @return 受影响rows
+     */
+    @Transactional(rollbackFor = Exception.class)
+    int recoveryById(Integer id);
 }

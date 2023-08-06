@@ -1,5 +1,8 @@
 package com.industry.service.impl;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,15 +11,20 @@ import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.EnterpriseDemandDO;
 import com.industry.bean.entity.TalentDO;
 import com.industry.bean.entity.TalentCertificateDO;
+import com.industry.bean.search.AlternativeTalentSearch;
+import com.industry.bean.search.AlternativeTalentSearch2;
+import com.industry.bean.search.TalentSearch;
+import com.industry.service.TalentService;
 import com.industry.mapper.EnterpriseResourceDemandMapper;
 import com.industry.mapper.TalentCertificateMapper;
 import com.industry.mapper.TalentMapper;
 import com.industry.service.TalentCertificateService;
-import com.industry.service.TalentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -144,5 +152,71 @@ public class TalentServiceImpl extends ServiceImpl<TalentMapper, TalentDO> imple
             page.setPageSize(page.getPageSize());
         }
         return page;
+    }
+
+    @Override
+    public ListPages<TalentDO> getTalentsByCondition2(ListPages<TalentDO> page, AlternativeTalentSearch2 search) {
+        final List<TalentDO> talents = mapper.getTalentsByCondition2(page, search);
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        page.setList(talents);
+        page.setTotal(mapper.getTalentsCountByCondition2(search));
+        return page;
+    }
+
+    @Override
+    public ListPages<TalentDO> listTalents(ListPages<TalentDO> page, TalentSearch search) {
+        String startDateStr = search.getStartDate();
+        String endDateStr = search.getEndDate();
+        if (!StringUtils.isEmpty(startDateStr)) {
+            final LocalDateTime startTime = LocalDateTimeUtil.of(DateUtil.parse(startDateStr));
+            final String newStartTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.beginOfDay(startTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setStartDate(newStartTimeStr);
+        }
+        if (!StringUtils.isEmpty(endDateStr)) {
+            final LocalDateTime endTime = LocalDateTimeUtil.of(DateUtil.parse(endDateStr));
+            final String newEndTimeStr = LocalDateTimeUtil.format(
+                    LocalDateTimeUtil.endOfDay(endTime), DatePattern.NORM_DATETIME_PATTERN);
+            search.setEndDate(newEndTimeStr);
+        }
+        page.setList(mapper.listTalents(page, search));
+        page.setTotal(mapper.getCountByCondition(search));
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        return page;
+    }
+
+    @Override
+    public ListPages<TalentDO> getAlternativeTalents(AlternativeTalentSearch search) {
+        ListPages<TalentDO> page = new ListPages<>();
+        final Long pageSize = search.getPageSize();
+        page.setPageSize(pageSize);
+        page.setCurrentPage((search.getCurrentPage() - 1) * pageSize);
+        final List<TalentDO> alternativeTalents = mapper.getAlternativeTalents(page, search);
+        page.setCurrentPage(page.getCurrentPage() / page.getPageSize() + 1);
+        page.setList(alternativeTalents);
+        page.setTotal(mapper.getAlternativeTalentsCount(search));
+        return page;
+    }
+
+    @Override
+    public int deleteById(Integer id) {
+        synchronized (this) {
+            final TalentDO talent = mapper.selectById(id);
+            if (null == talent) {
+                return -1;
+            }
+            return mapper.updateDeleteStatusById(id, true);
+        }
+    }
+
+    @Override
+    public int recoveryById(Integer id) {
+        synchronized (this) {
+            final TalentDO talent = mapper.selectById(id);
+            if (null == talent) {
+                return -1;
+            }
+            return mapper.updateDeleteStatusById(id, false);
+        }
     }
 }

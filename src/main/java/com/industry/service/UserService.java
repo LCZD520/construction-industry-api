@@ -2,7 +2,11 @@ package com.industry.service;
 
 import com.industry.auth.AuthUser;
 import com.industry.bean.common.ListPages;
+import com.industry.bean.common.ResultEntity;
 import com.industry.bean.common.SelectOptions;
+import com.industry.bean.entity.PermissionDO;
+import com.industry.bean.entity.RoleDO;
+import com.industry.bean.request.ModifyPasswordRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,7 +27,7 @@ public interface UserService {
 
     ListPages<AuthUser> listAllUsers(ListPages<AuthUser> page);
 
-    ListPages<AuthUser> listUsersByMechanismId(ListPages<AuthUser> page, Integer mechanismId);
+    ListPages<AuthUser> listUsersByMechanismId(ListPages<AuthUser> page, Integer mechanismId, String fullName, Boolean onJob);
 
     AuthUser getDetailById(Integer id);
 
@@ -58,4 +62,31 @@ public interface UserService {
      * @return 受影响rows
      */
     int deleteByUserId(Integer id);
+
+    /**
+     * 获取权限集合
+     *
+     * @param username 用户名
+     * @return List<PermissionDO>
+     */
+    List<PermissionDO> getAuthorityByUsername(String username);
+
+    /**
+     * 获取权限uri集合
+     *
+     * @param username 用户名
+     * @return List<String>
+     */
+    List<String> getAuthorityURIByUsername(String username);
+
+    List<RoleDO> listRolesByUsername(String username);
+
+    /**
+     * 修改密码
+     *
+     * @param request ModifyPasswordRequest
+     * @return ResultEntity
+     */
+    @Transactional(rollbackFor = Exception.class)
+    ResultEntity modifyPassword(ModifyPasswordRequest request);
 }

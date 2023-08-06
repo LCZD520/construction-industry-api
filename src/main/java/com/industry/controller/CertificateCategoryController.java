@@ -1,6 +1,7 @@
 package com.industry.controller;
 
 
+import com.industry.annotation.aop.OperationLog;
 import com.industry.bean.common.ResultEntity;
 import com.industry.bean.entity.CertificateCategoryDO;
 import com.industry.bean.request.CertificateCategoryRequest;
@@ -56,7 +57,8 @@ public class CertificateCategoryController {
         return result.success(ResultCodeEnum.SUCCESS, certificateCategory);
     }
 
-    @PutMapping("/")
+    @OperationLog(module = "系统管理-证书类别", operationDesc = "修改证书类别", uri = "/certificate-category/update")
+    @PutMapping("/update")
     public void update() {
 
     }
@@ -74,6 +76,18 @@ public class CertificateCategoryController {
         return result.failure(ResultCodeEnum.INSERT_FAILURE);
     }
 
+    @OperationLog(module = "系统管理-证书类别", operationDesc = "删除证书类别", uri = "/certificate-category/delete")
+    @DeleteMapping("/delete/{id}")
+    public ResultEntity deleteById(@PathVariable Integer id) {
+        final int rows = service.deleteById(id);
+        if (rows > 0) {
+            return result.success(ResultCodeEnum.SUCCESS_DELETED);
+        }
+        if (rows == -1) {
+            return result.failure(ResultCodeEnum.FAIL_NOT_EXIST_DELETED);
+        }
+        return result.failure(ResultCodeEnum.FAIL_DELETED);
+    }
 
 }
 

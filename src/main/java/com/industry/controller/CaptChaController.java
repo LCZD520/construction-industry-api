@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.io.IOException;
  */
 @Slf4j
 @RestController
-@RequestMapping("/captcha/")
+@RequestMapping("/captcha")
 public class CaptChaController {
 
     ResultEntity resultEntity;
@@ -33,7 +34,7 @@ public class CaptChaController {
 
     public static final String BASE64_PREFIX = "data:image/jpeg;base64,";
 
-    @Autowired
+    @Resource
     private LocalCacheUtil localCache;
 
     @GetMapping("/login")
@@ -47,10 +48,6 @@ public class CaptChaController {
         String code = captcha.getCode();
         session.setAttribute(session.getId() + "loginCaptcha", code);
         log.info("loginCaptcha:{}", code);
-
-        String admin = localCache.get("admin");
-        log.info("admin:{}",admin);
-
         return resultEntity.success(ResultCodeEnum.SUCCESS, BASE64_PREFIX + base64Code);
     }
 

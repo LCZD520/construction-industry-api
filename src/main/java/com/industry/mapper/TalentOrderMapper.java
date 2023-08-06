@@ -4,9 +4,9 @@ import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.OrderSelectedTalentDO;
 import com.industry.bean.entity.TalentOrderDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.industry.bean.search.TalentOrderSearch;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -35,26 +35,29 @@ public interface TalentOrderMapper extends BaseMapper<TalentOrderDO> {
     /**
      * 根据企业id获取最大订单编号的人才订单
      *
-     * @param id 企业id
+     * @param id     企业id
+     * @param source 订单来源
      * @return TalentOrderDO
      */
-    TalentOrderDO getMaxOrdernoByEnterpriseId(@Param("id") Integer id);
+    TalentOrderDO getMaxOrdernoByEnterpriseId(@Param("id") Integer id, @Param("source") String source);
 
     /**
      * 根据企业id获取最大订单状态
      *
-     * @param id 企业id
+     * @param id     企业id
+     * @param source 订单来源
      * @return Integer
      */
-    Integer getMaxOrderStatusByEnterpriseId(@Param("id") Integer id);
+    Integer getMaxOrderStatusByEnterpriseId(@Param("id") Integer id, @Param("source") String source);
 
     /**
      * 根据企业id获取人才订单id集合
      *
-     * @param id 企业id
+     * @param id     企业id
+     * @param source 订单来源
      * @return List<Integer>
      */
-    List<Integer> getListTalentOrderIdsByEnterpriseId(Integer id);
+    List<Integer> getListTalentOrderIdsByEnterpriseId(@Param("id") Integer id, @Param("source") String source);
 
     /**
      * 插入订单
@@ -72,4 +75,46 @@ public interface TalentOrderMapper extends BaseMapper<TalentOrderDO> {
      */
     int updateTalentOrderId(@Param("id") Integer id
             , @Param("listTalentOrderIds") List<Integer> listTalentOrderIds);
+
+    /**
+     * 获取所有人才订单
+     *
+     * @param page ListPages<TalentOrderDO>
+     * @return ListPages<TalentOrderDO>
+     */
+    List<TalentOrderDO> listAllTalentOrders(@Param("page") ListPages<TalentOrderDO> page);
+
+    /**
+     * 获取所有人才订单总数
+     *
+     * @return Long
+     */
+    Long getCountListAllOrders();
+
+    /**
+     * 获取最大的资质代办订单id
+     *
+     * @param today 当天日期 yyyy-MM-dd
+     * @return String
+     */
+    String getMaxOrderno2(@Param("today") String today);
+
+    /**
+     * 条件获取人才订单列表
+     *
+     * @param page   ListPages<TalentOrderDO> page
+     * @param search TalentOrderSearch
+     * @return List<TalentOrderDO>
+     */
+    List<TalentOrderDO> listByConditionPages(
+            @Param("page") ListPages<TalentOrderDO> page,
+            @Param("search") TalentOrderSearch search);
+
+    /**
+     * 条件获取人才订单列表总数
+     *
+     * @param search TalentOrderSearch
+     * @return Long
+     */
+    Long getCountByCondition(@Param("search") TalentOrderSearch search);
 }

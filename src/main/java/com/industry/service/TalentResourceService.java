@@ -2,8 +2,10 @@ package com.industry.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.industry.bean.common.ListPages;
 import com.industry.bean.entity.TalentResourceDO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.industry.bean.search.TalentResourceSearch;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -66,4 +68,13 @@ public interface TalentResourceService extends IService<TalentResourceDO> {
      * @return IPage<TalentResourceDO>
      */
     IPage<TalentResourceDO> listSharedTalentResources(Page<TalentResourceDO> page);
+
+    /**
+     * 条件获取人才资源列表
+     *
+     * @param page   ListPages<TalentResourceDO>
+     * @param search TalentResourceSearch
+     * @return ListPages<TalentResourceDO>
+     */
+    ListPages<TalentResourceDO> listTalentResourcesByConditionPages(ListPages<TalentResourceDO> page, TalentResourceSearch search);
 }

@@ -60,6 +60,17 @@ public class QualificationCategoryServiceImpl extends ServiceImpl<QualificationC
         return mapper.insert(qualificationCategory);
     }
 
+    @Override
+    public int deleteById(Integer id) {
+        synchronized (this) {
+            final QualificationCategoryDO category = mapper.selectById(id);
+            if (category == null) {
+                return -1;
+            }
+            return mapper.deleteById(id);
+        }
+    }
+
     private QualificationCategoryDO getSubList(QualificationCategoryDO rootQualificationCategory, List<QualificationCategoryDO> list) {
         for (QualificationCategoryDO qualificationCategoryDO : list) {
             if (rootQualificationCategory.getId().equals(qualificationCategoryDO.getParentId())) {
